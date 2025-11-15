@@ -42,7 +42,10 @@ PORT=10000
 CLIENT_URL=https://your-netlify-app.netlify.app
 ```
 
-⚠️ **IMPORTANTE**: Non impostare `CLIENT_URL` subito, lo farai dopo aver deployato il frontend su Netlify.
+⚠️ **IMPORTANTE**: 
+- Non impostare `CLIENT_URL` subito, lo farai dopo aver deployato il frontend su Netlify
+- **NON** includere il trailing slash (`/`) alla fine dell'URL (es: usa `https://neuralforming.netlify.app` non `https://neuralforming.netlify.app/`)
+- Il server normalizza automaticamente l'URL, ma è meglio non includerlo
 
 ### 4. Deploy
 1. Clicca su **"Create Web Service"**

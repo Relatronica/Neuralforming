@@ -16,7 +16,7 @@
 4. Variabili d'ambiente (da aggiungere dopo il deploy del frontend):
    - `NODE_ENV=production`
    - `PORT=10000`
-   - `CLIENT_URL=https://your-netlify-app.netlify.app` ⚠️ Da impostare dopo
+   - `CLIENT_URL=https://your-netlify-app.netlify.app` ⚠️ Da impostare dopo (senza trailing slash `/`)
 5. Clicca **Create Web Service** e copia l'URL (es: `https://neuralforming-server.onrender.com`)
 
 ## Frontend su Netlify (3 minuti)
