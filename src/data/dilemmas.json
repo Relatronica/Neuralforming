@@ -1,0 +1,227 @@
+[
+  {
+    "id": "d1",
+    "title": "Regolamentazione IA per la Selezione di Donatori",
+    "description": "Il Parlamento deve decidere come regolamentare l'uso dell'IA nella selezione di donatori di organi. Alcuni propongono criteri di efficienza, altri privilegiano l'equità. Quale legge approvi?",
+    "options": [
+      {
+        "text": "Approvare una legge che privilegia l'efficienza medica massimizzando i tassi di successo",
+        "ethicsPoints": 5,
+        "techPoints": 10,
+        "neuralformingPoints": 8,
+        "consequence": "c1"
+      },
+      {
+        "text": "Legge che impone un sistema di rotazione equo per garantire giustizia sociale",
+        "ethicsPoints": 15,
+        "techPoints": 5,
+        "neuralformingPoints": 12,
+        "consequence": "c2"
+      },
+      {
+        "text": "Regolamentazione che richiede supervisione umana per ogni decisione critica",
+        "ethicsPoints": 12,
+        "techPoints": 3,
+        "neuralformingPoints": 10,
+        "consequence": "c3"
+      }
+    ]
+  },
+  {
+    "id": "d2",
+    "title": "Legge Anti-Discriminazione nell'IA di Selezione",
+    "description": "Devi decidere come regolamentare l'uso dell'IA nelle assunzioni. I dati storici mostrano disparità, ma vietare completamente potrebbe ridurre l'efficienza. Quale proposta legislativa sostieni?",
+    "options": [
+      {
+        "text": "Permettere l'uso di dati storici senza restrizioni per massimizzare l'efficienza",
+        "ethicsPoints": 3,
+        "techPoints": 12,
+        "neuralformingPoints": 6,
+        "consequence": "c4"
+      },
+      {
+        "text": "Legge che impone correttivi algoritmici per garantire pari opportunità",
+        "ethicsPoints": 18,
+        "techPoints": 8,
+        "neuralformingPoints": 15,
+        "consequence": "c5"
+      },
+      {
+        "text": "Divieto assoluto di utilizzare dati demografici nei processi di selezione",
+        "ethicsPoints": 10,
+        "techPoints": 6,
+        "neuralformingPoints": 9,
+        "consequence": "c6"
+      }
+    ]
+  },
+  {
+    "id": "d3",
+    "title": "Legge sulla Sorveglianza Pubblica con IA",
+    "description": "Il Ministero dell'Interno propone una legge per utilizzare l'IA nella sorveglianza pubblica per prevenire crimini. I gruppi per i diritti civili si oppongono. Come voti?",
+    "options": [
+      {
+        "text": "Approvare la legge per la sorveglianza completa priorizzando la sicurezza nazionale",
+        "ethicsPoints": 4,
+        "techPoints": 15,
+        "neuralformingPoints": 7,
+        "consequence": "c7"
+      },
+      {
+        "text": "Approvare con emendamenti che garantiscono controlli rigorosi e trasparenza",
+        "ethicsPoints": 14,
+        "techPoints": 10,
+        "neuralformingPoints": 13,
+        "consequence": "c8"
+      },
+      {
+        "text": "Rifiutare la proposta per proteggere i diritti alla privacy dei cittadini",
+        "ethicsPoints": 16,
+        "techPoints": 2,
+        "neuralformingPoints": 11,
+        "consequence": "c9"
+      }
+    ]
+  },
+  {
+    "id": "d4",
+    "title": "Regolamentazione Etica dei Veicoli Autonomi",
+    "description": "Devi stabilire gli standard etici per i veicoli autonomi. Il dilemma del trolley divide l'opinione pubblica. Quale regolamento approvi?",
+    "options": [
+      {
+        "text": "Regolamento che privilegia la sicurezza del passeggero come priorità assoluta",
+        "ethicsPoints": 6,
+        "techPoints": 12,
+        "neuralformingPoints": 8,
+        "consequence": "c10"
+      },
+      {
+        "text": "Standard che impone la minimizzazione del danno totale in ogni scenario",
+        "ethicsPoints": 12,
+        "techPoints": 10,
+        "neuralformingPoints": 12,
+        "consequence": "c11"
+      },
+      {
+        "text": "Regolamento che richiede sistemi di emergenza per fermare il veicolo quando possibile",
+        "ethicsPoints": 15,
+        "techPoints": 7,
+        "neuralformingPoints": 13,
+        "consequence": "c12"
+      }
+    ]
+  },
+  {
+    "id": "d5",
+    "title": "Legge sulla Privacy dei Dati e Consenso",
+    "description": "Devi regolamentare l'uso dei dati personali da parte delle aziende. L'industria tecnologica chiede flessibilità, i gruppi per la privacy chiedono protezioni rigorose. Quale legge approvi?",
+    "options": [
+      {
+        "text": "Legge permissiva che consente l'uso dei dati per migliorare i servizi",
+        "ethicsPoints": 2,
+        "techPoints": 14,
+        "neuralformingPoints": 5,
+        "consequence": "c13"
+      },
+      {
+        "text": "Legge rigorosa che richiede consenso esplicito per ogni utilizzo dei dati",
+        "ethicsPoints": 17,
+        "techPoints": 6,
+        "neuralformingPoints": 14,
+        "consequence": "c14"
+      },
+      {
+        "text": "Regolamentazione bilanciata con sistema opt-in e controlli granulari",
+        "ethicsPoints": 13,
+        "techPoints": 9,
+        "neuralformingPoints": 12,
+        "consequence": "c15"
+      }
+    ]
+  },
+  {
+    "id": "d6",
+    "title": "Piano Nazionale per l'Automazione e il Lavoro",
+    "description": "Devi approvare un piano che regolamenta l'automazione con IA. Le aziende chiedono libertà, i sindacati chiedono protezioni. Quale politica approvi?",
+    "options": [
+      {
+        "text": "Piano che permette automazione completa senza restrizioni per la competitività",
+        "ethicsPoints": 3,
+        "techPoints": 16,
+        "neuralformingPoints": 7,
+        "consequence": "c16"
+      },
+      {
+        "text": "Piano con automazione graduale e programmi statali di riqualificazione",
+        "ethicsPoints": 16,
+        "techPoints": 11,
+        "neuralformingPoints": 15,
+        "consequence": "c17"
+      },
+      {
+        "text": "Regolamentazione che limita l'automazione per preservare posti di lavoro",
+        "ethicsPoints": 12,
+        "techPoints": 7,
+        "neuralformingPoints": 10,
+        "consequence": "c18"
+      }
+    ]
+  },
+  {
+    "id": "d7",
+    "title": "Legge Anti-Disinformazione e Deepfake",
+    "description": "Devi regolamentare le tecnologie di generazione di contenuti sintetici. I media chiedono protezioni, i ricercatori chiedono libertà. Quale legge approvi?",
+    "options": [
+      {
+        "text": "Permettere l'uso senza restrizioni per favorire l'innovazione",
+        "ethicsPoints": 1,
+        "techPoints": 18,
+        "neuralformingPoints": 4,
+        "consequence": "c19"
+      },
+      {
+        "text": "Legge che impone watermarking obbligatorio e sistemi di autenticazione",
+        "ethicsPoints": 14,
+        "techPoints": 12,
+        "neuralformingPoints": 14,
+        "consequence": "c20"
+      },
+      {
+        "text": "Regolamentazione restrittiva che limita l'accesso ai ricercatori autorizzati",
+        "ethicsPoints": 11,
+        "techPoints": 8,
+        "neuralformingPoints": 10,
+        "consequence": "c21"
+      }
+    ]
+  },
+  {
+    "id": "d8",
+    "title": "Legge sulla Trasparenza Algoritmica",
+    "description": "Devi decidere se obbligare le aziende a rendere pubblici gli algoritmi dell'IA. L'industria si oppone, i gruppi per la trasparenza sostengono. Come voti?",
+    "options": [
+      {
+        "text": "Rifiutare la legge per proteggere la proprietà intellettuale e la competitività",
+        "ethicsPoints": 4,
+        "techPoints": 13,
+        "neuralformingPoints": 6,
+        "consequence": "c22"
+      },
+      {
+        "text": "Approvare legge che impone la pubblicazione completa per trasparenza pubblica",
+        "ethicsPoints": 18,
+        "techPoints": 5,
+        "neuralformingPoints": 14,
+        "consequence": "c23"
+      },
+      {
+        "text": "Approvare con compromesso: versioni semplificate pubbliche e audit esterni",
+        "ethicsPoints": 13,
+        "techPoints": 9,
+        "neuralformingPoints": 12,
+        "consequence": "c24"
+      }
+    ]
+  }
+]
+

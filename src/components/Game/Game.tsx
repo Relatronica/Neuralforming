@@ -1,0 +1,1058 @@
+import React, { useState, useCallback, useEffect } from 'react';
+import { GameEngine } from '../../game/GameEngine';
+import { GameState, Technology, DilemmaOption, PlayerState } from '../../game/types';
+import { TurnManager } from '../../game/TurnManager';
+import { AIPlayer } from '../../game/AIPlayer';
+import { Board } from '../Board/Board';
+import { TechnologyCard } from '../Cards/TechnologyCard';
+import { DilemmaCard } from '../Cards/DilemmaCard';
+import { ConsequenceCard } from '../Cards/ConsequenceCard';
+import { PlayersList } from '../Players/PlayersList';
+import { VotingResult } from './VotingResult';
+import { GlobalEventCard } from './GlobalEventCard';
+import { MilestoneNotification } from './MilestoneNotification';
+import { useGameSocketContext } from '../../contexts/GameSocketContext';
+import { Bot, Landmark, Users, CheckCircle2, XCircle } from 'lucide-react';
+import technologiesData from '../../data/technologies.json';
+import dilemmasData from '../../data/dilemmas.json';
+
+interface GameProps {
+  mode?: 'single' | 'multiplayer';
+  roomId?: string | null;
+  onBackToSetup?: () => void;
+}
+
+export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBackToSetup }) => {
+  // Single player: stato locale
+  // IMPORTANTE: In multiplayer, questo NON viene usato - viene sempre usato serverGameState
+  const [localGameState, setLocalGameState] = useState<GameState>(() => 
+    mode === 'single' ? GameEngine.initializeGame() : {
+      players: [],
+      currentPlayerId: '',
+      currentPhase: 'development',
+      currentDilemma: null,
+      currentConsequence: null,
+      technologyDeck: [],
+      dilemmaDeck: [],
+      turn: 1,
+      gameWon: false,
+      gameLost: false,
+      winnerId: null,
+      activeJoker: null,
+      lastVoteResult: null,
+      lastVoteMessage: null,
+      currentGlobalEvent: null,
+      newlyUnlockedMilestones: null,
+    } as GameState
+  );
+  const [isProcessingAI, setIsProcessingAI] = useState(false);
+  const [isMaster, setIsMaster] = useState(false);
+
+  // Multiplayer: stato dal server
+  // Usa il context invece di creare una nuova istanza - questo condivide lo stato con RoomSetup
+  // IMPORTANTE: sempre chiamare useGameSocketContext() (non condizionalmente) per rispettare le regole degli Hooks
+  const socketContext = useGameSocketContext();
+  
+  const {
+    gameState: serverGameState,
+    playerState,
+    isConnected,
+    roomInfo,
+    sendAction,
+    sendVote,
+    pendingVote,
+    voteStatus,
+    setGameState: updateServerGameState,
+    socket,
+  } = (mode === 'multiplayer' && socketContext) ? socketContext : {
+    gameState: null,
+    playerState: null,
+    isConnected: false,
+    roomInfo: null,
+    sendAction: () => {},
+    sendVote: () => {},
+    pendingVote: null,
+    voteStatus: null,
+    setGameState: undefined,
+    socket: null,
+  };
+
+  // Determina se siamo il master
+  useEffect(() => {
+    if (mode === 'multiplayer' && roomInfo && socket) {
+      // Il master è identificato confrontando il socket.id con masterSocketId
+      const isMasterPlayer = roomInfo.masterSocketId === socket.id;
+      console.log('🔍 Master check:', {
+        socketId: socket.id,
+        masterSocketId: roomInfo.masterSocketId,
+        isMaster: isMasterPlayer,
+      });
+      setIsMaster(isMasterPlayer);
+    } else {
+      setIsMaster(false);
+    }
+  }, [mode, roomInfo, socket]);
+
+  // Inizializza il gioco quando il master avvia la partita
+  useEffect(() => {
+    // Aspetta che il gioco sia iniziato E che ci siano giocatori nella room
+    console.log('🎮 Initialization check:', {
+      mode,
+      isMaster,
+      isConnected,
+      hasServerGameState: !!serverGameState,
+      hasSocket: !!socket,
+      isGameStarted: roomInfo?.isGameStarted,
+      playersCount: roomInfo?.players.length,
+    });
+    
+    if (mode === 'multiplayer' && isMaster && isConnected && !serverGameState && socket && roomInfo?.isGameStarted && roomInfo.players.length > 0) {
+      console.log('✅ Starting game initialization...');
+      
+      // Crea un nuovo stato di gioco con solo i giocatori reali
+      const initializeMultiplayerGame = (): GameState => {
+        // Mescola i mazzi - usa gli stessi import di GameEngine
+        
+        const shuffleArray = <T,>(array: T[]): T[] => {
+          const shuffled = [...array];
+          for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+          }
+          return shuffled;
+        };
+
+        const technologyDeck = shuffleArray([...technologiesData] as Technology[]);
+        const dilemmaDeck = shuffleArray([...dilemmasData] as Dilemma[]);
+
+        // Crea i giocatori reali dalla room (escludi eventuali master)
+        const players: PlayerState[] = [];
+        
+        if (roomInfo && roomInfo.players.length > 0) {
+          // Filtra eventuali giocatori master (non dovrebbero esserci, ma per sicurezza)
+          const realPlayers = roomInfo.players.filter(p => !p.isMaster);
+          
+          realPlayers.forEach((p) => {
+            const playerHand = technologyDeck.splice(0, 2);
+            players.push({
+              id: p.id,
+              name: p.name,
+              isAI: false,
+              techPoints: 0,
+              ethicsPoints: 0,
+              neuralformingPoints: 0,
+              technologies: [],
+              hand: playerHand,
+              unlockedMilestones: [],
+              color: p.color,
+              icon: p.icon,
+            });
+          });
+        }
+
+        return {
+          players,
+          currentPlayerId: players[0]?.id || '',
+          currentPhase: 'development',
+          currentDilemma: null,
+          currentConsequence: null,
+          technologyDeck,
+          dilemmaDeck,
+          turn: 1,
+          gameWon: false,
+          gameLost: false,
+          winnerId: null,
+          activeJoker: null,
+          lastVoteResult: null,
+          lastVoteMessage: null,
+          currentGlobalEvent: null,
+          newlyUnlockedMilestones: null,
+        };
+      };
+
+      const initialState = initializeMultiplayerGame();
+      
+      console.log('🎮 Initialized game state:', {
+        playersCount: initialState.players.length,
+        currentPlayerId: initialState.currentPlayerId,
+        phase: initialState.currentPhase,
+      });
+      
+      // Il master deve inviare il gameState al server
+      // IMPORTANTE: Usa direttamente updateGameStateOnServer invece di updateServerGameState
+      // perché updateServerGameState potrebbe non inviare il gameState se il socket ID non corrisponde
+      if (socket && roomId) {
+        try {
+          console.log('📤 Master sending initial game state to server...');
+          console.log('📤 Current socket.id:', socket.id);
+          console.log('📤 Current roomInfo.masterSocketId:', roomInfo?.masterSocketId);
+          
+          // Imposta il gameState localmente PRIMA di inviarlo al server
+          // Questo evita il ritardo tra invio e ricezione
+          if (updateServerGameState) {
+            updateServerGameState(initialState);
+          }
+          
+          // Invia anche direttamente al server via HTTP (per sicurezza)
+          const serverUrl = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001';
+          fetch(`${serverUrl}/api/room/${roomId}/gamestate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              gameState: initialState,
+              socketId: socket.id,
+            }),
+          })
+            .then(res => {
+              if (!res.ok) {
+                console.error('Failed to send game state to server:', res.status, res.statusText);
+              } else {
+                console.log('✅ Game state successfully sent to server');
+              }
+            })
+            .catch(err => console.error('Failed to send game state to server:', err));
+        } catch (error) {
+          console.error('❌ Error sending game state to server:', error);
+        }
+      } else {
+        console.error('❌ Cannot send game state: socket or roomId missing', { socket: !!socket, roomId: !!roomId });
+      }
+    }
+  }, [mode, isMaster, isConnected, serverGameState, socket, roomId, roomInfo, updateServerGameState]);
+
+  // Usa lo stato appropriato in base alla modalità
+  // IMPORTANTE: In multiplayer, usa SEMPRE serverGameState, MAI localGameState
+  // localGameState contiene giocatori IA e non deve essere usato in multiplayer
+  const gameState = mode === 'multiplayer' 
+    ? serverGameState  // In multiplayer, usa SOLO serverGameState (null se non ancora arrivato)
+    : localGameState;
+  
+  // Per multiplayer, il master gestisce lo stato e lo invia al server
+  const setGameState = mode === 'multiplayer' && isMaster
+    ? (updater: GameState | ((prev: GameState) => GameState)) => {
+        if (!gameState) {
+          console.warn('⚠️ Cannot update game state: gameState is null');
+          return;
+        }
+        const newState = typeof updater === 'function' ? updater(gameState) : updater;
+        console.log('🔄 Master updating game state:', {
+          currentPhase: newState.currentPhase,
+          currentPlayerId: newState.currentPlayerId,
+          hasLastVoteResult: !!newState.lastVoteResult,
+          turn: newState.turn,
+        });
+        if (updateServerGameState) {
+          updateServerGameState(newState);
+        }
+      }
+    : setLocalGameState;
+
+  // Per multiplayer, usa playerState se disponibile (per giocatori non-master)
+  // Il master NON è un giocatore, quindi non ha un currentPlayer
+  const currentPlayer = mode === 'multiplayer' && isMaster
+    ? null // Il master non è un giocatore
+    : (mode === 'multiplayer' && playerState && !isMaster
+      ? playerState
+      : (gameState ? TurnManager.getCurrentPlayer(gameState) : null));
+  
+  // Il master non può mai avere il turno (non è un giocatore)
+  const isHumanTurn = !isMaster && currentPlayer && !currentPlayer.isAI && 
+    (mode === 'single' || (mode === 'multiplayer' && gameState?.currentPlayerId === currentPlayer.id));
+
+  // Gestisce i turni AI automaticamente (solo single-player)
+  useEffect(() => {
+    if (mode === 'multiplayer') return; // In multiplayer non ci sono AI
+    if (!gameState) return; // Aspetta che gameState sia disponibile
+    if (gameState.currentPhase === 'gameOver') return;
+    if (isProcessingAI) return;
+    
+    const currentPlayer = TurnManager.getCurrentPlayer(gameState);
+    const isHumanTurn = currentPlayer && !currentPlayer.isAI;
+    
+    if (!isHumanTurn && currentPlayer) {
+      setIsProcessingAI(true);
+      
+      const processAITurn = async () => {
+        setGameState(prevState => {
+          let state = { ...prevState };
+          let player = TurnManager.getCurrentPlayer(state);
+          if (!player) return state;
+
+          // Fase sviluppo: pesca tecnologia se necessario, poi scegli
+          if (player.hand.length === 0) {
+            state = GameEngine.drawTechnology(state, player.id);
+            player = GameEngine.getPlayer(state, player.id);
+            if (!player) return state;
+          }
+          
+          // Gioca una carta tecnologia (che automaticamente pesca un dilemma)
+          if (player.hand.length > 0) {
+            const chosenTech = AIPlayer.chooseTechnology(player, player.hand);
+            if (chosenTech) {
+              state = GameEngine.addTechnology(state, player.id, chosenTech);
+              player = GameEngine.getPlayer(state, player.id);
+              if (!player) return state;
+
+              // Se c'è un dilemma (pescato automaticamente), risolvilo
+          if (state.currentDilemma && player) {
+            const chosenOption = AIPlayer.chooseDilemmaOption(player, state.currentDilemma);
+            state = GameEngine.resolveDilemma(state, player.id, chosenOption);
+              }
+            }
+          }
+
+          // Se c'è una conseguenza, passa al prossimo giocatore dopo
+          if (!state.currentConsequence) {
+            state = TurnManager.nextPlayer(state);
+          }
+
+          return state;
+        });
+        
+        // Se c'è una conseguenza, attendi prima di continuare
+        if (gameState?.currentConsequence) {
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          setGameState(prev => GameEngine.completeConsequencePhase(prev));
+        }
+        
+        setIsProcessingAI(false);
+      };
+
+      processAITurn();
+    }
+  }, [mode, gameState?.currentPhase, gameState?.currentPlayerId, isProcessingAI, gameState?.currentConsequence, setGameState]);
+
+  const handleDrawTechnology = useCallback(() => {
+    if (!currentPlayer) return;
+    if (mode === 'multiplayer') {
+      sendAction('drawTechnology', {});
+    } else {
+    setGameState(prev => GameEngine.drawTechnology(prev, currentPlayer.id));
+    }
+  }, [currentPlayer, mode, sendAction, setGameState]);
+
+  const handleAddTechnology = useCallback((technology: Technology) => {
+    if (!currentPlayer) return;
+    if (mode === 'multiplayer') {
+      // In multiplayer, invia l'azione al server
+      sendAction('addTechnology', { technology });
+      // Il master riceverà l'azione e applicherà la logica
+    } else {
+    setGameState(prev => GameEngine.addTechnology(prev, currentPlayer.id, technology));
+    }
+  }, [currentPlayer, mode, sendAction, setGameState]);
+
+  const handleDrawDilemma = useCallback(() => {
+    if (mode === 'multiplayer') {
+      sendAction('drawDilemma', {});
+    } else {
+    setGameState(prev => GameEngine.drawDilemma(prev));
+    }
+  }, [mode, sendAction, setGameState]);
+
+  const handleResolveDilemma = useCallback((option: DilemmaOption) => {
+    if (!currentPlayer) return;
+    if (mode === 'multiplayer') {
+      sendAction('resolveDilemma', { option });
+    } else {
+    setGameState(prev => GameEngine.resolveDilemma(prev, currentPlayer.id, option));
+    }
+  }, [currentPlayer, mode, sendAction, setGameState]);
+
+  const handleCompleteConsequence = useCallback(() => {
+    if (mode === 'multiplayer') {
+      sendAction('completeConsequence', {});
+    } else {
+    setGameState(prev => GameEngine.completeConsequencePhase(prev));
+    }
+  }, [mode, sendAction, setGameState]);
+
+  const handleVote = useCallback((vote: boolean) => {
+    if (!pendingVote) return;
+    sendVote(pendingVote.technologyId, vote);
+  }, [pendingVote, sendVote]);
+
+  const handleDismissGlobalEvent = useCallback(() => {
+    setGameState(prev => ({
+      ...prev,
+      currentGlobalEvent: null,
+    }));
+  }, []);
+
+  const handleDismissMilestone = useCallback(() => {
+    setGameState(prev => ({
+      ...prev,
+      newlyUnlockedMilestones: null,
+    }));
+  }, []);
+
+  const handleNewGame = useCallback(() => {
+    if (mode === 'multiplayer') {
+      if (onBackToSetup) {
+        onBackToSetup();
+      }
+    } else {
+    setGameState(GameEngine.initializeGame());
+    setIsProcessingAI(false);
+    }
+  }, [mode, setGameState, onBackToSetup]);
+
+  // Gestisce le azioni ricevute dal server (solo master)
+  useEffect(() => {
+    if (mode === 'multiplayer' && isMaster && socket) {
+      const handlePlayerAction = (data: { playerId: string; action: string; data: any }) => {
+        if (!gameState) {
+          console.warn('⚠️ Cannot handle player action: gameState is null');
+          return;
+        }
+        
+        const player = gameState.players.find(p => p.id === data.playerId);
+        if (!player) {
+          console.error('❌ Cannot handle player action: player not found in gameState', {
+            playerId: data.playerId,
+            availablePlayers: gameState.players.map(p => ({ id: p.id, name: p.name })),
+            action: data.action,
+          });
+          return;
+        }
+
+        let newState: GameState = gameState;
+
+        switch (data.action) {
+          case 'drawTechnology':
+            newState = GameEngine.drawTechnology(gameState, data.playerId);
+            break;
+          case 'addTechnology':
+            // In multiplayer, NON applicare subito la tecnologia
+            // Avvia invece una votazione sul server
+            console.log('🎯 Master handling addTechnology:', {
+              playerId: data.playerId,
+              playerName: player.name,
+              technologyId: data.data.technology.id,
+              technologyName: data.data.technology.name,
+              roomId,
+              hasSocket: !!socket,
+              hasGameState: !!gameState,
+            });
+            
+            if (socket && roomId && gameState) {
+              console.log('✅ Starting voting...', {
+                playerId: data.playerId,
+                playerName: player.name,
+                technologyId: data.data.technology.id,
+              });
+              
+              // Usa sempre l'API HTTP (gameServer non è disponibile nel browser)
+              fetch(`${import.meta.env.VITE_SERVER_URL || 'http://localhost:3001'}/api/room/${roomId}/start-voting`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  technologyId: data.data.technology.id,
+                  technology: data.data.technology,
+                  proposerId: data.playerId,
+                }),
+              })
+                .then(res => {
+                  if (!res.ok) {
+                    console.error('❌ Failed to start voting:', res.status, res.statusText);
+                  } else {
+                    console.log('✅ Voting started successfully');
+                  }
+                })
+                .catch(err => {
+                  console.error('❌ Error starting voting:', err);
+                });
+            } else {
+              console.error('❌ Cannot start voting: missing socket, roomId, or gameState', {
+                hasSocket: !!socket,
+                hasRoomId: !!roomId,
+                hasGameState: !!gameState,
+              });
+            }
+            
+            // Rimuovi temporaneamente la carta dalla mano (verrà riaggiunta dopo la votazione)
+            const newHand = player.hand.filter(t => t.id !== data.data.technology.id);
+            newState = {
+              ...gameState,
+              players: gameState.players.map(p =>
+                p.id === data.playerId ? { ...p, hand: newHand } : p
+              ),
+            };
+            break;
+          case 'resolveDilemma':
+            console.log('🎯 Master handling resolveDilemma:', {
+              playerId: data.playerId,
+              option: data.data.option,
+            });
+            newState = GameEngine.resolveDilemma(gameState, data.playerId, data.data.option);
+            console.log('🎯 After resolveDilemma:', {
+              currentPhase: newState.currentPhase,
+              currentPlayerId: newState.currentPlayerId,
+              turn: newState.turn,
+            });
+            break;
+          case 'completeConsequence':
+            console.log('🎯 Master handling completeConsequence');
+            newState = GameEngine.completeConsequencePhase(gameState);
+            console.log('🎯 After completeConsequence:', {
+              currentPhase: newState.currentPhase,
+              currentPlayerId: newState.currentPlayerId,
+              turn: newState.turn,
+            });
+            break;
+        }
+
+        setGameState(newState);
+      };
+
+      // Gestisce il completamento della votazione
+      const handleVotingComplete = (data: {
+        technologyId: string;
+        technology: Technology;
+        proposerId: string;
+        votes: Array<{ playerId: string; vote: boolean }>;
+      }) => {
+        if (!gameState) {
+          console.error('❌ Cannot handle voting complete: gameState is null');
+          return;
+        }
+
+        console.log('✅ Master received votingComplete:', {
+          technologyId: data.technologyId,
+          proposerId: data.proposerId,
+          votesCount: data.votes.length,
+        });
+
+        // Converti i voti in una Map
+        const realVotes = new Map<string, boolean>();
+        data.votes.forEach(({ playerId, vote }) => {
+          realVotes.set(playerId, vote);
+        });
+        // Il proponente vota sempre a favore
+        realVotes.set(data.proposerId, true);
+
+        console.log('📊 Real votes map:', Array.from(realVotes.entries()));
+
+        // Applica la tecnologia con i voti reali
+        const newState = GameEngine.addTechnology(
+          gameState,
+          data.proposerId,
+          data.technology,
+          realVotes
+        );
+
+        console.log('🎮 New game state after addTechnology:', {
+          currentPhase: newState.currentPhase,
+          currentPlayerId: newState.currentPlayerId,
+          hasLastVoteResult: !!newState.lastVoteResult,
+          lastVoteMessage: newState.lastVoteMessage,
+        });
+
+        setGameState(newState);
+      };
+
+      socket.on('playerActionReceived', handlePlayerAction);
+      // Ascolta direttamente l'evento dal server invece di un evento intermedio
+      socket.on('votingComplete', handleVotingComplete);
+
+      return () => {
+        socket.off('playerActionReceived', handlePlayerAction);
+        socket.off('votingComplete', handleVotingComplete);
+      };
+    }
+  }, [mode, isMaster, socket, gameState, roomId, setGameState]);
+
+  // IMPORTANTE: Controllo anticipato per evitare errori quando gameState è null
+  // In multiplayer, se il gioco è iniziato ma non abbiamo ancora lo stato, mostra attesa
+  // NOTA: Questo deve essere DOPO tutti gli useEffect per rispettare le regole degli Hooks
+  if (mode === 'multiplayer') {
+    if (!gameState && roomInfo?.isGameStarted) {
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">Inizializzazione partita...</h2>
+            <p className="text-gray-600">Il gioco sta per iniziare...</p>
+            {isMaster && (
+              <p className="text-xs text-gray-500 mt-2">(Sei il master - inizializzazione in corso...)</p>
+            )}
+          </div>
+        </div>
+      );
+    }
+    // Se non abbiamo gameState e il gioco non è ancora iniziato, mostra attesa
+    if (!gameState && !roomInfo?.isGameStarted) {
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">Attesa...</h2>
+            <p className="text-gray-600">Preparazione della partita...</p>
+          </div>
+        </div>
+      );
+    }
+  }
+
+  // Game Over Screen
+  if (gameState && gameState.currentPhase === 'gameOver') {
+    const winner = gameState.players.find(p => p.id === gameState.winnerId);
+    const humanPlayer = gameState.players.find(p => !p.isAI);
+    const isHumanWinner = winner && !winner.isAI;
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
+        <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full text-center">
+          {isHumanWinner ? (
+            <>
+              <div className="text-6xl mb-4">🎉</div>
+              <h1 className="text-3xl font-bold text-gray-800 mb-4">Vittoria!</h1>
+              <p className="text-gray-600 mb-6">
+                Hai guidato con successo la creazione di un'IA sostenibile! Le tue decisioni politiche hanno bilanciato
+                innovazione tecnologica e responsabilità etica, creando un futuro migliore per tutti i cittadini.
+              </p>
+              {humanPlayer && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+                  <p className="text-sm text-gray-700 mb-2">
+                    <strong>Punti Neuralforming:</strong> {humanPlayer.neuralformingPoints}
+                  </p>
+                  <p className="text-sm text-gray-700 mb-2">
+                    <strong>Punti Etica:</strong> {humanPlayer.ethicsPoints}
+                  </p>
+                  <p className="text-sm text-gray-700">
+                    <strong>Punti Tecnologia:</strong> {humanPlayer.techPoints}
+                  </p>
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <Bot className="w-16 h-16 mx-auto mb-4 text-gray-600" />
+              <h1 className="text-3xl font-bold text-gray-800 mb-4">
+                {winner ? `${winner.name} ha vinto!` : 'Sconfitta'}
+              </h1>
+              <p className="text-gray-600 mb-6">
+                {winner 
+                  ? `${winner.name} ha completato per primo il programma di IA sostenibile. Le sue politiche hanno prevalso.`
+                  : 'Le tue politiche non hanno raggiunto gli obiettivi richiesti. L\'IA creata non è sostenibile.'}
+              </p>
+              {winner && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                  <p className="text-sm text-gray-700 mb-2">
+                    <strong>Punti Neuralforming:</strong> {winner.neuralformingPoints}
+                  </p>
+                  <p className="text-sm text-gray-700 mb-2">
+                    <strong>Punti Etica:</strong> {winner.ethicsPoints}
+                  </p>
+                  <p className="text-sm text-gray-700">
+                    <strong>Punti Tecnologia:</strong> {winner.techPoints}
+                  </p>
+                </div>
+              )}
+            </>
+          )}
+          <button
+            onClick={handleNewGame}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+          >
+            Nuova Partita
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // IMPORTANTE: Il master in multiplayer non ha currentPlayer (non è un giocatore)
+  // Quindi il controllo deve essere diverso per il master
+  const shouldShowLoading = mode === 'multiplayer' && isMaster
+    ? !gameState // Il master ha bisogno solo di gameState
+    : (!gameState || !currentPlayer); // I giocatori normali hanno bisogno di entrambi
+  
+  if (shouldShowLoading) {
+    if (mode === 'multiplayer') {
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">Caricamento partita...</h2>
+            <p className="text-gray-600">Attendere l'inizializzazione del gioco...</p>
+            {isMaster && (
+              <p className="text-xs text-gray-500 mt-2">(Sei il master - inizializzazione in corso...)</p>
+            )}
+          </div>
+        </div>
+      );
+    }
+    return null;
+  }
+
+  return (
+    <div className="h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col overflow-hidden">
+      {/* Header ultra-compatto */}
+      <header className="flex-shrink-0 px-3 py-1.5 bg-white border-b border-gray-200">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1.5">
+            <Landmark className="w-4 h-4 text-gray-800" />
+            <h1 className="text-lg font-bold text-gray-800">Neuralforming</h1>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="text-xs text-gray-600">
+              Turno: <span className="font-bold">{gameState.turn}</span>
+            </div>
+            {isProcessingAI && (
+              <div className="bg-blue-100 border border-blue-300 rounded px-2 py-0.5 flex items-center gap-1.5">
+                <Bot className="w-3 h-3 text-blue-800" />
+                <p className="text-xs text-blue-800 font-semibold">
+                  {currentPlayer?.name} sta giocando...
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </header>
+
+      {/* Dashboard principale - layout a griglia senza scroll */}
+      <div className="flex-1 grid grid-cols-12 gap-2 p-2 overflow-hidden">
+        {/* Colonna 1 - Board compatto (3 colonne) */}
+        <div className="col-span-3 bg-white border border-gray-200 rounded-lg p-2 overflow-hidden">
+          <div className="h-full overflow-hidden">
+            <Board 
+              technologies={
+                mode === 'multiplayer' && isMaster
+                  ? gameState.players.flatMap(p => p.technologies)
+                  : (currentPlayer?.technologies || [])
+              }
+              players={gameState.players}
+              currentPlayerId={gameState.currentPlayerId}
+            />
+          </div>
+        </div>
+
+        {/* Colonna 2 - Fase di gioco attiva (6 colonne) */}
+        <div className="col-span-6 flex flex-col gap-2 overflow-hidden">
+          {/* Fase di gioco attiva - compatto */}
+          <div className="flex-1 bg-gray-50 rounded-lg p-2 overflow-hidden">
+            <div className="h-full overflow-y-auto">
+            {/* Notifica milestone sbloccati - integrata nel layout */}
+            {gameState.newlyUnlockedMilestones && gameState.newlyUnlockedMilestones.length > 0 && (
+              <MilestoneNotification
+                unlocked={gameState.newlyUnlockedMilestones}
+                players={gameState.players}
+                onDismiss={handleDismissMilestone}
+              />
+            )}
+            
+            {/* Mostra evento globale se presente */}
+            {gameState.currentGlobalEvent && (
+              <GlobalEventCard
+                event={gameState.currentGlobalEvent}
+                onDismiss={handleDismissGlobalEvent}
+              />
+            )}
+
+            {/* Votazione in corso (multiplayer) - Mostrata a TUTTI i giocatori */}
+            {mode === 'multiplayer' && pendingVote && (
+              <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-lg shadow-lg p-3 border-2 border-blue-200">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <div className="bg-blue-600 rounded-full p-1.5 shadow-md">
+                    <Users className="w-4 h-4 text-white" />
+                  </div>
+                  <h2 className="text-base font-bold text-gray-800">
+                    Proposta in Votazione
+                  </h2>
+                </div>
+                
+                <div className="mb-2 flex justify-center">
+                  <div className="bg-white rounded-lg shadow-md p-2 border border-blue-100 max-w-xs w-full">
+                    <TechnologyCard
+                      technology={pendingVote.technology}
+                      isSelectable={false}
+                      isInHand={false}
+                      isVotingCard={true}
+                    />
+                  </div>
+                </div>
+                
+                <div className="bg-white rounded-lg p-2 mb-2 shadow-sm border border-gray-200">
+                  <p className="text-gray-700 text-center text-xs">
+                    <span className="font-bold text-blue-700">
+                      {gameState.players.find(p => p.id === pendingVote.proposerId)?.name || 'Un giocatore'}
+                    </span>
+                    <span className="text-gray-600"> ha proposto questa tecnologia</span>
+                  </p>
+                </div>
+                
+                {/* Mostra i bottoni di voto solo se non sei il proponente e hai un currentPlayer */}
+                {currentPlayer && currentPlayer.id !== pendingVote.proposerId && (
+                  <div className="space-y-2">
+                    <p className="text-gray-700 text-center font-semibold text-xs">
+                      Vuoi votare a favore o contro?
+                    </p>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleVote(true)}
+                        disabled={voteStatus?.hasVoted}
+                        className={`flex-1 font-bold py-2 px-3 rounded-lg transition-all duration-200 shadow-md text-xs ${
+                          voteStatus?.hasVoted && voteStatus?.myVote === true
+                            ? 'bg-green-500 text-white cursor-not-allowed'
+                            : voteStatus?.hasVoted
+                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                            : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white hover:shadow-lg'
+                        }`}
+                      >
+                        <div className="flex items-center justify-center gap-1">
+                          <CheckCircle2 className="w-3 h-3" />
+                          <span>{voteStatus?.hasVoted && voteStatus?.myVote === true ? 'Hai votato Sì' : 'Vota Sì'}</span>
+                        </div>
+                      </button>
+                      <button
+                        onClick={() => handleVote(false)}
+                        disabled={voteStatus?.hasVoted}
+                        className={`flex-1 font-bold py-2 px-3 rounded-lg transition-all duration-200 shadow-md text-xs ${
+                          voteStatus?.hasVoted && voteStatus?.myVote === false
+                            ? 'bg-red-500 text-white cursor-not-allowed'
+                            : voteStatus?.hasVoted
+                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                            : 'bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white hover:shadow-lg'
+                        }`}
+                      >
+                        <div className="flex items-center justify-center gap-1">
+                          <XCircle className="w-3 h-3" />
+                          <span>{voteStatus?.hasVoted && voteStatus?.myVote === false ? 'Hai votato No' : 'Vota No'}</span>
+                        </div>
+                      </button>
+                    </div>
+                    {voteStatus && (
+                      <div className="bg-white rounded-lg p-2 border border-gray-200">
+                        <p className="text-center text-xs font-semibold text-gray-700">
+                          <span className="text-blue-600">{voteStatus.totalVotes}</span>
+                          <span className="text-gray-500"> / </span>
+                          <span className="text-gray-600">{voteStatus.requiredVotes}</span>
+                          <span className="text-gray-500 text-[10px] ml-1">voti</span>
+                        </p>
+                        <div className="mt-1 w-full bg-gray-200 rounded-full h-1.5">
+                          <div 
+                            className="bg-gradient-to-r from-blue-500 to-indigo-500 h-1.5 rounded-full transition-all duration-500"
+                            style={{ width: `${(voteStatus.totalVotes / voteStatus.requiredVotes) * 100}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                {/* Messaggio per il proponente */}
+                {currentPlayer && currentPlayer.id === pendingVote.proposerId && (
+                  <div className="bg-gradient-to-r from-blue-100 to-indigo-100 border border-blue-300 rounded-lg p-2 text-center">
+                    <div className="flex items-center justify-center gap-1 mb-1">
+                      <CheckCircle2 className="w-3 h-3 text-blue-700" />
+                      <p className="text-blue-900 font-bold text-xs">
+                        Hai proposto questa tecnologia
+                      </p>
+                    </div>
+                    {voteStatus && (
+                      <div className="bg-white rounded p-1.5 border border-blue-200">
+                        <p className="text-blue-600 text-xs font-bold">
+                          {voteStatus.totalVotes} / {voteStatus.requiredVotes} voti
+                        </p>
+                        <div className="mt-1 w-full bg-blue-100 rounded-full h-1.5">
+                          <div 
+                            className="bg-gradient-to-r from-blue-500 to-indigo-500 h-1.5 rounded-full transition-all duration-500"
+                            style={{ width: `${(voteStatus.totalVotes / voteStatus.requiredVotes) * 100}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                {/* Messaggio per il master (che non è un giocatore) */}
+                {isMaster && (
+                  <div className="bg-gradient-to-r from-gray-100 to-slate-100 border border-gray-300 rounded-lg p-2 text-center">
+                    <div className="flex items-center justify-center gap-1 mb-1">
+                      <Users className="w-3 h-3 text-gray-700" />
+                      <p className="text-gray-800 font-bold text-xs">
+                        Votazione in corso
+                      </p>
+                    </div>
+                    {voteStatus && (
+                      <div className="bg-white rounded p-1.5 border border-gray-200">
+                        <p className="text-gray-800 text-xs font-bold">
+                          {voteStatus.totalVotes} / {voteStatus.requiredVotes} voti
+                        </p>
+                        <div className="mt-1 w-full bg-gray-200 rounded-full h-1.5">
+                          <div 
+                            className="bg-gradient-to-r from-gray-400 to-gray-500 h-1.5 rounded-full transition-all duration-500"
+                            style={{ width: `${(voteStatus.totalVotes / voteStatus.requiredVotes) * 100}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {/* Mostra risultato votazione dopo aver giocato una tecnologia */}
+            {(() => {
+              const shouldShowVoteResult = gameState.lastVoteResult && gameState.currentPhase === 'dilemma';
+              return shouldShowVoteResult ? (
+                <div className="mb-2">
+                  <VotingResult
+                    voteResult={gameState.lastVoteResult}
+                    players={gameState.players}
+                    message={gameState.lastVoteMessage || undefined}
+                  />
+                </div>
+              ) : null;
+            })()}
+            
+            {/* Development Phase - Solo per giocatore umano */}
+            {gameState.currentPhase === 'development' && isHumanTurn && currentPlayer && currentPlayer.hand.length === 0 && (
+              <div className="bg-white rounded-lg shadow-md p-3">
+                <div className="flex items-center justify-between mb-2">
+                  <h2 className="text-sm font-bold text-gray-800">Sviluppo Politico</h2>
+                  <button
+                    onClick={handleDrawTechnology}
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-2 text-xs rounded transition-colors duration-200 shadow-sm"
+                  >
+                    Nuova Proposta
+                  </button>
+                </div>
+                <p className="text-xs text-gray-600">
+                  Non hai proposte disponibili. Clicca su "Nuova Proposta" per presentare una nuova iniziativa legislativa.
+                </p>
+              </div>
+            )}
+
+            {/* Dilemma Phase - Mostrato a tutti, ma solo il giocatore corrente può interagire */}
+            {gameState.currentPhase === 'dilemma' && gameState.currentDilemma && (
+              <div className="bg-gradient-to-br from-yellow-50 via-orange-50 to-amber-50 rounded-lg shadow-md p-3 border border-orange-300">
+                {!isHumanTurn && (
+                  <div className="mb-2 text-center bg-white rounded-lg p-2 shadow-sm border border-orange-200">
+                    <div className="flex items-center justify-center gap-1.5 mb-1">
+                      <Users className="w-4 h-4 text-orange-600" />
+                      <p className="text-xs font-bold text-gray-800">
+                        {gameState.players.find(p => p.id === gameState.currentPlayerId)?.name || 'Un giocatore'} sta risolvendo un dilemma etico
+                      </p>
+                    </div>
+                  </div>
+                )}
+                <DilemmaCard
+                  dilemma={gameState.currentDilemma}
+                  onSelectOption={isHumanTurn ? handleResolveDilemma : () => {}}
+                  activeJoker={gameState.activeJoker}
+                  isInteractive={isHumanTurn}
+                />
+              </div>
+            )}
+
+            {/* Consequence Phase - Mostrato a tutti, ma solo il giocatore corrente può continuare */}
+            {gameState.currentPhase === 'consequence' && gameState.currentConsequence && (
+              <div className="bg-gradient-to-br from-red-50 via-pink-50 to-rose-50 rounded-lg shadow-md p-3 border border-red-300">
+                {!isHumanTurn && (
+                  <div className="mb-2 text-center bg-white rounded-lg p-2 shadow-sm border border-red-200">
+                    <div className="flex items-center justify-center gap-1.5 mb-1">
+                      <Users className="w-4 h-4 text-red-600" />
+                      <p className="text-xs font-bold text-gray-800">
+                        Conseguenza per {gameState.players.find(p => p.id === gameState.currentPlayerId)?.name || 'il giocatore corrente'}
+                      </p>
+                    </div>
+                  </div>
+                )}
+                <ConsequenceCard
+                  consequence={gameState.currentConsequence}
+                  onContinue={isHumanTurn ? handleCompleteConsequence : () => {}}
+                  isInteractive={isHumanTurn}
+                />
+              </div>
+            )}
+
+            {/* Mostra messaggio durante turno di altri giocatori */}
+            {!isHumanTurn && gameState.currentPhase !== 'dilemma' && gameState.currentPhase !== 'consequence' && (
+              <div className="bg-white rounded-lg shadow-md p-4 text-center">
+                {mode === 'multiplayer' ? (
+                  <>
+                    <Users className="w-6 h-6 mx-auto mb-2 text-gray-600" />
+                    <h2 className="text-sm font-bold text-gray-800 mb-1">
+                      {isMaster ? (
+                        <>Turno di {gameState.players.find(p => p.id === gameState.currentPlayerId)?.name || 'Altro Giocatore'}</>
+                      ) : (
+                        <>Turno di {currentPlayer?.name || 'Altro Giocatore'}</>
+                      )}
+                    </h2>
+                    <p className="text-xs text-gray-600">
+                      {isMaster ? 'Osservando il gioco...' : 'Aspetta il tuo turno...'}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <Bot className="w-6 h-6 mx-auto mb-2 text-gray-600" />
+                    <h2 className="text-sm font-bold text-gray-800 mb-1">
+                      Turno di {currentPlayer?.name}
+                    </h2>
+                    <p className="text-xs text-gray-600">
+                      {currentPlayer?.name} sta valutando le proprie strategie politiche...
+                    </p>
+                  </>
+                )}
+              </div>
+            )}
+            </div>
+          </div>
+
+          {/* Carte in mano - Solo per giocatore umano - compatto */}
+          {isHumanTurn && currentPlayer && currentPlayer.hand.length > 0 && (
+            <div className="flex-shrink-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-lg p-2 border border-gray-200">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-1.5">
+                  <Landmark className="w-3.5 h-3.5 text-blue-600" />
+                  <h3 className="text-xs font-bold text-gray-800">
+                    Proposte di Legge
+                  </h3>
+                  <span className="bg-blue-600 text-white font-bold px-1.5 py-0.5 rounded text-[10px]">
+                    {currentPlayer.hand.length}
+                  </span>
+                </div>
+                <button
+                  onClick={handleDrawTechnology}
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-1 px-2 text-[10px] rounded transition-all duration-200 shadow-sm"
+                >
+                  + Nuova
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-1.5 justify-center">
+                {currentPlayer.hand.map((tech) => (
+                  <div key={tech.id} className="transform hover:scale-105 transition-transform duration-200">
+                    <TechnologyCard
+                      technology={tech}
+                      onSelect={handleAddTechnology}
+                      isSelectable={true}
+                      isInHand={true}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Colonna 3 - Giocatori e info (3 colonne) */}
+        <div className="col-span-3 bg-white border border-gray-200 rounded-lg p-2 flex flex-col overflow-hidden">
+          <div className="flex-1 overflow-y-auto">
+            <PlayersList
+              players={gameState.players}
+              currentPlayerId={gameState.currentPlayerId}
+              winnerId={gameState.winnerId}
+            />
+            <div className="mt-2 bg-gray-50 rounded p-2 border border-gray-200">
+              <p className="text-[10px] text-gray-600 mb-0.5">
+                <strong>Obiettivo:</strong> 65+ Neuralforming, 45+ Etica, 5+ Tecnologie, Bilanciamento ≥0.5
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

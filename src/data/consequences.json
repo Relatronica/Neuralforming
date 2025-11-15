@@ -1,0 +1,223 @@
+[
+  {
+    "id": "c1",
+    "title": "Critiche Pubbliche all'Efficienza",
+    "description": "La legge ha aumentato i tassi di successo ma ha generato proteste pubbliche sulla mancanza di equità. La tua popolarità cala.",
+    "effect": {
+      "ethicsPoints": -2,
+      "techPoints": 3
+    }
+  },
+  {
+    "id": "c2",
+    "title": "Approvazione Pubblica",
+    "description": "La legge ha guadagnato ampio supporto pubblico e dei media. La tua reputazione politica migliora.",
+    "effect": {
+      "ethicsPoints": 4,
+      "neuralformingPoints": 2
+    }
+  },
+  {
+    "id": "c3",
+    "title": "Bilanciamento Politico",
+    "description": "La supervisione umana ha rallentato l'implementazione ma ha guadagnato il supporto dei gruppi etici.",
+    "effect": {
+      "ethicsPoints": 3,
+      "techPoints": -1
+    }
+  },
+  {
+    "id": "c4",
+    "title": "Proteste e Dimissioni",
+    "description": "La legge ha perpetuato disuguaglianze, generando proteste pubbliche e dimissioni di funzionari. Scandal politico.",
+    "effect": {
+      "ethicsPoints": -5,
+      "techPoints": 2
+    }
+  },
+  {
+    "id": "c5",
+    "title": "Successo Elettorale",
+    "description": "La legge ha portato a risultati positivi nella diversità. I gruppi per i diritti civili ti supportano pubblicamente.",
+    "effect": {
+      "ethicsPoints": 5,
+      "neuralformingPoints": 3
+    }
+  },
+  {
+    "id": "c6",
+    "title": "Cecità ai Dati",
+    "description": "Rimuovere completamente i dati demografici ha reso il sistema meno preciso ma più equo.",
+    "effect": {
+      "ethicsPoints": 2,
+      "techPoints": -2
+    }
+  },
+  {
+    "id": "c7",
+    "title": "Sicurezza Aumentata",
+    "description": "La sorveglianza completa ha ridotto i crimini ma ha sollevato preoccupazioni sulla privacy.",
+    "effect": {
+      "ethicsPoints": -4,
+      "techPoints": 4
+    }
+  },
+  {
+    "id": "c8",
+    "title": "Bilanciamento Raggiunto",
+    "description": "I controlli rigorosi hanno mantenuto la sicurezza preservando i diritti civili.",
+    "effect": {
+      "ethicsPoints": 4,
+      "techPoints": 2,
+      "neuralformingPoints": 2
+    }
+  },
+  {
+    "id": "c9",
+    "title": "Privacy Preservata",
+    "description": "Il rifiuto della sorveglianza ha protetto la privacy ma alcuni crimini sono aumentati.",
+    "effect": {
+      "ethicsPoints": 5,
+      "techPoints": -3
+    }
+  },
+  {
+    "id": "c10",
+    "title": "Fiducia dei Consumatori",
+    "description": "Priorizzare il passeggero ha aumentato la fiducia dei consumatori nei veicoli autonomi.",
+    "effect": {
+      "ethicsPoints": 2,
+      "techPoints": 3
+    }
+  },
+  {
+    "id": "c11",
+    "title": "Utilitarismo Applicato",
+    "description": "Minimizzare il danno totale ha generato dibattiti etici ma ha mostrato efficacia.",
+    "effect": {
+      "ethicsPoints": 1,
+      "techPoints": 2
+    }
+  },
+  {
+    "id": "c12",
+    "title": "Sicurezza Prioritaria",
+    "description": "La capacità di fermarsi rapidamente ha prevenuto incidenti, guadagnando approvazione pubblica.",
+    "effect": {
+      "ethicsPoints": 4,
+      "techPoints": 1
+    }
+  },
+  {
+    "id": "c13",
+    "title": "Violazione della Privacy",
+    "description": "L'uso di dati senza consenso ha portato a multe e perdita di fiducia.",
+    "effect": {
+      "ethicsPoints": -6,
+      "techPoints": 3
+    }
+  },
+  {
+    "id": "c14",
+    "title": "Privacy Rispettata",
+    "description": "Il rispetto del consenso ha guadagnato fiducia e supporto degli utenti.",
+    "effect": {
+      "ethicsPoints": 6,
+      "neuralformingPoints": 3
+    }
+  },
+  {
+    "id": "c15",
+    "title": "Controllo Utente",
+    "description": "Il sistema opt-in ha dato controllo agli utenti, migliorando la soddisfazione.",
+    "effect": {
+      "ethicsPoints": 4,
+      "techPoints": 1
+    }
+  },
+  {
+    "id": "c16",
+    "title": "Disoccupazione di Massa",
+    "description": "L'automazione completa ha causato disoccupazione, generando instabilità sociale.",
+    "effect": {
+      "ethicsPoints": -7,
+      "techPoints": 5
+    }
+  },
+  {
+    "id": "c17",
+    "title": "Transizione Sostenibile",
+    "description": "La riqualificazione ha permesso una transizione graduale, mantenendo stabilità sociale.",
+    "effect": {
+      "ethicsPoints": 6,
+      "techPoints": 3,
+      "neuralformingPoints": 4
+    }
+  },
+  {
+    "id": "c18",
+    "title": "Compromesso Parziale",
+    "description": "L'automazione parziale ha preservato posti di lavoro ma limitato i guadagni di efficienza.",
+    "effect": {
+      "ethicsPoints": 2,
+      "techPoints": -1
+    }
+  },
+  {
+    "id": "c19",
+    "title": "Disinformazione Diffusa",
+    "description": "La tecnologia senza restrizioni è stata usata per creare contenuti falsi, causando danni sociali.",
+    "effect": {
+      "ethicsPoints": -8,
+      "techPoints": 5
+    }
+  },
+  {
+    "id": "c20",
+    "title": "Tecnologia Responsabile",
+    "description": "Il watermarking ha permesso l'uso della tecnologia prevenendo abusi.",
+    "effect": {
+      "ethicsPoints": 5,
+      "techPoints": 3,
+      "neuralformingPoints": 3
+    }
+  },
+  {
+    "id": "c21",
+    "title": "Accesso Limitato",
+    "description": "Limitare l'accesso ha prevenuto abusi ma ha rallentato la ricerca legittima.",
+    "effect": {
+      "ethicsPoints": 3,
+      "techPoints": -2
+    }
+  },
+  {
+    "id": "c22",
+    "title": "Vantaggio Competitivo",
+    "description": "Mantenere gli algoritmi segreti ha dato vantaggio ma ha generato sfiducia.",
+    "effect": {
+      "ethicsPoints": -3,
+      "techPoints": 4
+    }
+  },
+  {
+    "id": "c23",
+    "title": "Trasparenza Pubblica",
+    "description": "La trasparenza ha guadagnato fiducia pubblica e ha accelerato l'innovazione collaborativa.",
+    "effect": {
+      "ethicsPoints": 7,
+      "techPoints": 1,
+      "neuralformingPoints": 4
+    }
+  },
+  {
+    "id": "c24",
+    "title": "Bilanciamento Trasparenza",
+    "description": "La pubblicazione controllata ha bilanciato trasparenza e competitività.",
+    "effect": {
+      "ethicsPoints": 4,
+      "techPoints": 2
+    }
+  }
+]
+

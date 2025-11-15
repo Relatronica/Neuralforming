@@ -1,0 +1,184 @@
+[
+  {
+    "id": "t1",
+    "name": "Legge sul Fondo Nazionale per l'IA",
+    "description": "Istituisce un fondo pubblico per finanziare ricerca e sviluppo di algoritmi di apprendimento profondo",
+    "techPoints": 12,
+    "neuralformingPoints": 6
+  },
+  {
+    "id": "t2",
+    "name": "Piano Nazionale per il Linguaggio Naturale",
+    "description": "Programma governativo per sviluppare sistemi di comprensione e generazione del linguaggio umano",
+    "techPoints": 10,
+    "neuralformingPoints": 5
+  },
+  {
+    "id": "t3",
+    "name": "Regolamento per Sensori Multimodali",
+    "description": "Normativa che regola l'uso di sistemi di percezione integrati in spazi pubblici",
+    "techPoints": 9,
+    "neuralformingPoints": 4
+  },
+  {
+    "id": "t4",
+    "name": "Legge sull'Archiviazione Digitale Pubblica",
+    "description": "Istituisce un sistema nazionale di archiviazione dati per l'IA con garanzie di sicurezza",
+    "techPoints": 8,
+    "neuralformingPoints": 3
+  },
+  {
+    "id": "t5",
+    "name": "Ragionamento Causale",
+    "description": "Capacità di comprendere relazioni causa-effetto complesse",
+    "techPoints": 11,
+    "neuralformingPoints": 6
+  },
+  {
+    "id": "t6",
+    "name": "Apprendimento per Rinforzo",
+    "description": "Sistema che migliora attraverso tentativi ed errori",
+    "techPoints": 10,
+    "neuralformingPoints": 5
+  },
+  {
+    "id": "t7",
+    "name": "Elaborazione in Tempo Reale",
+    "description": "Capacità di processare informazioni e rispondere istantaneamente",
+    "techPoints": 9,
+    "neuralformingPoints": 4
+  },
+  {
+    "id": "t8",
+    "name": "Legge sul Comitato Etico Nazionale per l'IA",
+    "description": "Istituisce un organismo indipendente che verifica le decisioni dell'IA contro principi etici",
+    "techPoints": 7,
+    "ethicsPoints": 10,
+    "neuralformingPoints": 7
+  },
+  {
+    "id": "t9",
+    "name": "Legge sulla Trasparenza Algoritmica",
+    "description": "Obbliga le aziende a spiegare le decisioni dell'IA in modo comprensibile ai cittadini",
+    "techPoints": 6,
+    "ethicsPoints": 12,
+    "neuralformingPoints": 8
+  },
+  {
+    "id": "t10",
+    "name": "Piano Nazionale Anti-Bias",
+    "description": "Programma governativo per identificare e correggere pregiudizi nei sistemi di IA pubblici",
+    "techPoints": 5,
+    "ethicsPoints": 15,
+    "neuralformingPoints": 9
+  },
+  {
+    "id": "t11",
+    "name": "Regolamento sulla Privacy Differenziale",
+    "description": "Normativa che impone tecniche di protezione della privacy nei dataset pubblici",
+    "techPoints": 7,
+    "ethicsPoints": 13,
+    "neuralformingPoints": 8
+  },
+  {
+    "id": "t12",
+    "name": "Legge sull'Architettura Modulare dei Sistemi Pubblici",
+    "description": "Normativa che impone sistemi flessibili e aggiornabili per l'IA nel settore pubblico",
+    "techPoints": 8,
+    "neuralformingPoints": 4
+  },
+  {
+    "id": "t13",
+    "name": "Piano Nazionale per l'Apprendimento Federato",
+    "description": "Programma governativo per sviluppare sistemi di apprendimento distribuito che preservano la privacy",
+    "techPoints": 9,
+    "ethicsPoints": 11,
+    "neuralformingPoints": 8
+  },
+  {
+    "id": "t14",
+    "name": "Regolamento sul Monitoraggio Continuo dell'IA",
+    "description": "Normativa che istituisce sorveglianza costante delle performance e comportamento dell'IA pubblica",
+    "techPoints": 8,
+    "neuralformingPoints": 4
+  },
+  {
+    "id": "t15",
+    "name": "Legge sulla Collaborazione Umano-IA",
+    "description": "Istituisce standard per sistemi che facilitano la collaborazione tra cittadini e IA nei servizi pubblici",
+    "techPoints": 7,
+    "ethicsPoints": 9,
+    "neuralformingPoints": 6
+  },
+  {
+    "id": "j1",
+    "name": "Emendamento Etico",
+    "description": "Emendamento che raddoppia l'impatto etico della prossima decisione politica",
+    "type": "joker",
+    "techPoints": 0,
+    "neuralformingPoints": 0,
+    "jokerEffect": {
+      "multiplier": {
+        "ethicsPoints": 2
+      }
+    }
+  },
+  {
+    "id": "j2",
+    "name": "Accordo con l'Industria",
+    "description": "Accordo che raddoppia l'impatto tecnologico della prossima legge",
+    "type": "joker",
+    "techPoints": 0,
+    "neuralformingPoints": 0,
+    "jokerEffect": {
+      "multiplier": {
+        "techPoints": 2
+      }
+    }
+  },
+  {
+    "id": "j3",
+    "name": "Coalizione di Maggioranza",
+    "description": "Coalizione che raddoppia il progresso verso l'IA sostenibile",
+    "type": "joker",
+    "techPoints": 0,
+    "neuralformingPoints": 0,
+    "jokerEffect": {
+      "multiplier": {
+        "neuralformingPoints": 2
+      }
+    }
+  },
+  {
+    "id": "j4",
+    "name": "Consenso Bipartisan",
+    "description": "Accordo trasversale che aggiunge +5 punti a tutti gli obiettivi",
+    "type": "joker",
+    "techPoints": 0,
+    "neuralformingPoints": 0,
+    "jokerEffect": {
+      "bonus": {
+        "techPoints": 5,
+        "ethicsPoints": 5,
+        "neuralformingPoints": 5
+      }
+    }
+  },
+  {
+    "id": "j5",
+    "name": "Supporto dei Gruppi Etici",
+    "description": "Appoggio pubblico che moltiplica l'etica per 1.5 e aggiunge +3 al progresso",
+    "type": "joker",
+    "techPoints": 0,
+    "neuralformingPoints": 0,
+    "jokerEffect": {
+      "multiplier": {
+        "ethicsPoints": 1.5
+      },
+      "bonus": {
+        "neuralformingPoints": 3
+      }
+    }
+  }
+]
+
