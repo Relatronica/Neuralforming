@@ -35,29 +35,36 @@ export const VotingResult: React.FC<VotingResultProps> = ({
         </div>
         <div className={`flex items-center gap-2 px-5 py-3 rounded-xl shadow-lg transform transition-all duration-300 ${
           isApproved 
-            ? 'bg-gradient-to-r from-gray-600 to-gray-500 text-white scale-105' 
-            : 'bg-gradient-to-r from-gray-700 to-gray-600 text-white scale-105'
+            ? approvalRate >= 70
+              ? 'bg-gradient-to-r from-green-600 to-green-500 text-white scale-105'
+              : 'bg-gradient-to-r from-yellow-600 to-yellow-500 text-white scale-105'
+            : 'bg-gradient-to-r from-red-700 to-red-600 text-white scale-105'
         }`}>
           {isApproved ? (
             <CheckCircle2 className="w-6 h-6" />
           ) : (
             <XCircle className="w-6 h-6" />
           )}
-          <span className="font-bold text-lg">{approvalRate}% Approvazione</span>
+          <span className="font-bold text-lg">
+            {isApproved ? `${approvalRate}% Approvazione` : `${approvalRate}% - Bocciata`}
+          </span>
         </div>
       </div>
       
       {message && (
         <div className={`mb-6 p-4 rounded-xl shadow-md border-2 ${
           approvalRate >= 70 
-            ? 'bg-gradient-to-r from-gray-700 to-gray-600 border-gray-500 text-gray-200'
+            ? 'bg-gradient-to-r from-green-900/50 to-green-800/40 border-green-600/60 text-green-100'
             : approvalRate >= 50
-            ? 'bg-gradient-to-r from-gray-700 to-gray-600 border-gray-500 text-gray-200'
-            : approvalRate >= 30
-            ? 'bg-gradient-to-r from-gray-800 to-gray-700 border-gray-600 text-gray-300'
-            : 'bg-gradient-to-r from-gray-800 to-gray-700 border-gray-600 text-gray-300'
+            ? 'bg-gradient-to-r from-yellow-900/50 to-yellow-800/40 border-yellow-600/60 text-yellow-100'
+            : 'bg-gradient-to-r from-red-900/50 to-red-800/40 border-red-600/60 text-red-100'
         }`}>
           <p className="text-base font-bold text-center">{message}</p>
+          {!isApproved && (
+            <p className="text-sm text-center mt-2 opacity-90">
+              ⚠️ La legge non è stata approvata. Verranno applicate penalità.
+            </p>
+          )}
         </div>
       )}
       

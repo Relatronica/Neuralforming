@@ -40,7 +40,7 @@ export const TechnologyCard: React.FC<TechnologyCardProps> = ({
     return {
       high: calculateVotingEffects({ votesFor: 7, votesAgainst: 1, approvalRate: 0.875, supporters: [], opponents: [] }, basePoints),
       medium: calculateVotingEffects({ votesFor: 5, votesAgainst: 3, approvalRate: 0.625, supporters: [], opponents: [] }, basePoints),
-      low: calculateVotingEffects({ votesFor: 3, votesAgainst: 5, approvalRate: 0.375, supporters: [], opponents: [] }, basePoints),
+      low: calculateVotingEffects({ votesFor: 2, votesAgainst: 6, approvalRate: 0.25, supporters: [], opponents: [] }, basePoints), // Bocciata
     };
   })() : null;
 
@@ -70,10 +70,10 @@ export const TechnologyCard: React.FC<TechnologyCardProps> = ({
       className={`
         rounded-xl shadow-xl p-3 sm:p-4 border-2 transition-all duration-300
         ${isJoker 
-          ? 'bg-gradient-to-br from-gray-700 to-gray-800 border-gray-600' 
-          : 'bg-gray-800 border-gray-600'}
-        ${isSelectable ? (isJoker ? 'border-gray-500' : 'border-gray-500') + ' cursor-pointer hover:shadow-2xl active:shadow-lg hover:scale-105 active:scale-100 hover:-translate-y-1' : ''}
-        ${isInHand && !isJoker ? 'bg-gradient-to-br from-gray-800 to-gray-700' : ''}
+          ? 'bg-gradient-to-br from-purple-900/40 via-purple-800/30 to-yellow-900/40 border-purple-600/60 shadow-[0_0_15px_rgba(168,85,247,0.3)]' 
+          : 'bg-gradient-to-br from-blue-900/30 via-gray-800 to-blue-900/20 border-blue-600/70'}
+        ${isSelectable ? (isJoker ? 'border-purple-500' : 'border-blue-500') + ' cursor-pointer hover:shadow-2xl active:shadow-lg hover:scale-105 active:scale-100 hover:-translate-y-1' : ''}
+        ${isInHand && !isJoker ? 'bg-gradient-to-br from-blue-900/40 via-gray-800 to-blue-900/30 border-blue-600/80' : ''}
         transform-gpu flex flex-col
         ${isLargeFormat ? 'w-full' : ''}
       `}
@@ -88,17 +88,29 @@ export const TechnologyCard: React.FC<TechnologyCardProps> = ({
       onClick={handleClick}
     >
       <div className="flex items-start justify-between mb-2 sm:mb-3 gap-2">
-        <h3 className={`font-bold text-gray-100 flex-1 break-words ${
-          isLargeFormat 
-            ? 'text-base sm:text-lg leading-relaxed' 
-            : 'text-sm line-clamp-2 leading-tight'
-        }`}>
-          {technology.name}
-        </h3>
+        <div className="flex-1">
+          {isJoker && (
+            <span className="inline-block mb-1 px-2 py-0.5 bg-purple-600/30 text-purple-200 text-[9px] sm:text-[10px] font-bold rounded border border-purple-500/50">
+              BONUS
+            </span>
+          )}
+          {!isJoker && (
+            <span className="inline-block mb-1 px-2 py-0.5 bg-blue-600/30 text-blue-200 text-[9px] sm:text-[10px] font-bold rounded border border-blue-500/50">
+              LEGGE
+            </span>
+          )}
+          <h3 className={`font-bold text-gray-100 break-words mt-1 ${
+            isLargeFormat 
+              ? 'text-base sm:text-lg leading-relaxed' 
+              : 'text-sm line-clamp-2 leading-tight'
+          }`}>
+            {technology.name}
+          </h3>
+        </div>
         {isJoker ? (
-          <Sparkles className={`text-gray-300 flex-shrink-0 ${isLargeFormat ? 'w-6 h-6 sm:w-7 sm:h-7' : 'w-5 h-5'}`} />
+          <Sparkles className={`text-purple-300 flex-shrink-0 ${isLargeFormat ? 'w-6 h-6 sm:w-7 sm:h-7' : 'w-5 h-5'}`} style={{ filter: 'drop-shadow(0 0 4px rgba(196, 181, 253, 0.6))' }} />
         ) : (
-          <Microscope className={`text-gray-300 flex-shrink-0 ${isLargeFormat ? 'w-6 h-6 sm:w-7 sm:h-7' : 'w-5 h-5'}`} />
+          <Microscope className={`text-blue-300 flex-shrink-0 ${isLargeFormat ? 'w-6 h-6 sm:w-7 sm:h-7' : 'w-5 h-5'}`} style={{ filter: 'drop-shadow(0 0 3px rgba(96, 165, 250, 0.5))' }} />
         )}
       </div>
       
@@ -111,8 +123,11 @@ export const TechnologyCard: React.FC<TechnologyCardProps> = ({
       </p>
       
       {isJoker && technology.jokerEffect && (
-        <div className={`mb-3 sm:mb-4 p-2 sm:p-3 bg-gray-700 rounded border border-gray-600`}>
-          <p className={`font-semibold text-gray-200 mb-1 ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[9px]'}`}>Effetto Jolly:</p>
+        <div className={`mb-3 sm:mb-4 p-2 sm:p-3 bg-gradient-to-r from-purple-900/40 to-yellow-900/30 rounded border border-purple-600/50`}>
+          <div className="flex items-center gap-2 mb-1">
+            <Sparkles className={`w-3 h-3 ${isLargeFormat ? 'sm:w-4 sm:h-4' : ''} text-purple-300`} />
+            <p className={`font-semibold text-purple-200 ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[9px]'}`}>Effetto Bonus:</p>
+          </div>
           {technology.jokerEffect.multiplier && (
             <p className={`text-gray-300 ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[9px]'}`}>
               {technology.jokerEffect.multiplier.techPoints && `Tech ×${technology.jokerEffect.multiplier.techPoints} `}
@@ -208,9 +223,10 @@ export const TechnologyCard: React.FC<TechnologyCardProps> = ({
               </div>
               <div className="flex items-center gap-1.5">
                 <TrendingDown className="w-3 h-3 text-red-400" />
-                <span className="text-gray-300">Bassa (&lt;50%):</span>
+                <span className="text-gray-300">Bocciata (&lt;50%):</span>
                 <span className="text-red-400 font-semibold">
-                  +{votingEffects.low.techPoints} Tech, +{votingEffects.low.ethicsPoints} Etica, +{votingEffects.low.neuralformingPoints} Neural
+                  {votingEffects.low.techPoints} Tech, {votingEffects.low.ethicsPoints} Etica, {votingEffects.low.neuralformingPoints} Neural
+                  <span className="ml-1 text-xs">(legge non passa)</span>
                 </span>
               </div>
             </div>

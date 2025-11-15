@@ -1,5 +1,5 @@
 import { Server as SocketServer, Socket } from 'socket.io';
-import { GameState, PlayerState, Technology, DilemmaOption, VoteResult } from './types';
+import { GameState, PlayerState, Technology, DilemmaOption, VoteResult } from './types.js';
 
 interface PlayerConnection {
   socketId: string;

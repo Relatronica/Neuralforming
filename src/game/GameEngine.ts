@@ -34,7 +34,7 @@ export class GameEngine {
     const dilemmaDeck = this.shuffleArray([...dilemmasData] as Dilemma[]);
 
     // Crea i giocatori
-    const players: PlayerState[] = [];
+    let players: PlayerState[] = [];
 
     // Giocatore umano
     const humanHand = technologyDeck.splice(0, 2);
@@ -207,6 +207,57 @@ export class GameEngine {
     
     // Calcola punti modificati in base alla votazione
     const votingEffects = calculateVotingEffects(voteResult, adjustedBasePoints);
+    
+    // Se la legge è bocciata, NON aggiungere la tecnologia e applica punteggi negativi
+    if (votingEffects.isRejected) {
+      // Punteggi negativi quando la legge è bocciata
+      const penaltyPoints = {
+        techPoints: votingEffects.techPoints, // Già negativo
+        ethicsPoints: votingEffects.ethicsPoints, // Già negativo
+        neuralformingPoints: votingEffects.neuralformingPoints, // Già negativo
+      };
+
+      let updatedPlayer = Scoring.addPoints(player, penaltyPoints);
+      
+      // Verifica milestone raggiunti dopo aver aggiunto punti (anche se negativi, potrebbe sbloccare)
+      const newMilestones = checkMilestones(updatedPlayer, updatedPlayer.unlockedMilestones);
+      let newlyUnlocked: MilestoneUnlocked[] = [];
+      if (newMilestones.length > 0) {
+        newlyUnlocked = newMilestones.map(m => ({ milestoneId: m.id, playerId }));
+        updatedPlayer = {
+          ...updatedPlayer,
+          unlockedMilestones: [
+            ...updatedPlayer.unlockedMilestones,
+            ...newMilestones.map(m => m.id)
+          ],
+        };
+      }
+
+      // NON aggiungere la tecnologia - la legge è bocciata
+      // La carta viene comunque rimossa dalla mano (costa tentare)
+      const newState = this.updatePlayer({
+        ...gameState,
+        lastVoteResult: voteResult,
+        lastVoteMessage: votingEffects.message,
+        newlyUnlockedMilestones: newlyUnlocked.length > 0 ? newlyUnlocked : null,
+      }, playerId, {
+        ...updatedPlayer,
+        // NON aggiungere technologies: newTechnologies - la legge è bocciata
+        hand: newHand,
+      });
+
+      // Verifica se il giocatore ha raggiunto il suo obiettivo
+      const stateAfterWinCheck = TurnManager.checkGameEnd(newState);
+      if (stateAfterWinCheck.currentPhase === 'gameOver') {
+        return stateAfterWinCheck;
+      }
+
+      // Passa al prossimo giocatore (senza dilemma - la legge è bocciata)
+      // La carta viene rimossa dalla mano ma non viene aggiunta alle tecnologie
+      return TurnManager.nextPlayer(stateAfterWinCheck);
+    }
+
+    // Legge approvata: aggiungi punti positivi
     const finalPoints = {
       techPoints: votingEffects.techPoints,
       ethicsPoints: votingEffects.ethicsPoints,
@@ -240,7 +291,7 @@ export class GameEngine {
       newlyUnlockedMilestones: newlyUnlocked.length > 0 ? newlyUnlocked : null,
     }, playerId, {
       ...updatedPlayer,
-      technologies: newTechnologies,
+      technologies: newTechnologies, // Aggiungi la tecnologia solo se approvata
       hand: newHand,
     });
 

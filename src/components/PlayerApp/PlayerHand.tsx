@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { GameState, PlayerState, Technology } from '../../game/types';
 import { TechnologyCard } from '../Cards/TechnologyCard';
-import { Plus, Hand, ScrollText, Brain, Scale, Microscope, Trophy, Sparkles, Target } from 'lucide-react';
+import { Plus, Hand, ScrollText, Brain, Scale, Microscope, Trophy, Sparkles, Target, Users, Loader2 } from 'lucide-react';
 import { milestones } from '../../game/Milestones';
 import { Objectives } from '../../game/Objectives';
 
 interface PlayerHandProps {
   player: PlayerState;
   gameState: GameState;
+  isMyTurn: boolean;
+  currentPlayerName: string;
   onDrawTechnology: () => void;
   onAddTechnology: (technology: Technology) => void;
 }
@@ -15,6 +17,8 @@ interface PlayerHandProps {
 export const PlayerHand: React.FC<PlayerHandProps> = ({
   player,
   gameState,
+  isMyTurn,
+  currentPlayerName,
   onDrawTechnology,
   onAddTechnology,
 }) => {
@@ -45,7 +49,6 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
   // 1. Ha già proposto una tecnologia in questo turno (stato locale)
   // 2. La fase non è più 'development' (dilemma o consequence in corso)
   // 3. Non è il suo turno
-  const isMyTurn = gameState.currentPlayerId === player.id;
   const canProposeTechnology = !hasProposedTechnology && gameState.currentPhase === 'development' && isMyTurn;
 
   return (
@@ -152,7 +155,22 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
         {/* Contenuto tab Proposte */}
         {activeTab === 'hand' && (
           <>
-            {player.hand.length === 0 ? (
+            {!isMyTurn ? (
+              // Messaggio di attesa quando non è il turno del giocatore
+              <div className="bg-gray-900 rounded-xl shadow-2xl p-6 sm:p-8 text-center border border-gray-700">
+                <Users className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                <h2 className="text-lg sm:text-xl font-bold text-gray-100 mb-2">
+                  Turno di {currentPlayerName}
+                </h2>
+                <p className="text-gray-300 mb-4 text-sm sm:text-base">
+                  Aspetta il tuo turno...
+                </p>
+                <Loader2 className="w-8 h-8 mx-auto text-gray-400 animate-spin" />
+                <p className="text-gray-400 text-xs sm:text-sm mt-4">
+                  Consulta le altre tab per vedere il tuo obiettivo, le leggi approvate e i milestone
+                </p>
+              </div>
+            ) : player.hand.length === 0 ? (
               <div className="bg-gray-900 rounded-xl shadow-2xl p-6 sm:p-8 text-center border border-gray-700">
                 <p className="text-gray-300 mb-4 sm:mb-6 text-sm sm:text-base">Non hai proposte disponibili</p>
                 <button

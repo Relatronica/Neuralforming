@@ -35,7 +35,7 @@ export class Objectives {
     const shuffledPlayers = [...players].sort(() => Math.random() - 0.5);
     
     // Assegna obiettivi bilanciando la difficoltà
-    shuffledPlayers.forEach((player, index) => {
+    shuffledPlayers.forEach((player) => {
       // Filtra obiettivi non ancora assegnati
       const available = availableObjectives.filter(obj => !usedObjectives.has(obj.id));
       

@@ -1,8 +1,12 @@
-# 🔧 Fix per l'errore "Missing script: start" su Render
+# 🔧 Fix per errori comuni su Render
 
-## Problema
+## Problema 1: "Missing script: start"
 
 Render sta cercando di eseguire `npm start` dalla root del progetto invece che dalla directory `server`, causando l'errore "Missing script: start".
+
+## Problema 2: "Cannot find module './GameServer'"
+
+Con ES modules, Node.js richiede che gli import relativi includano l'estensione `.js` anche se i file sorgente sono `.ts`. Questo è stato già corretto nel codice.
 
 ## Soluzione
 
@@ -50,4 +54,24 @@ Se vedi ancora errori, verifica che:
 - ✅ Root Directory sia impostato su `server` (non `/server` o `./server`)
 - ✅ I comandi non includano `cd server &&`
 - ✅ Il file `server/package.json` contenga lo script `start`
+
+## Note Importanti
+
+### Import ES Modules
+
+Con TypeScript e ES modules (`"type": "module"`), gli import relativi devono includere l'estensione `.js` nel codice sorgente TypeScript, anche se i file sono `.ts`. Questo è necessario perché Node.js richiede l'estensione nel codice compilato JavaScript.
+
+**Esempio corretto:**
+```typescript
+import { GameServer } from './GameServer.js';  // ✅ Corretto
+```
+
+**Esempio errato:**
+```typescript
+import { GameServer } from './GameServer';  // ❌ Errato per ES modules
+```
+
+Questo problema è già stato corretto nei file:
+- ✅ `server/src/server.ts`
+- ✅ `server/src/GameServer.ts`
 

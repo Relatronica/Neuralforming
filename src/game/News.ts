@@ -1,5 +1,4 @@
 import { GameState, SocietyNews, PlayerState } from './types';
-import { Scoring } from './Scoring';
 import { TurnManager } from './TurnManager';
 import newsData from '../data/news.json';
 

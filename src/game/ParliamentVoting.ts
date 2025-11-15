@@ -156,6 +156,7 @@ export function conductParliamentVote(
 
 /**
  * Calcola i bonus/penalità basati sul risultato della votazione
+ * Ritorna anche se la legge è stata bocciata (approvazione < 50%)
  */
 export function calculateVotingEffects(
   voteResult: VoteResult,
@@ -169,8 +170,29 @@ export function calculateVotingEffects(
   ethicsPoints: number;
   neuralformingPoints: number;
   message: string;
+  isRejected: boolean; // Se true, la legge è stata bocciata
 } {
   const { approvalRate } = voteResult;
+  
+  // Soglia per bocciatura: < 50% di approvazione
+  const REJECTION_THRESHOLD = 0.5;
+  
+  // Se la legge è bocciata (<50%), applica punteggi negativi invece di aggiungere la tecnologia
+  if (approvalRate < REJECTION_THRESHOLD) {
+    // Punteggi negativi proporzionali ai punti base della tecnologia
+    // Penalità più severe per approvazione molto bassa
+    const penaltyMultiplier = approvalRate < 0.3 ? 0.5 : 0.4; // Più severo se <30%
+    
+    return {
+      techPoints: -Math.floor(basePoints.techPoints * penaltyMultiplier),
+      ethicsPoints: -Math.floor(basePoints.ethicsPoints * penaltyMultiplier),
+      neuralformingPoints: -Math.floor(basePoints.neuralformingPoints * penaltyMultiplier),
+      message: approvalRate < 0.3
+        ? `Bocciata! La proposta è stata respinta dal parlamento con grande maggioranza. Il fallimento ha danneggiato la tua reputazione politica (-50% penalità)`
+        : `Bocciata! La proposta è stata respinta dal parlamento. Il fallimento ha danneggiato la tua reputazione politica (-40% penalità)`,
+      isRejected: true,
+    };
+  }
   
   // Bonus per alta approvazione (>70%)
   if (approvalRate >= 0.7) {
@@ -179,35 +201,17 @@ export function calculateVotingEffects(
       ethicsPoints: Math.floor(basePoints.ethicsPoints * 1.3),
       neuralformingPoints: Math.floor(basePoints.neuralformingPoints * 1.2),
       message: `Approvazione schiacciante! La proposta ha ricevuto ampio sostegno parlamentare (+30% bonus)`,
+      isRejected: false,
     };
   }
   
-  // Bonus per buona approvazione (>50%)
-  if (approvalRate >= 0.5) {
-    return {
-      techPoints: Math.floor(basePoints.techPoints * 1.1),
-      ethicsPoints: Math.floor(basePoints.ethicsPoints * 1.1),
-      neuralformingPoints: Math.floor(basePoints.neuralformingPoints * 1.1),
-      message: `Approvata! La proposta ha ottenuto il sostegno della maggioranza (+10% bonus)`,
-    };
-  }
-  
-  // Penalità per bassa approvazione (<50%)
-  if (approvalRate >= 0.3) {
-    return {
-      techPoints: Math.floor(basePoints.techPoints * 0.7),
-      ethicsPoints: Math.floor(basePoints.ethicsPoints * 0.7),
-      neuralformingPoints: Math.floor(basePoints.neuralformingPoints * 0.8),
-      message: `Approvata di stretta misura. L'opposizione ha limitato l'efficacia della proposta (-30% penalità)`,
-    };
-  }
-  
-  // Forte penalità per approvazione molto bassa (<30%)
+  // Bonus per buona approvazione (>=50% e <70%)
   return {
-    techPoints: Math.floor(basePoints.techPoints * 0.4),
-    ethicsPoints: Math.floor(basePoints.ethicsPoints * 0.4),
-    neuralformingPoints: Math.floor(basePoints.neuralformingPoints * 0.6),
-    message: `Approvata con grande difficoltà. La forte opposizione ha compromesso seriamente l'implementazione (-60% penalità)`,
+    techPoints: Math.floor(basePoints.techPoints * 1.1),
+    ethicsPoints: Math.floor(basePoints.ethicsPoints * 1.1),
+    neuralformingPoints: Math.floor(basePoints.neuralformingPoints * 1.1),
+    message: `Approvata! La proposta ha ottenuto il sostegno della maggioranza (+10% bonus)`,
+    isRejected: false,
   };
 }
 

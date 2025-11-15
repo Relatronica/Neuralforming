@@ -131,13 +131,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
     );
   }
 
-  // Se non è il tuo turno, mostra attesa
-  if (!isMyTurn) {
-    const currentPlayerName = gameState.players.find(p => p.id === gameState.currentPlayerId)?.name || 'Un giocatore';
-    return <PlayerWaiting currentPlayerName={currentPlayerName} />;
-  }
-
-  // Il tuo turno - mostra le azioni appropriate
+  // Il giocatore deve esistere
   if (!currentPlayer) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
@@ -159,7 +153,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
     if (currentPhase === 'development') {
       return (
         <>
-          {shouldShowNews && (
+          {shouldShowNews && gameState.currentNews && (
             <div className="fixed top-0 left-0 right-0 z-50 p-3 sm:p-4 max-w-2xl mx-auto">
               <NewsCard
                 news={gameState.currentNews}
@@ -181,7 +175,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
     return (
       <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 p-3 sm:p-4">
         <div className="max-w-2xl mx-auto">
-          {shouldShowNews && (
+          {shouldShowNews && gameState.currentNews && (
             <div className="mb-4">
               <NewsCard
                 news={gameState.currentNews}
@@ -201,19 +195,24 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
   };
 
   // Mostra la fase appropriata
+  const currentPlayerName = gameState.players.find(p => p.id === gameState.currentPlayerId)?.name || 'Un giocatore';
+  
   switch (currentPhase) {
     case 'development':
       return contentWithNews(
         <PlayerHand
           player={currentPlayer}
           gameState={gameState}
+          isMyTurn={isMyTurn}
+          currentPlayerName={currentPlayerName}
           onDrawTechnology={() => sendAction('drawTechnology', {})}
           onAddTechnology={(tech) => sendAction('addTechnology', { technology: tech })}
         />
       );
     
     case 'dilemma':
-      if (gameState.currentDilemma) {
+      // Mostra il dilemma solo al giocatore di turno
+      if (gameState.currentDilemma && isMyTurn) {
         return contentWithNews(
           <PlayerDilemma
             dilemma={gameState.currentDilemma}
@@ -222,10 +221,21 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
           />
         );
       }
-      break;
+      // Se non è il suo turno, mostra PlayerHand con messaggio di attesa
+      return contentWithNews(
+        <PlayerHand
+          player={currentPlayer}
+          gameState={gameState}
+          isMyTurn={false}
+          currentPlayerName={currentPlayerName}
+          onDrawTechnology={() => sendAction('drawTechnology', {})}
+          onAddTechnology={(tech) => sendAction('addTechnology', { technology: tech })}
+        />
+      );
     
     case 'consequence':
-      if (gameState.currentConsequence) {
+      // Mostra la consequence solo al giocatore di turno
+      if (gameState.currentConsequence && isMyTurn) {
         return contentWithNews(
           <PlayerConsequence
             consequence={gameState.currentConsequence}
@@ -233,7 +243,17 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
           />
         );
       }
-      break;
+      // Se non è il suo turno, mostra PlayerHand con messaggio di attesa
+      return contentWithNews(
+        <PlayerHand
+          player={currentPlayer}
+          gameState={gameState}
+          isMyTurn={false}
+          currentPlayerName={currentPlayerName}
+          onDrawTechnology={() => sendAction('drawTechnology', {})}
+          onAddTechnology={(tech) => sendAction('addTechnology', { technology: tech })}
+        />
+      );
   }
 
   return <PlayerWaiting currentPlayerName="Preparazione..." />;

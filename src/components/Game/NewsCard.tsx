@@ -1,6 +1,6 @@
 import React from 'react';
 import { SocietyNews } from '../../game/types';
-import { Newspaper, TrendingUp, TrendingDown, AlertTriangle, Sparkles, Zap } from 'lucide-react';
+import { Newspaper, TrendingUp, AlertTriangle, Sparkles, Zap } from 'lucide-react';
 
 interface NewsCardProps {
   news: SocietyNews;

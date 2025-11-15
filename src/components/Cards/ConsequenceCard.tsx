@@ -37,18 +37,44 @@ export const ConsequenceCard: React.FC<ConsequenceCardProps> = ({ consequence, o
   // Per ora, rendiamo sempre responsive
   const isPWA = true; // In PWA, la card dovrebbe essere full-width
 
+  // Determina il colore in base agli effetti (verde per positivi, arancione per negativi, neutro per misti)
+  const hasPositive = effects.some(e => e.isPositive);
+  const hasNegative = effects.some(e => !e.isPositive);
+  const cardStyle = hasNegative && !hasPositive
+    ? 'bg-gradient-to-br from-orange-900/40 via-gray-800 to-red-900/30 border-2 border-orange-600/70'
+    : hasPositive && !hasNegative
+    ? 'bg-gradient-to-br from-green-900/40 via-gray-800 to-emerald-900/30 border-2 border-green-600/70'
+    : 'bg-gradient-to-br from-gray-800 to-gray-700 border-2 border-gray-600';
+
   return (
     <div 
-      className="bg-gradient-to-br from-gray-800 to-gray-700 rounded-xl shadow-2xl p-4 sm:p-6 border-2 border-gray-600 transform-gpu flex flex-col w-full"
+      className={`${cardStyle} rounded-xl shadow-2xl p-4 sm:p-6 transform-gpu flex flex-col w-full`}
       style={{
-        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1)',
+        boxShadow: hasNegative && !hasPositive
+          ? '0 20px 25px -5px rgba(249, 115, 22, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1)'
+          : hasPositive && !hasNegative
+          ? '0 20px 25px -5px rgba(34, 197, 94, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1)'
+          : '0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1)',
       }}
     >
       <div className="flex items-start justify-between mb-3 sm:mb-4 gap-2">
-        <h2 className={`font-bold text-gray-100 flex-1 break-words ${isPWA ? 'text-lg sm:text-xl' : 'text-base line-clamp-2'}`}>
-          {consequence.title}
-        </h2>
-        <span className={`flex-shrink-0 ${isPWA ? 'text-3xl sm:text-4xl' : 'text-2xl'}`}>📊</span>
+        <div className="flex-1">
+          <span className={`inline-block mb-1 px-2 py-0.5 text-[9px] sm:text-[10px] font-bold rounded border ${
+            hasNegative && !hasPositive
+              ? 'bg-orange-600/30 text-orange-200 border-orange-500/50'
+              : hasPositive && !hasNegative
+              ? 'bg-green-600/30 text-green-200 border-green-500/50'
+              : 'bg-gray-600/30 text-gray-200 border-gray-500/50'
+          }`}>
+            CONSEGUENZA
+          </span>
+          <h2 className={`font-bold text-gray-100 break-words mt-1 ${isPWA ? 'text-lg sm:text-xl' : 'text-base line-clamp-2'}`}>
+            {consequence.title}
+          </h2>
+        </div>
+        <span className={`flex-shrink-0 ${isPWA ? 'text-3xl sm:text-4xl' : 'text-2xl'}`}>
+          {hasNegative && !hasPositive ? '⚠️' : hasPositive && !hasNegative ? '✅' : '📊'}
+        </span>
       </div>
       
       <p className={`text-gray-300 mb-3 sm:mb-4 flex-grow break-words leading-relaxed ${isPWA ? 'text-sm sm:text-base' : 'text-xs line-clamp-5 leading-tight'}`}>
