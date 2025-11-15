@@ -176,25 +176,25 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
   const canStart = isMaster && roomInfo && roomInfo.players.length >= 2 && !roomInfo.isGameStarted;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-2xl p-8 max-w-2xl w-full">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Neuralforming - Setup Partita</h1>
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
+      <div className="bg-gray-900 rounded-xl shadow-2xl p-8 max-w-2xl w-full border border-gray-700">
+        <h1 className="text-3xl font-bold text-gray-100 mb-6 text-center">Neuralforming - Setup Partita</h1>
 
         {!isConnected && !error && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-            <p className="text-yellow-800">Connessione al server in corso...</p>
-            <p className="text-xs text-yellow-700 mt-2">
+          <div className="bg-gray-800 border border-gray-600 rounded-lg p-4 mb-6">
+            <p className="text-gray-300">Connessione al server in corso...</p>
+            <p className="text-xs text-gray-400 mt-2">
               Assicurati che il server sia avviato su {import.meta.env.VITE_SERVER_URL || 'http://localhost:3001'}
             </p>
           </div>
         )}
 
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-            <p className="text-red-800 font-semibold">Errore di connessione</p>
-            <p className="text-red-700 text-sm mt-1">{error}</p>
-            <p className="text-xs text-red-600 mt-2">
-              Verifica che il server sia avviato: <code className="bg-red-100 px-1 rounded">cd server && npm run dev</code>
+          <div className="bg-gray-800 border border-gray-600 rounded-lg p-4 mb-6">
+            <p className="text-gray-200 font-semibold">Errore di connessione</p>
+            <p className="text-gray-300 text-sm mt-1">{error}</p>
+            <p className="text-xs text-gray-400 mt-2">
+              Verifica che il server sia avviato: <code className="bg-gray-700 px-1 rounded text-gray-300">cd server && npm run dev</code>
             </p>
           </div>
         )}
@@ -202,24 +202,24 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
         {!roomId ? (
           <div className="space-y-6">
             {/* Il master NON ha bisogno di nome e colore (non è un giocatore) */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-sm text-blue-800">
-                <strong>Sei il Master della partita.</strong> Il master non è un giocatore, ma gestisce la partita e vede tutto lo stato del gioco.
+            <div className="bg-gray-800 border border-gray-600 rounded-lg p-4">
+              <p className="text-sm text-gray-200">
+                <strong className="text-gray-100">Sei il Master della partita.</strong> Il master non è un giocatore, ma gestisce la partita e vede tutto lo stato del gioco.
               </p>
             </div>
             
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
+                <div className="w-full border-t border-gray-600"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">oppure</span>
+                <span className="px-2 bg-gray-900 text-gray-400">oppure</span>
               </div>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-300 mb-2">
                   ID Partita (per unirsi)
                 </label>
                 <input
@@ -227,7 +227,7 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
                   value={roomIdInput}
                   onChange={(e) => setRoomIdInput(e.target.value)}
                   placeholder="Incolla l'ID della partita"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent font-mono text-sm"
+                  className="w-full px-4 py-2 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent font-mono text-sm text-gray-100 placeholder-gray-500"
                 />
               </div>
             </div>
@@ -236,14 +236,14 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
               <button
                 onClick={handleCreateRoom}
                 disabled={!isConnected}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+                className="flex-1 bg-gray-600 hover:bg-gray-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
               >
                 Crea Partita
               </button>
               <button
                 onClick={handleJoinRoom}
                 disabled={!isConnected || !roomIdInput.trim() || !playerName.trim()}
-                className="flex-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+                className="flex-1 bg-gray-600 hover:bg-gray-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
               >
                 Unisciti
               </button>
@@ -253,7 +253,7 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
           <div className="space-y-6">
             {/* Room ID */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-300 mb-2">
                 ID Partita (condividi con gli altri giocatori)
               </label>
               <div className="flex gap-2">
@@ -261,25 +261,25 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
                   type="text"
                   value={roomId}
                   readOnly
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 font-mono text-sm"
+                  className="flex-1 px-4 py-2 border border-gray-600 rounded-lg bg-gray-800 font-mono text-sm text-gray-100"
                 />
                 <button
                   onClick={copyRoomId}
-                  className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors flex items-center gap-2"
+                  className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors flex items-center gap-2 text-gray-100"
                 >
                   {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                 </button>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-gray-400 mt-1">
                 Gli altri giocatori possono unirsi usando questo ID
               </p>
             </div>
 
             {/* Join form (se non master e non ancora unito) */}
             {!isMaster && !roomInfo?.players.some((p: RoomInfo['players'][0]) => p.name === playerName.trim()) && (
-              <div className="space-y-4 border-t pt-4">
+              <div className="space-y-4 border-t border-gray-700 pt-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Nome del Partito
                   </label>
                   <input
@@ -287,14 +287,14 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
                     value={playerName}
                     onChange={(e) => setPlayerName(e.target.value)}
                     placeholder="Es: Partito Democratico"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-2 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent text-gray-100 placeholder-gray-500"
                     maxLength={30}
                     disabled={!!roomInfo?.players.some((p: RoomInfo['players'][0]) => p.name === playerName.trim())}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
                     Colore del Partito
                   </label>
                   <div className="grid grid-cols-4 gap-2">
@@ -304,8 +304,8 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
                         onClick={() => setPlayerColor(color.value)}
                         className={`h-12 rounded-lg border-2 transition-all ${
                           playerColor === color.value
-                            ? 'border-gray-800 scale-110'
-                            : 'border-gray-300 hover:border-gray-400'
+                            ? 'border-gray-400 scale-110'
+                            : 'border-gray-600 hover:border-gray-500'
                         }`}
                         style={{ backgroundColor: color.value }}
                         title={color.name}
@@ -318,7 +318,7 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
                 <button
                   onClick={handleJoinRoom}
                   disabled={!playerName.trim() || !!roomInfo?.players.some((p: RoomInfo['players'][0]) => p.name === playerName.trim())}
-                  className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+                  className="w-full bg-gray-600 hover:bg-gray-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
                 >
                   {roomInfo?.players.some((p: RoomInfo['players'][0]) => p.name === playerName.trim()) ? 'Già Unito' : 'Unisciti alla Partita'}
                 </button>
@@ -327,20 +327,20 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
 
             {/* Messaggio se già unito */}
             {!isMaster && roomInfo?.players.some((p: RoomInfo['players'][0]) => p.name === playerName.trim()) && (
-              <div className="border-t pt-4">
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                  <p className="text-green-800 font-semibold">✓ Ti sei unito alla partita!</p>
-                  <p className="text-sm text-green-700 mt-1">Aspetta che il master avvii il gioco...</p>
+              <div className="border-t border-gray-700 pt-4">
+                <div className="bg-gray-800 border border-gray-600 rounded-lg p-4">
+                  <p className="text-gray-200 font-semibold">✓ Ti sei unito alla partita!</p>
+                  <p className="text-sm text-gray-300 mt-1">Aspetta che il master avvii il gioco...</p>
                 </div>
               </div>
             )}
 
             {/* Players list */}
             {roomInfo && (
-              <div className="border-t pt-4">
+              <div className="border-t border-gray-700 pt-4">
                 <div className="flex items-center gap-2 mb-4">
-                  <Users className="w-5 h-5 text-gray-600" />
-                  <h2 className="text-lg font-semibold text-gray-800">
+                  <Users className="w-5 h-5 text-gray-400" />
+                  <h2 className="text-lg font-semibold text-gray-100">
                     Giocatori ({roomInfo.players.length}/{roomInfo.maxPlayers})
                   </h2>
                 </div>
@@ -348,15 +348,15 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
                   {roomInfo.players.map((player: RoomInfo['players'][0]) => (
                     <div
                       key={player.id}
-                      className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
+                      className="flex items-center gap-3 p-3 bg-gray-800 rounded-lg border border-gray-700"
                     >
                       <div
-                        className="w-8 h-8 rounded-full"
+                        className="w-8 h-8 rounded-full border-2 border-gray-700"
                         style={{ backgroundColor: player.color }}
                       />
-                      <span className="flex-1 font-medium text-gray-800">{player.name}</span>
+                      <span className="flex-1 font-medium text-gray-100">{player.name}</span>
                       {player.isMaster && (
-                        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                        <span className="text-xs bg-gray-700 text-gray-200 px-2 py-1 rounded">
                           Master
                         </span>
                       )}
@@ -370,7 +370,7 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
             {isMaster && canStart && (
               <button
                 onClick={handleStartGame}
-                className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+                className="w-full bg-gray-600 hover:bg-gray-500 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
               >
                 <Play className="w-5 h-5" />
                 Inizia Partita
@@ -378,7 +378,7 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
             )}
 
             {isMaster && roomInfo && roomInfo.players.length < 2 && (
-              <p className="text-sm text-gray-500 text-center">
+              <p className="text-sm text-gray-400 text-center">
                 Aspetta almeno 2 giocatori per iniziare
               </p>
             )}

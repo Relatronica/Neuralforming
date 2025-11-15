@@ -62,12 +62,12 @@ export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
       }
     });
 
-    // Aggiungi seggi vuoti (grigi)
+    // Aggiungi seggi vuoti (grigi scuri per dark mode)
     const emptySeats = totalParliamentSeats - occupiedSeats;
     if (emptySeats > 0) {
       aggregatedData.push({ 
         seats: emptySeats, 
-        color: '#d1d5db' 
+        color: '#374151' // gray-700 per dark mode
       });
     }
 
@@ -161,8 +161,8 @@ export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
       {/* Emiciclo con seggi */}
       <div 
         ref={containerRef}
-        className="relative w-full bg-gradient-to-b from-gray-50 to-white rounded-lg overflow-hidden"
-        style={{ minHeight: '450px', height: '450px' }}
+        className="relative w-full bg-gradient-to-b from-gray-800 to-gray-900 rounded-lg overflow-hidden"
+        style={{ minHeight: '330px', height: '330px' }}
       >
         <svg 
           ref={svgRef}
@@ -172,10 +172,10 @@ export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
       </div>
 
       {/* Legenda partiti */}
-      <div className="bg-white rounded-lg p-3 border border-gray-200">
+      <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
         <div className="flex items-center justify-between mb-2">
-          <h4 className="text-xs font-bold text-gray-700">Composizione Parlamentare</h4>
-          <span className="text-[10px] text-gray-500">
+          <h4 className="text-xs font-bold text-gray-100">Composizione Parlamentare</h4>
+          <span className="text-[10px] text-gray-400">
             {occupiedSeats}/{totalParliamentSeats} seggi occupati
           </span>
         </div>
@@ -186,15 +186,15 @@ export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
               <div
                 key={player.id}
                 className={`
-                  flex items-center gap-2 p-1.5 rounded text-xs
-                  ${isCurrent ? 'bg-blue-50 border border-blue-200' : 'bg-gray-50'}
+                  flex items-center gap-2 p-1.5 rounded text-xs border
+                  ${isCurrent ? 'bg-gray-700 border-gray-600' : 'bg-gray-800 border-gray-700'}
                 `}
               >
                 <div
-                  className="w-4 h-4 rounded-full border-2 border-white shadow-sm"
+                  className="w-4 h-4 rounded-full border-2 border-gray-700 shadow-sm"
                   style={{ backgroundColor: color }}
                 />
-                      <div className="flex items-center gap-1.5 font-semibold text-gray-800 flex-1">
+                      <div className="flex items-center gap-1.5 font-semibold text-gray-100 flex-1">
                         {player.isAI ? (
                           <Bot className="w-3 h-3" />
                         ) : (
@@ -202,9 +202,9 @@ export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
                         )}
                         <span>{player.name}</span>
                       </div>
-                <span className="text-gray-600 font-bold">{seats}</span>
+                <span className="text-gray-300 font-bold">{seats}</span>
                 {isCurrent && (
-                  <span className="text-[10px] bg-yellow-400 text-yellow-900 px-1.5 py-0.5 rounded font-bold">
+                  <span className="text-[10px] bg-gray-600 text-gray-100 px-1.5 py-0.5 rounded font-bold">
                     TU
                   </span>
                 )}

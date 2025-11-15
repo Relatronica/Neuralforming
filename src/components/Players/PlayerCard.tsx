@@ -52,101 +52,136 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentPlayer,
   return (
     <div
       className={`
-        rounded-lg shadow-sm p-2 border-2 transition-all duration-200
-        ${isCurrentPlayer ? 'ring-2 ring-offset-1 shadow-md' : ''}
-        ${isWinner ? 'bg-gradient-to-br from-yellow-50 to-amber-50 border-yellow-400' : ''}
+        rounded-lg shadow-sm p-2 border-2 transition-all duration-200 bg-gray-800
+        ${isCurrentPlayer ? 'ring-2 ring-offset-1 shadow-md ring-gray-500' : ''}
+        ${isWinner ? 'bg-gradient-to-br from-gray-700 to-gray-800 border-gray-500' : 'border-gray-700'}
       `}
       style={{
-        backgroundColor: isWinner ? undefined : bgColor,
-        borderColor: isWinner ? undefined : borderColor,
-        ringColor: isCurrentPlayer ? partyColor : undefined,
+        backgroundColor: isWinner ? undefined : 'rgb(31, 41, 55)',
+        borderColor: isWinner ? undefined : isCurrentPlayer ? 'rgb(156, 163, 175)' : 'rgb(55, 65, 81)',
       }}
     >
       {/* Header: Nome e Badge */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-1.5">
           {player.isAI ? (
-            <Bot className="w-3.5 h-3.5 text-gray-600" />
+            <Bot className="w-3.5 h-3.5 text-gray-400" />
           ) : player.icon ? (
             <span className="text-base">{getIconEmoji(player.icon)}</span>
           ) : (
-            <User className="w-3.5 h-3.5 text-gray-600" />
+            <User className="w-3.5 h-3.5 text-gray-400" />
           )}
-          <h3 className="font-semibold text-sm text-gray-800">{player.name}</h3>
+          <h3 className="font-semibold text-sm text-gray-100">{player.name}</h3>
         </div>
         <div className="flex items-center gap-1">
           {isCurrentPlayer && (
-            <span className="bg-blue-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+            <span className="bg-gray-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
               TURNO
             </span>
           )}
           {isWinner && (
-            <span className="bg-yellow-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5">
+            <span className="bg-gray-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5">
               <Trophy className="w-2.5 h-2.5" />
             </span>
           )}
         </div>
       </div>
 
-      {/* Barre di Progresso con valori */}
+      {/* Barre di Progresso - solo visuali, numeri su hover */}
       <div className="space-y-1.5 mb-2">
-        <div>
+        <div 
+          className="group relative"
+          title={`Tech: ${player.techPoints}/50`}
+        >
           <div className="flex items-center justify-between mb-0.5">
             <div className="flex items-center gap-1">
-              <Microscope className="w-3 h-3 text-blue-600" />
-              <span className="text-[10px] text-gray-600">Tech</span>
+              <Microscope className="w-3 h-3 text-gray-400" />
+              <span className="text-[10px] text-gray-400">Tech</span>
             </div>
-            <span className="text-[10px] font-bold text-blue-600">{player.techPoints}/50</span>
+            <span className="text-[10px] font-bold text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity">
+              {player.techPoints}/50
+            </span>
           </div>
-          <div className="w-full bg-blue-100 rounded-full h-1.5">
+          <div className="w-full bg-gray-700 rounded-full h-1.5">
             <div
-              className="bg-gradient-to-r from-blue-500 to-cyan-500 h-1.5 rounded-full transition-all duration-300"
+              className="bg-gradient-to-r from-gray-500 to-gray-400 h-1.5 rounded-full transition-all duration-300"
               style={{ width: `${Math.min(100, (player.techPoints / 50) * 100)}%` }}
             />
           </div>
         </div>
-        <div>
+        <div 
+          className="group relative"
+          title={`Etica: ${player.ethicsPoints}/45`}
+        >
           <div className="flex items-center justify-between mb-0.5">
             <div className="flex items-center gap-1">
-              <Scale className="w-3 h-3 text-green-600" />
-              <span className="text-[10px] text-gray-600">Etica</span>
+              <Scale className="w-3 h-3 text-gray-400" />
+              <span className="text-[10px] text-gray-400">Etica</span>
             </div>
-            <span className="text-[10px] font-bold text-green-600">{player.ethicsPoints}/45</span>
+            <span className="text-[10px] font-bold text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity">
+              {player.ethicsPoints}/45
+            </span>
           </div>
-          <div className="w-full bg-green-100 rounded-full h-1.5">
+          <div className="w-full bg-gray-700 rounded-full h-1.5">
             <div
-              className="bg-gradient-to-r from-green-500 to-emerald-500 h-1.5 rounded-full transition-all duration-300"
+              className="bg-gradient-to-r from-gray-500 to-gray-400 h-1.5 rounded-full transition-all duration-300"
               style={{ width: `${Math.min(100, (player.ethicsPoints / 45) * 100)}%` }}
             />
           </div>
         </div>
-        <div>
+        <div 
+          className="group relative"
+          title={`Neural: ${player.neuralformingPoints}`}
+        >
           <div className="flex items-center justify-between mb-0.5">
             <div className="flex items-center gap-1">
-              <Brain className="w-3 h-3 text-purple-600" />
-              <span className="text-[10px] text-gray-600">Neural</span>
+              <Brain className="w-3 h-3 text-gray-400" />
+              <span className="text-[10px] text-gray-400">Neural</span>
             </div>
-            <span className="text-[10px] font-bold text-purple-600">{player.neuralformingPoints}</span>
+            <span className="text-[10px] font-bold text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity">
+              {player.neuralformingPoints}
+            </span>
+          </div>
+          <div className="w-full bg-gray-700 rounded-full h-1.5">
+            <div
+              className="bg-gradient-to-r from-gray-500 to-gray-400 h-1.5 rounded-full transition-all duration-300"
+              style={{ width: `${Math.min(100, (player.neuralformingPoints / 65) * 100)}%` }}
+            />
           </div>
         </div>
       </div>
 
-      {/* Info compatte: Tech, Milestone, Progresso */}
-      <div className="flex items-center justify-between text-[10px] text-gray-500 mb-1.5">
-        <div className="flex items-center gap-1">
+      {/* Info compatte: solo icone, numeri su hover */}
+      <div className="flex items-center justify-between text-[10px] text-gray-400 mb-1.5">
+        <div 
+          className="flex items-center gap-1 group relative"
+          title={`Tecnologie: ${player.technologies.length}/5`}
+        >
           <Microscope className="w-3 h-3" />
-          <span>{player.technologies.length}/5</span>
+          <span className="opacity-0 group-hover:opacity-100 transition-opacity">
+            {player.technologies.length}/5
+          </span>
         </div>
         {player.unlockedMilestones && player.unlockedMilestones.length > 0 && (
-          <div className="flex items-center gap-1">
-            <Award className="w-3 h-3 text-yellow-600" />
-            <span className="font-semibold text-yellow-700">{player.unlockedMilestones.length}</span>
+          <div 
+            className="flex items-center gap-1 group relative"
+            title={`Milestone: ${player.unlockedMilestones.length}`}
+          >
+            <Award className="w-3 h-3 text-gray-400" />
+            <span className="font-semibold text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity">
+              {player.unlockedMilestones.length}
+            </span>
           </div>
         )}
         {!player.isAI && (
-          <div className="flex items-center gap-1">
-            <Trophy className="w-3 h-3 text-purple-600" />
-            <span className="font-semibold text-purple-600">{overallProgress}%</span>
+          <div 
+            className="flex items-center gap-1 group relative"
+            title={`Progresso: ${overallProgress}%`}
+          >
+            <Trophy className="w-3 h-3 text-gray-400" />
+            <span className="font-semibold text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity">
+              {overallProgress}%
+            </span>
           </div>
         )}
       </div>

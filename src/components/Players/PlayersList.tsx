@@ -18,8 +18,8 @@ export const PlayersList: React.FC<PlayersListProps> = ({ players, currentPlayer
   const isMultiplayer = humanPlayers.length > 1;
 
   return (
-    <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-3 shadow-lg">
-      <h2 className="text-lg font-bold text-gray-800 mb-3">Giocatori</h2>
+    <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-3 shadow-lg border border-gray-700">
+      <h2 className="text-lg font-bold text-gray-100 mb-3">Giocatori</h2>
       
       {isMultiplayer ? (
         // Multiplayer: mostra tutti i giocatori umani
@@ -48,7 +48,7 @@ export const PlayersList: React.FC<PlayersListProps> = ({ players, currentPlayer
 
           {aiPlayers.length > 0 && (
             <div className="space-y-2">
-              <h3 className="text-xs font-semibold text-gray-700 mb-2">Avversari AI</h3>
+              <h3 className="text-xs font-semibold text-gray-300 mb-2">Avversari AI</h3>
               {aiPlayers.map((player) => (
                 <PlayerCard
                   key={player.id}

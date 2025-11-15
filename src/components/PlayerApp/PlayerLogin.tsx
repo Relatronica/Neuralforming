@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
-import { Landmark, Check } from 'lucide-react';
+import { 
+  Landmark, 
+  Check, 
+  Shield, 
+  Star, 
+  Flame, 
+  Zap, 
+  Crown, 
+  Globe, 
+  Flashlight 
+} from 'lucide-react';
 
 interface PlayerLoginProps {
   onLogin: (roomId: string, playerName: string, playerColor: string, playerIcon: string) => void;
@@ -19,14 +29,14 @@ const availableColors = [
 
 // Icone disponibili per i partiti
 const availableIcons = [
-  { name: 'Landmark', icon: '🏛️', value: 'landmark' },
-  { name: 'Scudo', icon: '🛡️', value: 'shield' },
-  { name: 'Stella', icon: '⭐', value: 'star' },
-  { name: 'Fiamma', icon: '🔥', value: 'flame' },
-  { name: 'Fulmine', icon: '⚡', value: 'lightning' },
-  { name: 'Corona', icon: '👑', value: 'crown' },
-  { name: 'Globo', icon: '🌍', value: 'globe' },
-  { name: 'Torcia', icon: '🔦', value: 'torch' },
+  { name: 'Landmark', value: 'landmark', Icon: Landmark },
+  { name: 'Scudo', value: 'shield', Icon: Shield },
+  { name: 'Stella', value: 'star', Icon: Star },
+  { name: 'Fiamma', value: 'flame', Icon: Flame },
+  { name: 'Fulmine', value: 'lightning', Icon: Zap },
+  { name: 'Corona', value: 'crown', Icon: Crown },
+  { name: 'Globo', value: 'globe', Icon: Globe },
+  { name: 'Torcia', value: 'torch', Icon: Flashlight },
 ];
 
 export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
@@ -43,20 +53,20 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full">
+    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
+      <div className="bg-gray-900 rounded-xl shadow-2xl p-6 max-w-md w-full border border-gray-700">
         <div className="flex items-center justify-center gap-2 mb-6">
-          <Landmark className="w-8 h-8 text-gray-800" />
-          <h1 className="text-2xl font-bold text-gray-800">Neuralforming</h1>
+          <Landmark className="w-8 h-8 text-gray-100" />
+          <h1 className="text-2xl font-bold text-gray-100">Neuralforming</h1>
         </div>
         
-        <p className="text-gray-600 text-center mb-6">
+        <p className="text-gray-300 text-center mb-6">
           Accedi alla partita con il tuo nome e l'ID della partita
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
               ID Partita
             </label>
             <input
@@ -64,13 +74,13 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
               value={roomId}
               onChange={(e) => setRoomId(e.target.value)}
               placeholder="Incolla l'ID della partita"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
+              className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent font-mono text-sm text-gray-100 placeholder-gray-500"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
               Nome del Partito
             </label>
             <input
@@ -78,14 +88,14 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
               value={playerName}
               onChange={(e) => setPlayerName(e.target.value)}
               placeholder="Il tuo nome partito"
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent text-gray-100 placeholder-gray-500"
               maxLength={30}
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
               Colore del Partito
             </label>
             <div className="grid grid-cols-4 gap-2">
@@ -97,8 +107,8 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
                   className={`
                     relative h-12 rounded-lg border-2 transition-all duration-200
                     ${selectedColor === color.value 
-                      ? 'border-gray-800 scale-110 shadow-lg' 
-                      : 'border-gray-300 hover:border-gray-400 hover:scale-105'
+                      ? 'border-gray-400 scale-110 shadow-lg' 
+                      : 'border-gray-600 hover:border-gray-500 hover:scale-105'
                     }
                   `}
                   style={{ backgroundColor: color.value }}
@@ -115,33 +125,36 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-300 mb-2">
               Icona del Partito
             </label>
             <div className="grid grid-cols-4 gap-2">
-              {availableIcons.map((iconOption) => (
-                <button
-                  key={iconOption.value}
-                  type="button"
-                  onClick={() => setSelectedIcon(iconOption.value)}
-                  className={`
-                    h-12 rounded-lg border-2 transition-all duration-200 flex items-center justify-center text-2xl
-                    ${selectedIcon === iconOption.value 
-                      ? 'border-gray-800 bg-gray-100 scale-110 shadow-lg' 
-                      : 'border-gray-300 bg-white hover:border-gray-400 hover:bg-gray-50 hover:scale-105'
-                    }
-                  `}
-                  title={iconOption.name}
-                >
-                  {iconOption.icon}
-                </button>
-              ))}
+              {availableIcons.map((iconOption) => {
+                const IconComponent = iconOption.Icon;
+                return (
+                  <button
+                    key={iconOption.value}
+                    type="button"
+                    onClick={() => setSelectedIcon(iconOption.value)}
+                    className={`
+                      h-12 rounded-lg border-2 transition-all duration-200 flex items-center justify-center
+                      ${selectedIcon === iconOption.value 
+                        ? 'border-gray-400 bg-gray-700 scale-110 shadow-lg' 
+                        : 'border-gray-600 bg-gray-800 hover:border-gray-500 hover:bg-gray-700 hover:scale-105'
+                      }
+                    `}
+                    title={iconOption.name}
+                  >
+                    <IconComponent className="w-6 h-6 text-gray-300" />
+                  </button>
+                );
+              })}
             </div>
           </div>
 
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+            className="w-full bg-gray-600 hover:bg-gray-500 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
           >
             Accedi alla Partita
           </button>

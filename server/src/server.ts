@@ -16,8 +16,18 @@ const io = new SocketServer(httpServer, {
   },
 });
 
-app.use(cors());
+// Configura CORS per Express
+app.use(cors({
+  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  credentials: true,
+}));
+
 app.use(express.json());
+
+// Health check endpoint per Render
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 
 // Inizializza il game server
 const gameServer = new GameServer(io);

@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { GameEngine } from '../../game/GameEngine';
-import { GameState, Technology, DilemmaOption, PlayerState } from '../../game/types';
+import { GameState, Technology, DilemmaOption, PlayerState, Dilemma } from '../../game/types';
 import { TurnManager } from '../../game/TurnManager';
 import { AIPlayer } from '../../game/AIPlayer';
 import { Board } from '../Board/Board';
@@ -10,7 +10,6 @@ import { ConsequenceCard } from '../Cards/ConsequenceCard';
 import { PlayersList } from '../Players/PlayersList';
 import { VotingResult } from './VotingResult';
 import { GlobalEventCard } from './GlobalEventCard';
-import { MilestoneNotification } from './MilestoneNotification';
 import { useGameSocketContext } from '../../contexts/GameSocketContext';
 import { Bot, Landmark, Users, CheckCircle2, XCircle } from 'lucide-react';
 import technologiesData from '../../data/technologies.json';
@@ -256,8 +255,8 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
       : (gameState ? TurnManager.getCurrentPlayer(gameState) : null));
   
   // Il master non può mai avere il turno (non è un giocatore)
-  const isHumanTurn = !isMaster && currentPlayer && !currentPlayer.isAI && 
-    (mode === 'single' || (mode === 'multiplayer' && gameState?.currentPlayerId === currentPlayer.id));
+  const isHumanTurn = Boolean(!isMaster && currentPlayer && !currentPlayer.isAI && 
+    (mode === 'single' || (mode === 'multiplayer' && gameState?.currentPlayerId === currentPlayer.id)));
 
   // Gestisce i turni AI automaticamente (solo single-player)
   useEffect(() => {
@@ -379,12 +378,6 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
     }));
   }, []);
 
-  const handleDismissMilestone = useCallback(() => {
-    setGameState(prev => ({
-      ...prev,
-      newlyUnlockedMilestones: null,
-    }));
-  }, []);
 
   const handleNewGame = useCallback(() => {
     if (mode === 'multiplayer') {
@@ -568,13 +561,13 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
   if (mode === 'multiplayer') {
     if (!gameState && roomInfo?.isGameStarted) {
       return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Inizializzazione partita...</h2>
-            <p className="text-gray-600">Il gioco sta per iniziare...</p>
+        <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
+          <div className="bg-gray-900 rounded-xl shadow-2xl p-8 max-w-md w-full text-center border border-gray-700">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
+            <h2 className="text-2xl font-bold text-gray-100 mb-2">Inizializzazione partita...</h2>
+            <p className="text-gray-300">Il gioco sta per iniziare...</p>
             {isMaster && (
-              <p className="text-xs text-gray-500 mt-2">(Sei il master - inizializzazione in corso...)</p>
+              <p className="text-xs text-gray-400 mt-2">(Sei il master - inizializzazione in corso...)</p>
             )}
           </div>
         </div>
@@ -583,11 +576,11 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
     // Se non abbiamo gameState e il gioco non è ancora iniziato, mostra attesa
     if (!gameState && !roomInfo?.isGameStarted) {
       return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Attesa...</h2>
-            <p className="text-gray-600">Preparazione della partita...</p>
+        <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
+          <div className="bg-gray-900 rounded-xl shadow-2xl p-8 max-w-md w-full text-center border border-gray-700">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
+            <h2 className="text-2xl font-bold text-gray-100 mb-2">Attesa...</h2>
+            <p className="text-gray-300">Preparazione della partita...</p>
           </div>
         </div>
       );
@@ -601,51 +594,51 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
     const isHumanWinner = winner && !winner.isAI;
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full text-center">
+      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
+        <div className="bg-gray-900 rounded-xl shadow-2xl p-8 max-w-md w-full text-center border border-gray-700">
           {isHumanWinner ? (
             <>
               <div className="text-6xl mb-4">🎉</div>
-              <h1 className="text-3xl font-bold text-gray-800 mb-4">Vittoria!</h1>
-              <p className="text-gray-600 mb-6">
+              <h1 className="text-3xl font-bold text-gray-100 mb-4">Vittoria!</h1>
+              <p className="text-gray-300 mb-6">
                 Hai guidato con successo la creazione di un'IA sostenibile! Le tue decisioni politiche hanno bilanciato
                 innovazione tecnologica e responsabilità etica, creando un futuro migliore per tutti i cittadini.
               </p>
               {humanPlayer && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-                  <p className="text-sm text-gray-700 mb-2">
-                    <strong>Punti Neuralforming:</strong> {humanPlayer.neuralformingPoints}
+                <div className="bg-gray-800 border border-gray-600 rounded-lg p-4 mb-6">
+                  <p className="text-sm text-gray-200 mb-2">
+                    <strong className="text-gray-100">Punti Neuralforming:</strong> {humanPlayer.neuralformingPoints}
                   </p>
-                  <p className="text-sm text-gray-700 mb-2">
-                    <strong>Punti Etica:</strong> {humanPlayer.ethicsPoints}
+                  <p className="text-sm text-gray-200 mb-2">
+                    <strong className="text-gray-100">Punti Etica:</strong> {humanPlayer.ethicsPoints}
                   </p>
-                  <p className="text-sm text-gray-700">
-                    <strong>Punti Tecnologia:</strong> {humanPlayer.techPoints}
+                  <p className="text-sm text-gray-200">
+                    <strong className="text-gray-100">Punti Tecnologia:</strong> {humanPlayer.techPoints}
                   </p>
                 </div>
               )}
             </>
           ) : (
             <>
-              <Bot className="w-16 h-16 mx-auto mb-4 text-gray-600" />
-              <h1 className="text-3xl font-bold text-gray-800 mb-4">
+              <Bot className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+              <h1 className="text-3xl font-bold text-gray-100 mb-4">
                 {winner ? `${winner.name} ha vinto!` : 'Sconfitta'}
               </h1>
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-300 mb-6">
                 {winner 
                   ? `${winner.name} ha completato per primo il programma di IA sostenibile. Le sue politiche hanno prevalso.`
                   : 'Le tue politiche non hanno raggiunto gli obiettivi richiesti. L\'IA creata non è sostenibile.'}
               </p>
               {winner && (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                  <p className="text-sm text-gray-700 mb-2">
-                    <strong>Punti Neuralforming:</strong> {winner.neuralformingPoints}
+                <div className="bg-gray-800 border border-gray-600 rounded-lg p-4 mb-6">
+                  <p className="text-sm text-gray-200 mb-2">
+                    <strong className="text-gray-100">Punti Neuralforming:</strong> {winner.neuralformingPoints}
                   </p>
-                  <p className="text-sm text-gray-700 mb-2">
-                    <strong>Punti Etica:</strong> {winner.ethicsPoints}
+                  <p className="text-sm text-gray-200 mb-2">
+                    <strong className="text-gray-100">Punti Etica:</strong> {winner.ethicsPoints}
                   </p>
-                  <p className="text-sm text-gray-700">
-                    <strong>Punti Tecnologia:</strong> {winner.techPoints}
+                  <p className="text-sm text-gray-200">
+                    <strong className="text-gray-100">Punti Tecnologia:</strong> {winner.techPoints}
                   </p>
                 </div>
               )}
@@ -653,7 +646,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
           )}
           <button
             onClick={handleNewGame}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+            className="w-full bg-gray-600 hover:bg-gray-500 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
           >
             Nuova Partita
           </button>
@@ -671,13 +664,13 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
   if (shouldShowLoading) {
     if (mode === 'multiplayer') {
       return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Caricamento partita...</h2>
-            <p className="text-gray-600">Attendere l'inizializzazione del gioco...</p>
+        <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
+          <div className="bg-gray-900 rounded-xl shadow-2xl p-8 max-w-md w-full text-center border border-gray-700">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
+            <h2 className="text-2xl font-bold text-gray-100 mb-2">Caricamento partita...</h2>
+            <p className="text-gray-300">Attendere l'inizializzazione del gioco...</p>
             {isMaster && (
-              <p className="text-xs text-gray-500 mt-2">(Sei il master - inizializzazione in corso...)</p>
+              <p className="text-xs text-gray-400 mt-2">(Sei il master - inizializzazione in corso...)</p>
             )}
           </div>
         </div>
@@ -686,23 +679,30 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
     return null;
   }
 
+  // Controllo finale per assicurare che gameState non sia null (TypeScript guard)
+  if (!gameState) {
+    return null;
+  }
+
   return (
-    <div className="h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col overflow-hidden">
+    <div className="h-screen flex flex-col overflow-hidden relative" style={{
+      background: 'linear-gradient(135deg, #000000 0%, #0a0a0a 15%, #1a1a1a 30%, #2a2a2a 45%, #3a3a3a 60%, #4a4a4a 75%, #5a5a5a 90%, #6a6a6a 100%)'
+    }}>
       {/* Header ultra-compatto */}
-      <header className="flex-shrink-0 px-3 py-1.5 bg-white border-b border-gray-200">
+      <header className="flex-shrink-0 px-3 py-1.5 bg-gray-900/90 backdrop-blur-sm border-b border-gray-700/50 shadow-sm relative z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5">
-            <Landmark className="w-4 h-4 text-gray-800" />
-            <h1 className="text-lg font-bold text-gray-800">Neuralforming</h1>
+            <Landmark className="w-4 h-4 text-gray-100" />
+            <h1 className="text-lg font-bold text-gray-100">Neuralforming</h1>
           </div>
           <div className="flex items-center gap-3">
-            <div className="text-xs text-gray-600">
-              Turno: <span className="font-bold">{gameState.turn}</span>
+            <div className="text-xs text-gray-300">
+              Turno: <span className="font-bold text-gray-100">{gameState.turn}</span>
             </div>
             {isProcessingAI && (
-              <div className="bg-blue-100 border border-blue-300 rounded px-2 py-0.5 flex items-center gap-1.5">
-                <Bot className="w-3 h-3 text-blue-800" />
-                <p className="text-xs text-blue-800 font-semibold">
+              <div className="bg-gray-800 border border-gray-600 rounded px-2 py-0.5 flex items-center gap-1.5">
+                <Bot className="w-3 h-3 text-gray-300" />
+                <p className="text-xs text-gray-300 font-semibold">
                   {currentPlayer?.name} sta giocando...
                 </p>
               </div>
@@ -712,9 +712,9 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
       </header>
 
       {/* Dashboard principale - layout a griglia senza scroll */}
-      <div className="flex-1 grid grid-cols-12 gap-2 p-2 overflow-hidden">
+      <div className="flex-1 grid grid-cols-12 gap-4 p-4 overflow-hidden">
         {/* Colonna 1 - Board compatto (3 colonne) */}
-        <div className="col-span-3 bg-white border border-gray-200 rounded-lg p-2 overflow-hidden">
+        <div className="col-span-3 bg-gray-900/95 backdrop-blur-md border border-gray-700/50 rounded-xl p-2 overflow-hidden shadow-2xl relative z-20">
           <div className="h-full overflow-hidden">
             <Board 
               technologies={
@@ -729,18 +729,10 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
         </div>
 
         {/* Colonna 2 - Fase di gioco attiva (6 colonne) */}
-        <div className="col-span-6 flex flex-col gap-2 overflow-hidden">
+        <div className="col-span-6 flex flex-col gap-2 overflow-hidden relative z-10">
           {/* Fase di gioco attiva - compatto */}
-          <div className="flex-1 bg-gray-50 rounded-lg p-2 overflow-hidden">
+          <div className="flex-1 bg-gray-900/90 backdrop-blur-sm rounded-xl p-2 overflow-hidden shadow-lg border border-gray-700/50">
             <div className="h-full overflow-y-auto">
-            {/* Notifica milestone sbloccati - integrata nel layout */}
-            {gameState.newlyUnlockedMilestones && gameState.newlyUnlockedMilestones.length > 0 && (
-              <MilestoneNotification
-                unlocked={gameState.newlyUnlockedMilestones}
-                players={gameState.players}
-                onDismiss={handleDismissMilestone}
-              />
-            )}
             
             {/* Mostra evento globale se presente */}
             {gameState.currentGlobalEvent && (
@@ -752,18 +744,18 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
 
             {/* Votazione in corso (multiplayer) - Mostrata a TUTTI i giocatori */}
             {mode === 'multiplayer' && pendingVote && (
-              <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-lg shadow-lg p-3 border-2 border-blue-200">
+              <div className="bg-gradient-to-br from-gray-800 via-gray-700 to-gray-800 rounded-lg shadow-lg p-3 border-2 border-gray-600">
                 <div className="flex items-center justify-center gap-2 mb-2">
-                  <div className="bg-blue-600 rounded-full p-1.5 shadow-md">
-                    <Users className="w-4 h-4 text-white" />
+                  <div className="bg-gray-600 rounded-full p-1.5 shadow-md">
+                    <Users className="w-4 h-4 text-gray-100" />
                   </div>
-                  <h2 className="text-base font-bold text-gray-800">
+                  <h2 className="text-base font-bold text-gray-100">
                     Proposta in Votazione
                   </h2>
                 </div>
                 
                 <div className="mb-2 flex justify-center">
-                  <div className="bg-white rounded-lg shadow-md p-2 border border-blue-100 max-w-xs w-full">
+                  <div className="bg-gray-800 rounded-lg shadow-md p-2 border border-gray-600 max-w-xs w-full">
                     <TechnologyCard
                       technology={pendingVote.technology}
                       isSelectable={false}
@@ -773,19 +765,19 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                   </div>
                 </div>
                 
-                <div className="bg-white rounded-lg p-2 mb-2 shadow-sm border border-gray-200">
-                  <p className="text-gray-700 text-center text-xs">
-                    <span className="font-bold text-blue-700">
+                <div className="bg-gray-800 rounded-lg p-2 mb-2 shadow-sm border border-gray-600">
+                  <p className="text-gray-200 text-center text-xs">
+                    <span className="font-bold text-gray-100">
                       {gameState.players.find(p => p.id === pendingVote.proposerId)?.name || 'Un giocatore'}
                     </span>
-                    <span className="text-gray-600"> ha proposto questa tecnologia</span>
+                    <span className="text-gray-400"> ha proposto questa tecnologia</span>
                   </p>
                 </div>
                 
                 {/* Mostra i bottoni di voto solo se non sei il proponente e hai un currentPlayer */}
                 {currentPlayer && currentPlayer.id !== pendingVote.proposerId && (
                   <div className="space-y-2">
-                    <p className="text-gray-700 text-center font-semibold text-xs">
+                    <p className="text-gray-200 text-center font-semibold text-xs">
                       Vuoi votare a favore o contro?
                     </p>
                     <div className="flex gap-2">
@@ -794,10 +786,10 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                         disabled={voteStatus?.hasVoted}
                         className={`flex-1 font-bold py-2 px-3 rounded-lg transition-all duration-200 shadow-md text-xs ${
                           voteStatus?.hasVoted && voteStatus?.myVote === true
-                            ? 'bg-green-500 text-white cursor-not-allowed'
+                            ? 'bg-gray-600 text-gray-300 cursor-not-allowed'
                             : voteStatus?.hasVoted
-                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                            : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white hover:shadow-lg'
+                            ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                            : 'bg-gradient-to-r from-gray-600 to-gray-500 hover:from-gray-500 hover:to-gray-400 text-white hover:shadow-lg'
                         }`}
                       >
                         <div className="flex items-center justify-center gap-1">
@@ -810,10 +802,10 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                         disabled={voteStatus?.hasVoted}
                         className={`flex-1 font-bold py-2 px-3 rounded-lg transition-all duration-200 shadow-md text-xs ${
                           voteStatus?.hasVoted && voteStatus?.myVote === false
-                            ? 'bg-red-500 text-white cursor-not-allowed'
+                            ? 'bg-gray-600 text-gray-300 cursor-not-allowed'
                             : voteStatus?.hasVoted
-                            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                            : 'bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 text-white hover:shadow-lg'
+                            ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                            : 'bg-gradient-to-r from-gray-700 to-gray-600 hover:from-gray-600 hover:to-gray-500 text-white hover:shadow-lg'
                         }`}
                       >
                         <div className="flex items-center justify-center gap-1">
@@ -823,16 +815,16 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                       </button>
                     </div>
                     {voteStatus && (
-                      <div className="bg-white rounded-lg p-2 border border-gray-200">
-                        <p className="text-center text-xs font-semibold text-gray-700">
-                          <span className="text-blue-600">{voteStatus.totalVotes}</span>
+                      <div className="bg-gray-800 rounded-lg p-2 border border-gray-600">
+                        <p className="text-center text-xs font-semibold text-gray-200">
+                          <span className="text-gray-100">{voteStatus.totalVotes}</span>
                           <span className="text-gray-500"> / </span>
-                          <span className="text-gray-600">{voteStatus.requiredVotes}</span>
+                          <span className="text-gray-300">{voteStatus.requiredVotes}</span>
                           <span className="text-gray-500 text-[10px] ml-1">voti</span>
                         </p>
-                        <div className="mt-1 w-full bg-gray-200 rounded-full h-1.5">
+                        <div className="mt-1 w-full bg-gray-700 rounded-full h-1.5">
                           <div 
-                            className="bg-gradient-to-r from-blue-500 to-indigo-500 h-1.5 rounded-full transition-all duration-500"
+                            className="bg-gradient-to-r from-gray-500 to-gray-400 h-1.5 rounded-full transition-all duration-500"
                             style={{ width: `${(voteStatus.totalVotes / voteStatus.requiredVotes) * 100}%` }}
                           />
                         </div>
@@ -843,21 +835,21 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                 
                 {/* Messaggio per il proponente */}
                 {currentPlayer && currentPlayer.id === pendingVote.proposerId && (
-                  <div className="bg-gradient-to-r from-blue-100 to-indigo-100 border border-blue-300 rounded-lg p-2 text-center">
+                  <div className="bg-gradient-to-r from-gray-700 to-gray-800 border border-gray-600 rounded-lg p-2 text-center">
                     <div className="flex items-center justify-center gap-1 mb-1">
-                      <CheckCircle2 className="w-3 h-3 text-blue-700" />
-                      <p className="text-blue-900 font-bold text-xs">
+                      <CheckCircle2 className="w-3 h-3 text-gray-300" />
+                      <p className="text-gray-100 font-bold text-xs">
                         Hai proposto questa tecnologia
                       </p>
                     </div>
                     {voteStatus && (
-                      <div className="bg-white rounded p-1.5 border border-blue-200">
-                        <p className="text-blue-600 text-xs font-bold">
+                      <div className="bg-gray-800 rounded p-1.5 border border-gray-600">
+                        <p className="text-gray-200 text-xs font-bold">
                           {voteStatus.totalVotes} / {voteStatus.requiredVotes} voti
                         </p>
-                        <div className="mt-1 w-full bg-blue-100 rounded-full h-1.5">
+                        <div className="mt-1 w-full bg-gray-700 rounded-full h-1.5">
                           <div 
-                            className="bg-gradient-to-r from-blue-500 to-indigo-500 h-1.5 rounded-full transition-all duration-500"
+                            className="bg-gradient-to-r from-gray-500 to-gray-400 h-1.5 rounded-full transition-all duration-500"
                             style={{ width: `${(voteStatus.totalVotes / voteStatus.requiredVotes) * 100}%` }}
                           />
                         </div>
@@ -868,21 +860,21 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                 
                 {/* Messaggio per il master (che non è un giocatore) */}
                 {isMaster && (
-                  <div className="bg-gradient-to-r from-gray-100 to-slate-100 border border-gray-300 rounded-lg p-2 text-center">
+                  <div className="bg-gradient-to-r from-gray-700 to-gray-800 border border-gray-600 rounded-lg p-2 text-center">
                     <div className="flex items-center justify-center gap-1 mb-1">
-                      <Users className="w-3 h-3 text-gray-700" />
-                      <p className="text-gray-800 font-bold text-xs">
+                      <Users className="w-3 h-3 text-gray-300" />
+                      <p className="text-gray-100 font-bold text-xs">
                         Votazione in corso
                       </p>
                     </div>
                     {voteStatus && (
-                      <div className="bg-white rounded p-1.5 border border-gray-200">
-                        <p className="text-gray-800 text-xs font-bold">
+                      <div className="bg-gray-800 rounded p-1.5 border border-gray-600">
+                        <p className="text-gray-200 text-xs font-bold">
                           {voteStatus.totalVotes} / {voteStatus.requiredVotes} voti
                         </p>
-                        <div className="mt-1 w-full bg-gray-200 rounded-full h-1.5">
+                        <div className="mt-1 w-full bg-gray-700 rounded-full h-1.5">
                           <div 
-                            className="bg-gradient-to-r from-gray-400 to-gray-500 h-1.5 rounded-full transition-all duration-500"
+                            className="bg-gradient-to-r from-gray-500 to-gray-400 h-1.5 rounded-full transition-all duration-500"
                             style={{ width: `${(voteStatus.totalVotes / voteStatus.requiredVotes) * 100}%` }}
                           />
                         </div>
@@ -896,7 +888,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
             {/* Mostra risultato votazione dopo aver giocato una tecnologia */}
             {(() => {
               const shouldShowVoteResult = gameState.lastVoteResult && gameState.currentPhase === 'dilemma';
-              return shouldShowVoteResult ? (
+              return shouldShowVoteResult && gameState.lastVoteResult ? (
                 <div className="mb-2">
                   <VotingResult
                     voteResult={gameState.lastVoteResult}
@@ -909,17 +901,17 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
             
             {/* Development Phase - Solo per giocatore umano */}
             {gameState.currentPhase === 'development' && isHumanTurn && currentPlayer && currentPlayer.hand.length === 0 && (
-              <div className="bg-white rounded-lg shadow-md p-3">
+              <div className="bg-gray-800 rounded-lg shadow-md p-3 border border-gray-700">
                 <div className="flex items-center justify-between mb-2">
-                  <h2 className="text-sm font-bold text-gray-800">Sviluppo Politico</h2>
+                  <h2 className="text-sm font-bold text-gray-100">Sviluppo Politico</h2>
                   <button
                     onClick={handleDrawTechnology}
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-1 px-2 text-xs rounded transition-colors duration-200 shadow-sm"
+                    className="bg-gray-600 hover:bg-gray-500 text-white font-semibold py-1 px-2 text-xs rounded transition-colors duration-200 shadow-sm"
                   >
                     Nuova Proposta
                   </button>
                 </div>
-                <p className="text-xs text-gray-600">
+                <p className="text-xs text-gray-300">
                   Non hai proposte disponibili. Clicca su "Nuova Proposta" per presentare una nuova iniziativa legislativa.
                 </p>
               </div>
@@ -927,12 +919,12 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
 
             {/* Dilemma Phase - Mostrato a tutti, ma solo il giocatore corrente può interagire */}
             {gameState.currentPhase === 'dilemma' && gameState.currentDilemma && (
-              <div className="bg-gradient-to-br from-yellow-50 via-orange-50 to-amber-50 rounded-lg shadow-md p-3 border border-orange-300">
+              <div className="bg-gradient-to-br from-gray-800 via-gray-700 to-gray-800 rounded-lg shadow-md p-3 border border-gray-600">
                 {!isHumanTurn && (
-                  <div className="mb-2 text-center bg-white rounded-lg p-2 shadow-sm border border-orange-200">
+                  <div className="mb-2 text-center bg-gray-800 rounded-lg p-2 shadow-sm border border-gray-600">
                     <div className="flex items-center justify-center gap-1.5 mb-1">
-                      <Users className="w-4 h-4 text-orange-600" />
-                      <p className="text-xs font-bold text-gray-800">
+                      <Users className="w-4 h-4 text-gray-400" />
+                      <p className="text-xs font-bold text-gray-200">
                         {gameState.players.find(p => p.id === gameState.currentPlayerId)?.name || 'Un giocatore'} sta risolvendo un dilemma etico
                       </p>
                     </div>
@@ -941,20 +933,20 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                 <DilemmaCard
                   dilemma={gameState.currentDilemma}
                   onSelectOption={isHumanTurn ? handleResolveDilemma : () => {}}
-                  activeJoker={gameState.activeJoker}
-                  isInteractive={isHumanTurn}
+                  activeJoker={gameState.activeJoker ?? undefined}
+                  isInteractive={isHumanTurn ?? false}
                 />
               </div>
             )}
 
             {/* Consequence Phase - Mostrato a tutti, ma solo il giocatore corrente può continuare */}
             {gameState.currentPhase === 'consequence' && gameState.currentConsequence && (
-              <div className="bg-gradient-to-br from-red-50 via-pink-50 to-rose-50 rounded-lg shadow-md p-3 border border-red-300">
+              <div className="bg-gradient-to-br from-gray-800 via-gray-700 to-gray-800 rounded-lg shadow-md p-3 border border-gray-600">
                 {!isHumanTurn && (
-                  <div className="mb-2 text-center bg-white rounded-lg p-2 shadow-sm border border-red-200">
+                  <div className="mb-2 text-center bg-gray-800 rounded-lg p-2 shadow-sm border border-gray-600">
                     <div className="flex items-center justify-center gap-1.5 mb-1">
-                      <Users className="w-4 h-4 text-red-600" />
-                      <p className="text-xs font-bold text-gray-800">
+                      <Users className="w-4 h-4 text-gray-400" />
+                      <p className="text-xs font-bold text-gray-200">
                         Conseguenza per {gameState.players.find(p => p.id === gameState.currentPlayerId)?.name || 'il giocatore corrente'}
                       </p>
                     </div>
@@ -963,35 +955,35 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                 <ConsequenceCard
                   consequence={gameState.currentConsequence}
                   onContinue={isHumanTurn ? handleCompleteConsequence : () => {}}
-                  isInteractive={isHumanTurn}
+                  isInteractive={isHumanTurn ?? false}
                 />
               </div>
             )}
 
             {/* Mostra messaggio durante turno di altri giocatori */}
             {!isHumanTurn && gameState.currentPhase !== 'dilemma' && gameState.currentPhase !== 'consequence' && (
-              <div className="bg-white rounded-lg shadow-md p-4 text-center">
+              <div className="bg-gray-800 rounded-lg shadow-md p-4 text-center border border-gray-700">
                 {mode === 'multiplayer' ? (
                   <>
-                    <Users className="w-6 h-6 mx-auto mb-2 text-gray-600" />
-                    <h2 className="text-sm font-bold text-gray-800 mb-1">
+                    <Users className="w-6 h-6 mx-auto mb-2 text-gray-400" />
+                    <h2 className="text-sm font-bold text-gray-100 mb-1">
                       {isMaster ? (
                         <>Turno di {gameState.players.find(p => p.id === gameState.currentPlayerId)?.name || 'Altro Giocatore'}</>
                       ) : (
                         <>Turno di {currentPlayer?.name || 'Altro Giocatore'}</>
                       )}
                     </h2>
-                    <p className="text-xs text-gray-600">
+                    <p className="text-xs text-gray-400">
                       {isMaster ? 'Osservando il gioco...' : 'Aspetta il tuo turno...'}
                     </p>
                   </>
                 ) : (
                   <>
-                    <Bot className="w-6 h-6 mx-auto mb-2 text-gray-600" />
-                    <h2 className="text-sm font-bold text-gray-800 mb-1">
+                    <Bot className="w-6 h-6 mx-auto mb-2 text-gray-400" />
+                    <h2 className="text-sm font-bold text-gray-100 mb-1">
                       Turno di {currentPlayer?.name}
                     </h2>
-                    <p className="text-xs text-gray-600">
+                    <p className="text-xs text-gray-400">
                       {currentPlayer?.name} sta valutando le proprie strategie politiche...
                     </p>
                   </>
@@ -1003,20 +995,20 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
 
           {/* Carte in mano - Solo per giocatore umano - compatto */}
           {isHumanTurn && currentPlayer && currentPlayer.hand.length > 0 && (
-            <div className="flex-shrink-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-lg p-2 border border-gray-200">
+            <div className="flex-shrink-0 bg-gray-900/90 backdrop-blur-sm rounded-xl p-2 border border-gray-700/50 shadow-lg">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-1.5">
-                  <Landmark className="w-3.5 h-3.5 text-blue-600" />
-                  <h3 className="text-xs font-bold text-gray-800">
+                  <Landmark className="w-3.5 h-3.5 text-gray-300" />
+                  <h3 className="text-xs font-bold text-gray-100">
                     Proposte di Legge
                   </h3>
-                  <span className="bg-blue-600 text-white font-bold px-1.5 py-0.5 rounded text-[10px]">
+                  <span className="bg-gray-600 text-white font-bold px-1.5 py-0.5 rounded text-[10px]">
                     {currentPlayer.hand.length}
                   </span>
                 </div>
                 <button
                   onClick={handleDrawTechnology}
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold py-1 px-2 text-[10px] rounded transition-all duration-200 shadow-sm"
+                  className="bg-gradient-to-r from-gray-600 to-gray-500 hover:from-gray-500 hover:to-gray-400 text-white font-semibold py-1 px-2 text-[10px] rounded transition-all duration-200 shadow-sm"
                 >
                   + Nuova
                 </button>
@@ -1038,16 +1030,16 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
         </div>
 
         {/* Colonna 3 - Giocatori e info (3 colonne) */}
-        <div className="col-span-3 bg-white border border-gray-200 rounded-lg p-2 flex flex-col overflow-hidden">
+        <div className="col-span-3 bg-gray-900/95 backdrop-blur-md border border-gray-700/50 rounded-xl p-2 flex flex-col overflow-hidden shadow-2xl relative z-20">
           <div className="flex-1 overflow-y-auto">
             <PlayersList
               players={gameState.players}
               currentPlayerId={gameState.currentPlayerId}
               winnerId={gameState.winnerId}
             />
-            <div className="mt-2 bg-gray-50 rounded p-2 border border-gray-200">
-              <p className="text-[10px] text-gray-600 mb-0.5">
-                <strong>Obiettivo:</strong> 65+ Neuralforming, 45+ Etica, 5+ Tecnologie, Bilanciamento ≥0.5
+            <div className="mt-2 bg-gray-800 rounded p-2 border border-gray-700">
+              <p className="text-[10px] text-gray-300 mb-0.5">
+                <strong className="text-gray-100">Obiettivo:</strong> 65+ Neuralforming, 45+ Etica, 5+ Tecnologie, Bilanciamento ≥0.5
               </p>
             </div>
           </div>

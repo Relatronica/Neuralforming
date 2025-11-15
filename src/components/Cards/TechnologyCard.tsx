@@ -1,6 +1,6 @@
 import React from 'react';
 import { Technology } from '../../game/types';
-import { Sparkles, Microscope } from 'lucide-react';
+import { Sparkles, Microscope, Scale, Brain } from 'lucide-react';
 
 interface TechnologyCardProps {
   technology: Technology;
@@ -51,10 +51,10 @@ export const TechnologyCard: React.FC<TechnologyCardProps> = ({
       className={`
         rounded-xl shadow-xl p-3 sm:p-4 border-2 transition-all duration-300
         ${isJoker 
-          ? 'bg-gradient-to-br from-purple-50 to-pink-50 border-purple-400' 
-          : 'bg-white border-gray-300'}
-        ${isSelectable ? (isJoker ? 'border-purple-500' : 'border-blue-500') + ' cursor-pointer hover:shadow-2xl active:shadow-lg hover:scale-105 active:scale-100 hover:-translate-y-1' : ''}
-        ${isInHand && !isJoker ? 'bg-gradient-to-br from-blue-50 to-blue-100' : ''}
+          ? 'bg-gradient-to-br from-gray-700 to-gray-800 border-gray-600' 
+          : 'bg-gray-800 border-gray-600'}
+        ${isSelectable ? (isJoker ? 'border-gray-500' : 'border-gray-500') + ' cursor-pointer hover:shadow-2xl active:shadow-lg hover:scale-105 active:scale-100 hover:-translate-y-1' : ''}
+        ${isInHand && !isJoker ? 'bg-gradient-to-br from-gray-800 to-gray-700' : ''}
         transform-gpu flex flex-col
         ${isLargeFormat ? 'w-full' : ''}
       `}
@@ -69,7 +69,7 @@ export const TechnologyCard: React.FC<TechnologyCardProps> = ({
       onClick={handleClick}
     >
       <div className="flex items-start justify-between mb-2 sm:mb-3 gap-2">
-        <h3 className={`font-bold text-gray-800 flex-1 break-words ${
+        <h3 className={`font-bold text-gray-100 flex-1 break-words ${
           isLargeFormat 
             ? 'text-base sm:text-lg leading-relaxed' 
             : 'text-sm line-clamp-2 leading-tight'
@@ -77,13 +77,13 @@ export const TechnologyCard: React.FC<TechnologyCardProps> = ({
           {technology.name}
         </h3>
         {isJoker ? (
-          <Sparkles className={`text-purple-600 flex-shrink-0 ${isLargeFormat ? 'w-6 h-6 sm:w-7 sm:h-7' : 'w-5 h-5'}`} />
+          <Sparkles className={`text-gray-300 flex-shrink-0 ${isLargeFormat ? 'w-6 h-6 sm:w-7 sm:h-7' : 'w-5 h-5'}`} />
         ) : (
-          <Microscope className={`text-blue-600 flex-shrink-0 ${isLargeFormat ? 'w-6 h-6 sm:w-7 sm:h-7' : 'w-5 h-5'}`} />
+          <Microscope className={`text-gray-300 flex-shrink-0 ${isLargeFormat ? 'w-6 h-6 sm:w-7 sm:h-7' : 'w-5 h-5'}`} />
         )}
       </div>
       
-      <p className={`text-gray-600 mb-3 sm:mb-4 flex-grow break-words leading-relaxed ${
+      <p className={`text-gray-300 mb-3 sm:mb-4 flex-grow break-words leading-relaxed ${
         isLargeFormat 
           ? 'text-sm sm:text-base' 
           : 'text-xs line-clamp-4 leading-tight'
@@ -92,17 +92,17 @@ export const TechnologyCard: React.FC<TechnologyCardProps> = ({
       </p>
       
       {isJoker && technology.jokerEffect && (
-        <div className={`mb-3 sm:mb-4 p-2 sm:p-3 bg-purple-100 rounded border border-purple-300`}>
-          <p className={`font-semibold text-purple-800 mb-1 ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[9px]'}`}>Effetto Jolly:</p>
+        <div className={`mb-3 sm:mb-4 p-2 sm:p-3 bg-gray-700 rounded border border-gray-600`}>
+          <p className={`font-semibold text-gray-200 mb-1 ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[9px]'}`}>Effetto Jolly:</p>
           {technology.jokerEffect.multiplier && (
-            <p className={`text-purple-700 ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[9px]'}`}>
+            <p className={`text-gray-300 ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[9px]'}`}>
               {technology.jokerEffect.multiplier.techPoints && `Tech ×${technology.jokerEffect.multiplier.techPoints} `}
               {technology.jokerEffect.multiplier.ethicsPoints && `Etica ×${technology.jokerEffect.multiplier.ethicsPoints} `}
               {technology.jokerEffect.multiplier.neuralformingPoints && `Neural ×${technology.jokerEffect.multiplier.neuralformingPoints}`}
             </p>
           )}
           {technology.jokerEffect.bonus && (
-            <p className={`text-purple-700 ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[9px]'}`}>
+            <p className={`text-gray-300 ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[9px]'}`}>
               {technology.jokerEffect.bonus.techPoints && `Tech +${technology.jokerEffect.bonus.techPoints} `}
               {technology.jokerEffect.bonus.ethicsPoints && `Etica +${technology.jokerEffect.bonus.ethicsPoints} `}
               {technology.jokerEffect.bonus.neuralformingPoints && `Neural +${technology.jokerEffect.bonus.neuralformingPoints}`}
@@ -112,24 +112,56 @@ export const TechnologyCard: React.FC<TechnologyCardProps> = ({
       )}
       
       {!isJoker && (
-      <div className={`flex flex-col gap-2 sm:gap-2.5 mt-auto ${isLargeFormat ? 'pt-2 sm:pt-3 border-t border-gray-200' : ''}`}>
-        <div className="flex items-center justify-between">
-          <span className={`text-gray-500 ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[10px]'}`}>Tech</span>
-          <span className={`bg-blue-100 text-blue-800 font-semibold px-2 py-1 rounded ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[10px] px-1.5 py-0.5'}`}>
+      <div className={`flex flex-wrap gap-2 sm:gap-3 mt-auto ${isLargeFormat ? 'pt-2 sm:pt-3 border-t border-gray-600' : ''}`}>
+        {/* Tech - Icona con intensità colore basata sul valore */}
+        <div 
+          className="flex items-center gap-1.5 group relative"
+          title={`Tech: +${technology.techPoints}`}
+        >
+          <Microscope 
+            className={`${isLargeFormat ? 'w-5 h-5 sm:w-6 sm:h-6' : 'w-4 h-4'}`}
+            style={{ 
+              color: technology.techPoints >= 8 ? '#9ca3af' : technology.techPoints >= 5 ? '#d1d5db' : '#e5e7eb',
+              filter: technology.techPoints >= 8 ? 'drop-shadow(0 0 4px rgba(156, 163, 175, 0.5))' : 'none'
+            }}
+          />
+          <span className={`text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[10px]'}`}>
             +{technology.techPoints}
           </span>
         </div>
+        
+        {/* Etica - Icona con intensità colore basata sul valore */}
         {technology.ethicsPoints && (
-          <div className="flex items-center justify-between">
-            <span className={`text-gray-500 ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[10px]'}`}>Etica</span>
-            <span className={`bg-green-100 text-green-800 font-semibold px-2 py-1 rounded ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[10px] px-1.5 py-0.5'}`}>
+          <div 
+            className="flex items-center gap-1.5 group relative"
+            title={`Etica: +${technology.ethicsPoints}`}
+          >
+            <Scale 
+              className={`${isLargeFormat ? 'w-5 h-5 sm:w-6 sm:h-6' : 'w-4 h-4'}`}
+              style={{ 
+                color: technology.ethicsPoints >= 8 ? '#9ca3af' : technology.ethicsPoints >= 5 ? '#d1d5db' : '#e5e7eb',
+                filter: technology.ethicsPoints >= 8 ? 'drop-shadow(0 0 4px rgba(156, 163, 175, 0.5))' : 'none'
+              }}
+            />
+            <span className={`text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[10px]'}`}>
               +{technology.ethicsPoints}
             </span>
           </div>
         )}
-        <div className="flex items-center justify-between">
-          <span className={`text-gray-500 ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[10px]'}`}>Neural</span>
-          <span className={`bg-purple-100 text-purple-800 font-semibold px-2 py-1 rounded ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[10px] px-1.5 py-0.5'}`}>
+        
+        {/* Neural - Icona con intensità colore basata sul valore */}
+        <div 
+          className="flex items-center gap-1.5 group relative"
+          title={`Neural: +${technology.neuralformingPoints}`}
+        >
+          <Brain 
+            className={`${isLargeFormat ? 'w-5 h-5 sm:w-6 sm:h-6' : 'w-4 h-4'}`}
+            style={{ 
+              color: technology.neuralformingPoints >= 8 ? '#9ca3af' : technology.neuralformingPoints >= 5 ? '#d1d5db' : '#e5e7eb',
+              filter: technology.neuralformingPoints >= 8 ? 'drop-shadow(0 0 4px rgba(156, 163, 175, 0.5))' : 'none'
+            }}
+          />
+          <span className={`text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[10px]'}`}>
             +{technology.neuralformingPoints}
           </span>
         </div>

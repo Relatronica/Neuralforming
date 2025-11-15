@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: neuralforming-server
+    env: node
+    plan: free
+    rootDir: server
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: CLIENT_URL
+        sync: false  # Da impostare manualmente su Render con l'URL di Netlify
+

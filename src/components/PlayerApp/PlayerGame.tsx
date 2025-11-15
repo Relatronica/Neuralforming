@@ -61,11 +61,11 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
   // Schermata di caricamento
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full text-center">
-          <Loader2 className="w-12 h-12 mx-auto mb-4 text-blue-600 animate-spin" />
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Connessione...</h2>
-          <p className="text-gray-600">Connessione al server in corso...</p>
+      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
+        <div className="bg-gray-900 rounded-xl shadow-2xl p-8 max-w-md w-full text-center border border-gray-700">
+          <Loader2 className="w-12 h-12 mx-auto mb-4 text-gray-400 animate-spin" />
+          <h2 className="text-xl font-bold text-gray-100 mb-2">Connessione...</h2>
+          <p className="text-gray-300">Connessione al server in corso...</p>
         </div>
       </div>
     );
@@ -74,10 +74,10 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
   // Errore
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full text-center">
-          <h2 className="text-xl font-bold text-red-800 mb-2">Errore</h2>
-          <p className="text-gray-600">{error}</p>
+      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
+        <div className="bg-gray-900 rounded-xl shadow-2xl p-6 max-w-md w-full text-center border border-gray-700">
+          <h2 className="text-xl font-bold text-gray-200 mb-2">Errore</h2>
+          <p className="text-gray-300">{error}</p>
         </div>
       </div>
     );
@@ -86,11 +86,11 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
   // Attesa che il gioco inizi
   if (!gameState || !roomInfo?.isGameStarted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full text-center">
-          <Users className="w-12 h-12 mx-auto mb-4 text-gray-600" />
-          <h2 className="text-xl font-bold text-gray-800 mb-2">In attesa...</h2>
-          <p className="text-gray-600">Il master sta avviando la partita...</p>
+      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
+        <div className="bg-gray-900 rounded-xl shadow-2xl p-6 max-w-md w-full text-center border border-gray-700">
+          <Users className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+          <h2 className="text-xl font-bold text-gray-100 mb-2">In attesa...</h2>
+          <p className="text-gray-300">Il master sta avviando la partita...</p>
         </div>
       </div>
     );
@@ -117,10 +117,10 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
   // Il tuo turno - mostra le azioni appropriate
   if (!currentPlayer) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-2xl p-6 max-w-md w-full text-center">
-          <h2 className="text-xl font-bold text-gray-800 mb-2">Giocatore non trovato</h2>
-          <p className="text-gray-600">Controlla che il nome sia corretto</p>
+      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
+        <div className="bg-gray-900 rounded-xl shadow-2xl p-6 max-w-md w-full text-center border border-gray-700">
+          <h2 className="text-xl font-bold text-gray-100 mb-2">Giocatore non trovato</h2>
+          <p className="text-gray-300">Controlla che il nome sia corretto</p>
         </div>
       </div>
     );

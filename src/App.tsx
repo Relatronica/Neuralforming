@@ -31,67 +31,30 @@ function MainApp() {
 
   if (gameMode === 'setup') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full text-center">
-          <h1 className="text-3xl font-bold text-gray-800 mb-6">Neuralforming</h1>
-          <p className="text-gray-600 mb-8">
+      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
+        <div className="bg-gray-900 rounded-xl shadow-2xl p-8 max-w-md w-full text-center border border-gray-700">
+          <h1 className="text-3xl font-bold text-gray-100 mb-6">Neuralforming</h1>
+          <p className="text-gray-300 mb-8">
             Prendi decisioni politiche per un'IA sostenibile e responsabile
           </p>
           <div className="space-y-4">
             <button
               onClick={handleStartSinglePlayer}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+              className="w-full bg-gray-600 hover:bg-gray-500 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
             >
               Gioca Single Player
             </button>
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
+                <div className="w-full border-t border-gray-600"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">oppure</span>
+                <span className="px-2 bg-gray-900 text-gray-400">oppure</span>
               </div>
             </div>
             <button
               onClick={() => setGameMode('multiplayer')}
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
-            >
-              Gioca Multiplayer
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Usa un unico provider per tutta la sessione multiplayer per mantenere lo stato condiviso
-  // Per single player e setup, non serve il provider
-  if (gameMode === 'setup') {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full text-center">
-          <h1 className="text-3xl font-bold text-gray-800 mb-6">Neuralforming</h1>
-          <p className="text-gray-600 mb-8">
-            Prendi decisioni politiche per un'IA sostenibile e responsabile
-          </p>
-          <div className="space-y-4">
-            <button
-              onClick={handleStartSinglePlayer}
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
-            >
-              Gioca Single Player
-            </button>
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">oppure</span>
-              </div>
-            </div>
-            <button
-              onClick={() => setGameMode('multiplayer')}
-              className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+              className="w-full bg-gray-600 hover:bg-gray-500 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
             >
               Gioca Multiplayer
             </button>
