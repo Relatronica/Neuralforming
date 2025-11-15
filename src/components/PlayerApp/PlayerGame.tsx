@@ -78,7 +78,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
     p.id === playerId
   );
 
-  const isMyTurn = gameState && currentPlayer && gameState.currentPlayerId === currentPlayer.id;
+  const isMyTurn = !!(gameState && currentPlayer && gameState.currentPlayerId === currentPlayer.id);
   const currentPhase = gameState?.currentPhase;
 
   // Schermata di caricamento
