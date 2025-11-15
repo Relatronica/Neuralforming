@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useGameSocketContext } from '../../contexts/GameSocketContext';
 import { PlayerVoting } from './PlayerVoting';
 import { PlayerHand } from './PlayerHand';
 import { PlayerDilemma } from './PlayerDilemma';
 import { PlayerConsequence } from './PlayerConsequence';
 import { PlayerWaiting } from './PlayerWaiting';
+import { NewsCard } from '../Game/NewsCard';
 import { Users, Loader2 } from 'lucide-react';
 
 interface PlayerGameProps {
@@ -39,6 +40,28 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
     error: null,
     joinRoom: () => {},
   };
+
+  // Stato locale per nascondere le news chiuse dall'utente
+  // Usiamo un Set per tenere traccia degli ID delle news già chiuse
+  const [dismissedNewsIds, setDismissedNewsIds] = useState<Set<string>>(new Set());
+  const [lastNewsId, setLastNewsId] = useState<string | null>(null);
+
+  // Reset delle news chiuse quando arriva una nuova news (ID diverso)
+  useEffect(() => {
+    if (gameState?.currentNews) {
+      const currentNewsId = gameState.currentNews.id;
+      
+      // Se è una nuova news (ID diverso da quello precedente), rimuovi le news vecchie dal Set
+      if (currentNewsId !== lastNewsId) {
+        setDismissedNewsIds(new Set()); // Reset quando arriva una nuova news
+        setLastNewsId(currentNewsId);
+      }
+    } else {
+      // Se non c'è news, pulisci tutto
+      setDismissedNewsIds(new Set());
+      setLastNewsId(null);
+    }
+  }, [gameState?.currentNews?.id, lastNewsId]);
 
   // Unisciti alla room quando il socket è connesso
   useEffect(() => {
@@ -126,10 +149,61 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
     );
   }
 
+  // Wrapper per mostrare le news se presenti
+  const contentWithNews = (content: React.ReactNode) => {
+    // Verifica se la news corrente è stata chiusa dall'utente
+    const isNewsDismissed = gameState.currentNews && dismissedNewsIds.has(gameState.currentNews.id);
+    const shouldShowNews = gameState.currentNews && !isNewsDismissed;
+
+    // PlayerHand ha già il suo layout, quindi non wrappiamo di nuovo
+    if (currentPhase === 'development') {
+      return (
+        <>
+          {shouldShowNews && (
+            <div className="fixed top-0 left-0 right-0 z-50 p-3 sm:p-4 max-w-2xl mx-auto">
+              <NewsCard
+                news={gameState.currentNews}
+                onDismiss={() => {
+                  // Nascondi la news localmente aggiungendo il suo ID al Set
+                  if (gameState.currentNews) {
+                    setDismissedNewsIds(prev => new Set(prev).add(gameState.currentNews!.id));
+                  }
+                }}
+              />
+            </div>
+          )}
+          {content}
+        </>
+      );
+    }
+    
+    // Per altre fasi, wrappiamo normalmente
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 p-3 sm:p-4">
+        <div className="max-w-2xl mx-auto">
+          {shouldShowNews && (
+            <div className="mb-4">
+              <NewsCard
+                news={gameState.currentNews}
+                onDismiss={() => {
+                  // Nascondi la news localmente aggiungendo il suo ID al Set
+                  if (gameState.currentNews) {
+                    setDismissedNewsIds(prev => new Set(prev).add(gameState.currentNews!.id));
+                  }
+                }}
+              />
+            </div>
+          )}
+          {content}
+        </div>
+      </div>
+    );
+  };
+
   // Mostra la fase appropriata
   switch (currentPhase) {
     case 'development':
-      return (
+      return contentWithNews(
         <PlayerHand
           player={currentPlayer}
           gameState={gameState}
@@ -140,7 +214,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
     
     case 'dilemma':
       if (gameState.currentDilemma) {
-        return (
+        return contentWithNews(
           <PlayerDilemma
             dilemma={gameState.currentDilemma}
             activeJoker={gameState.activeJoker}
@@ -152,7 +226,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
     
     case 'consequence':
       if (gameState.currentConsequence) {
-        return (
+        return contentWithNews(
           <PlayerConsequence
             consequence={gameState.currentConsequence}
             onContinue={() => sendAction('completeConsequence', {})}

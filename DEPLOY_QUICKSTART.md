@@ -6,10 +6,12 @@
 2. Connetti il repository GitHub
 3. Configurazione:
    - **Name**: `neuralforming-server`
-   - **Root Directory**: `server`
+   - **Root Directory**: `server` ⚠️ IMPORTANTE: imposta questa opzione!
    - **Build Command**: `npm install && npm run build`
    - **Start Command**: `npm start`
    - **Plan**: Free
+
+⚠️ **Se il deploy fallisce con "Missing script: start"**, verifica che **Root Directory** sia impostato su `server` nelle impostazioni del servizio Render!
 4. Variabili d'ambiente (da aggiungere dopo il deploy del frontend):
    - `NODE_ENV=production`
    - `PORT=10000`

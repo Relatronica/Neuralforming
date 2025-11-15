@@ -1,6 +1,7 @@
 import React from 'react';
 import { Technology } from '../../game/types';
-import { Sparkles, Microscope, Scale, Brain } from 'lucide-react';
+import { Sparkles, Microscope, Scale, Brain, TrendingUp, TrendingDown } from 'lucide-react';
+import { calculateVotingEffects } from '../../game/ParliamentVoting';
 
 interface TechnologyCardProps {
   technology: Technology;
@@ -8,6 +9,7 @@ interface TechnologyCardProps {
   isSelectable?: boolean;
   isInHand?: boolean;
   isVotingCard?: boolean; // Se true, mostra la card in formato grande per la votazione
+  showVotingEffects?: boolean; // Se true, mostra i vantaggi/svantaggi della votazione
 }
 
 export const TechnologyCard: React.FC<TechnologyCardProps> = ({
@@ -16,6 +18,7 @@ export const TechnologyCard: React.FC<TechnologyCardProps> = ({
   isSelectable = false,
   isInHand = false,
   isVotingCard = false,
+  showVotingEffects = false,
 }) => {
   const handleClick = () => {
     if (isSelectable && onSelect) {
@@ -24,6 +27,22 @@ export const TechnologyCard: React.FC<TechnologyCardProps> = ({
   };
 
   const isJoker = technology.type === 'joker';
+
+  // Calcola gli effetti della votazione se richiesto
+  const votingEffects = showVotingEffects ? (() => {
+    const basePoints = {
+      techPoints: technology.techPoints,
+      ethicsPoints: technology.ethicsPoints || 0,
+      neuralformingPoints: technology.neuralformingPoints,
+    };
+    
+    // Mostra effetti per diversi tassi di approvazione
+    return {
+      high: calculateVotingEffects({ votesFor: 7, votesAgainst: 1, approvalRate: 0.875, supporters: [], opponents: [] }, basePoints),
+      medium: calculateVotingEffects({ votesFor: 5, votesAgainst: 3, approvalRate: 0.625, supporters: [], opponents: [] }, basePoints),
+      low: calculateVotingEffects({ votesFor: 3, votesAgainst: 5, approvalRate: 0.375, supporters: [], opponents: [] }, basePoints),
+    };
+  })() : null;
 
   // Determina il formato della card
   const isPWA = isInHand;
@@ -112,59 +131,91 @@ export const TechnologyCard: React.FC<TechnologyCardProps> = ({
       )}
       
       {!isJoker && (
-      <div className={`flex flex-wrap gap-2 sm:gap-3 mt-auto ${isLargeFormat ? 'pt-2 sm:pt-3 border-t border-gray-600' : ''}`}>
-        {/* Tech - Icona con intensità colore basata sul valore */}
-        <div 
-          className="flex items-center gap-1.5 group relative"
-          title={`Tech: +${technology.techPoints}`}
-        >
-          <Microscope 
-            className={`${isLargeFormat ? 'w-5 h-5 sm:w-6 sm:h-6' : 'w-4 h-4'}`}
-            style={{ 
-              color: technology.techPoints >= 8 ? '#9ca3af' : technology.techPoints >= 5 ? '#d1d5db' : '#e5e7eb',
-              filter: technology.techPoints >= 8 ? 'drop-shadow(0 0 4px rgba(156, 163, 175, 0.5))' : 'none'
-            }}
-          />
-          <span className={`text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[10px]'}`}>
-            +{technology.techPoints}
-          </span>
-        </div>
-        
-        {/* Etica - Icona con intensità colore basata sul valore */}
-        {technology.ethicsPoints && (
+      <div className={`flex flex-col gap-2 ${isLargeFormat ? 'pt-2 sm:pt-3 border-t border-gray-600' : ''}`}>
+        {/* Punti base */}
+        <div className="flex flex-wrap gap-2 sm:gap-3">
+          {/* Tech - Icona con intensità colore basata sul valore */}
           <div 
             className="flex items-center gap-1.5 group relative"
-            title={`Etica: +${technology.ethicsPoints}`}
+            title={`Tech: +${technology.techPoints}`}
           >
-            <Scale 
+            <Microscope 
               className={`${isLargeFormat ? 'w-5 h-5 sm:w-6 sm:h-6' : 'w-4 h-4'}`}
               style={{ 
-                color: technology.ethicsPoints >= 8 ? '#9ca3af' : technology.ethicsPoints >= 5 ? '#d1d5db' : '#e5e7eb',
-                filter: technology.ethicsPoints >= 8 ? 'drop-shadow(0 0 4px rgba(156, 163, 175, 0.5))' : 'none'
+                color: technology.techPoints >= 8 ? '#9ca3af' : technology.techPoints >= 5 ? '#d1d5db' : '#e5e7eb',
+                filter: technology.techPoints >= 8 ? 'drop-shadow(0 0 4px rgba(156, 163, 175, 0.5))' : 'none'
               }}
             />
             <span className={`text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[10px]'}`}>
-              +{technology.ethicsPoints}
+              +{technology.techPoints}
             </span>
           </div>
-        )}
-        
-        {/* Neural - Icona con intensità colore basata sul valore */}
-        <div 
-          className="flex items-center gap-1.5 group relative"
-          title={`Neural: +${technology.neuralformingPoints}`}
-        >
-          <Brain 
-            className={`${isLargeFormat ? 'w-5 h-5 sm:w-6 sm:h-6' : 'w-4 h-4'}`}
-            style={{ 
-              color: technology.neuralformingPoints >= 8 ? '#9ca3af' : technology.neuralformingPoints >= 5 ? '#d1d5db' : '#e5e7eb',
-              filter: technology.neuralformingPoints >= 8 ? 'drop-shadow(0 0 4px rgba(156, 163, 175, 0.5))' : 'none'
-            }}
-          />
-          <span className={`text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[10px]'}`}>
-            +{technology.neuralformingPoints}
-          </span>
+          
+          {/* Etica - Icona con intensità colore basata sul valore */}
+          {technology.ethicsPoints && (
+            <div 
+              className="flex items-center gap-1.5 group relative"
+              title={`Etica: +${technology.ethicsPoints}`}
+            >
+              <Scale 
+                className={`${isLargeFormat ? 'w-5 h-5 sm:w-6 sm:h-6' : 'w-4 h-4'}`}
+                style={{ 
+                  color: technology.ethicsPoints >= 8 ? '#9ca3af' : technology.ethicsPoints >= 5 ? '#d1d5db' : '#e5e7eb',
+                  filter: technology.ethicsPoints >= 8 ? 'drop-shadow(0 0 4px rgba(156, 163, 175, 0.5))' : 'none'
+                }}
+              />
+              <span className={`text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[10px]'}`}>
+                +{technology.ethicsPoints}
+              </span>
+            </div>
+          )}
+          
+          {/* Neural - Icona con intensità colore basata sul valore */}
+          <div 
+            className="flex items-center gap-1.5 group relative"
+            title={`Neural: +${technology.neuralformingPoints}`}
+          >
+            <Brain 
+              className={`${isLargeFormat ? 'w-5 h-5 sm:w-6 sm:h-6' : 'w-4 h-4'}`}
+              style={{ 
+                color: technology.neuralformingPoints >= 8 ? '#9ca3af' : technology.neuralformingPoints >= 5 ? '#d1d5db' : '#e5e7eb',
+                filter: technology.neuralformingPoints >= 8 ? 'drop-shadow(0 0 4px rgba(156, 163, 175, 0.5))' : 'none'
+              }}
+            />
+            <span className={`text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[10px]'}`}>
+              +{technology.neuralformingPoints}
+            </span>
+          </div>
         </div>
+
+        {/* Effetti della votazione (se mostrati) */}
+        {showVotingEffects && votingEffects && (
+          <div className={`mt-2 p-2 bg-gray-700/50 rounded border border-gray-600 ${isLargeFormat ? 'text-xs' : 'text-[10px]'}`}>
+            <p className="text-gray-300 mb-1.5 font-semibold">Effetti Votazione:</p>
+            <div className="space-y-1">
+              <div className="flex items-center gap-1.5">
+                <TrendingUp className="w-3 h-3 text-green-400" />
+                <span className="text-gray-300">Alta approvazione (&gt;70%):</span>
+                <span className="text-green-400 font-semibold">
+                  +{votingEffects.high.techPoints} Tech, +{votingEffects.high.ethicsPoints} Etica, +{votingEffects.high.neuralformingPoints} Neural
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-gray-300 ml-4">Media (&gt;50%):</span>
+                <span className="text-yellow-400 font-semibold">
+                  +{votingEffects.medium.techPoints} Tech, +{votingEffects.medium.ethicsPoints} Etica, +{votingEffects.medium.neuralformingPoints} Neural
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <TrendingDown className="w-3 h-3 text-red-400" />
+                <span className="text-gray-300">Bassa (&lt;50%):</span>
+                <span className="text-red-400 font-semibold">
+                  +{votingEffects.low.techPoints} Tech, +{votingEffects.low.ethicsPoints} Etica, +{votingEffects.low.neuralformingPoints} Neural
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
       )}
     </div>

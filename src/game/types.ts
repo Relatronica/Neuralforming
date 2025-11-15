@@ -85,6 +85,51 @@ export interface MilestoneUnlocked {
   playerId: string;
 }
 
+// Tipo per obiettivo del giocatore
+export interface PlayerObjective {
+  id: string;
+  title: string;
+  description: string;
+  requirements: {
+    techPoints?: number;
+    ethicsPoints?: number;
+    neuralformingPoints?: number;
+    technologiesCount?: number;
+    balance?: number; // Bilanciamento minimo richiesto
+  };
+  difficulty: 'easy' | 'medium' | 'hard';
+  category: 'tech' | 'ethics' | 'balanced' | 'neural';
+}
+
+// Tipo per news dalla società
+export interface SocietyNews {
+  id: string;
+  title: string;
+  description: string;
+  effect: {
+    techPoints?: number; // Modifica punti per tutti i giocatori (o selettiva)
+    ethicsPoints?: number;
+    neuralformingPoints?: number;
+  };
+  targets?: 'all' | 'current' | 'others'; // Chi viene colpito dalla news
+  category: 'tech' | 'ethics' | 'neutral' | 'crisis' | 'breakthrough';
+}
+
+export interface PlayerState {
+  id: string;
+  name: string;
+  isAI: boolean;
+  techPoints: number;
+  ethicsPoints: number;
+  neuralformingPoints: number;
+  technologies: Technology[];
+  hand: Technology[];
+  unlockedMilestones: string[]; // ID dei milestone sbloccati
+  color?: string; // Colore scelto dal giocatore
+  icon?: string; // Icona scelta dal giocatore
+  objectiveId?: string; // ID dell'obiettivo assegnato al giocatore
+}
+
 export interface GameState {
   players: PlayerState[];
   currentPlayerId: string;
@@ -102,5 +147,7 @@ export interface GameState {
   lastVoteMessage?: string | null; // Messaggio dell'ultima votazione
   currentGlobalEvent?: GlobalEventInfo | null; // Evento globale attivo
   newlyUnlockedMilestones?: MilestoneUnlocked[] | null; // Milestone appena sbloccati (per mostrare notifica)
+  currentNews?: SocietyNews | null; // News corrente dalla società
+  lastNewsTurn?: number; // Turno in cui è apparsa l'ultima news
 }
 

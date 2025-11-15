@@ -3,6 +3,7 @@ import { GameEngine } from '../../game/GameEngine';
 import { GameState, Technology, DilemmaOption, PlayerState, Dilemma } from '../../game/types';
 import { TurnManager } from '../../game/TurnManager';
 import { AIPlayer } from '../../game/AIPlayer';
+import { Objectives } from '../../game/Objectives';
 import { Board } from '../Board/Board';
 import { TechnologyCard } from '../Cards/TechnologyCard';
 import { DilemmaCard } from '../Cards/DilemmaCard';
@@ -10,6 +11,7 @@ import { ConsequenceCard } from '../Cards/ConsequenceCard';
 import { PlayersList } from '../Players/PlayersList';
 import { VotingResult } from './VotingResult';
 import { GlobalEventCard } from './GlobalEventCard';
+import { NewsCard } from './NewsCard';
 import { useGameSocketContext } from '../../contexts/GameSocketContext';
 import { Bot, Landmark, Users, CheckCircle2, XCircle } from 'lucide-react';
 import technologiesData from '../../data/technologies.json';
@@ -125,7 +127,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
         const dilemmaDeck = shuffleArray([...dilemmasData] as Dilemma[]);
 
         // Crea i giocatori reali dalla room (escludi eventuali master)
-        const players: PlayerState[] = [];
+        let players: PlayerState[] = [];
         
         if (roomInfo && roomInfo.players.length > 0) {
           // Filtra eventuali giocatori master (non dovrebbero esserci, ma per sicurezza)
@@ -149,6 +151,13 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
           });
         }
 
+        // Assegna obiettivi randomicamente ai giocatori
+        const objectiveAssignments = Objectives.assignObjectives(players);
+        players = players.map(player => ({
+          ...player,
+          objectiveId: objectiveAssignments.get(player.id),
+        }));
+
         return {
           players,
           currentPlayerId: players[0]?.id || '',
@@ -166,6 +175,8 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
           lastVoteMessage: null,
           currentGlobalEvent: null,
           newlyUnlockedMilestones: null,
+          currentNews: null,
+          lastNewsTurn: undefined,
         };
       };
 
@@ -368,7 +379,14 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
       ...prev,
       currentGlobalEvent: null,
     }));
-  }, []);
+  }, [setGameState]);
+
+  const handleDismissNews = useCallback(() => {
+    setGameState(prev => ({
+      ...prev,
+      currentNews: null,
+    }));
+  }, [setGameState]);
 
 
   const handleNewGame = useCallback(() => {
@@ -584,6 +602,9 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
     const winner = gameState.players.find(p => p.id === gameState.winnerId);
     const humanPlayer = gameState.players.find(p => !p.isAI);
     const isHumanWinner = winner && !winner.isAI;
+    
+    // Ottieni l'obiettivo del vincitore se presente
+    const winnerObjective = winner?.objectiveId ? Objectives.getObjectiveById(winner.objectiveId) : null;
 
     return (
       <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
@@ -592,9 +613,17 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
             <>
               <div className="text-6xl mb-4">🎉</div>
               <h1 className="text-3xl font-bold text-gray-100 mb-4">Vittoria!</h1>
+              {winnerObjective && (
+                <div className="bg-gray-800 border border-gray-600 rounded-lg p-4 mb-4">
+                  <p className="text-xs text-gray-400 mb-1">Obiettivo Completato</p>
+                  <p className="text-lg font-bold text-gray-100 mb-2">{winnerObjective.title}</p>
+                  <p className="text-sm text-gray-300">{winnerObjective.description}</p>
+                </div>
+              )}
               <p className="text-gray-300 mb-6">
-                Hai guidato con successo la creazione di un'IA sostenibile! Le tue decisioni politiche hanno bilanciato
-                innovazione tecnologica e responsabilità etica, creando un futuro migliore per tutti i cittadini.
+                {winnerObjective 
+                  ? `Hai raggiunto per primo il tuo obiettivo! ${winnerObjective.title}`
+                  : 'Hai guidato con successo la creazione di un\'IA sostenibile! Le tue decisioni politiche hanno bilanciato innovazione tecnologica e responsabilità etica, creando un futuro migliore per tutti i cittadini.'}
               </p>
               {humanPlayer && (
                 <div className="bg-gray-800 border border-gray-600 rounded-lg p-4 mb-6">
@@ -616,9 +645,18 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
               <h1 className="text-3xl font-bold text-gray-100 mb-4">
                 {winner ? `${winner.name} ha vinto!` : 'Sconfitta'}
               </h1>
+              {winner && winnerObjective && (
+                <div className="bg-gray-800 border border-gray-600 rounded-lg p-4 mb-4">
+                  <p className="text-xs text-gray-400 mb-1">Obiettivo Raggiunto</p>
+                  <p className="text-lg font-bold text-gray-100 mb-2">{winnerObjective.title}</p>
+                  <p className="text-sm text-gray-300">{winnerObjective.description}</p>
+                </div>
+              )}
               <p className="text-gray-300 mb-6">
                 {winner 
-                  ? `${winner.name} ha completato per primo il programma di IA sostenibile. Le sue politiche hanno prevalso.`
+                  ? winnerObjective
+                    ? `${winner.name} ha raggiunto per primo il suo obiettivo: ${winnerObjective.title}. Le sue politiche hanno prevalso.`
+                    : `${winner.name} ha completato per primo il programma di IA sostenibile. Le sue politiche hanno prevalso.`
                   : 'Le tue politiche non hanno raggiunto gli obiettivi richiesti. L\'IA creata non è sostenibile.'}
               </p>
               {winner && (
@@ -734,6 +772,14 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
               />
             )}
 
+            {/* Mostra news dalla società se presente */}
+            {gameState.currentNews && (
+              <NewsCard
+                news={gameState.currentNews}
+                onDismiss={handleDismissNews}
+              />
+            )}
+
             {/* Votazione in corso (multiplayer) - Mostrata a TUTTI i giocatori */}
             {mode === 'multiplayer' && pendingVote && (
               <div className="bg-gradient-to-br from-gray-800 via-gray-700 to-gray-800 rounded-lg shadow-lg p-3 border-2 border-gray-600">
@@ -753,6 +799,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                       isSelectable={false}
                       isInHand={false}
                       isVotingCard={true}
+                      showVotingEffects={true}
                     />
                   </div>
                 </div>

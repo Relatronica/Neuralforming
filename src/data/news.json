@@ -1,0 +1,133 @@
+[
+  {
+    "id": "scientific-breakthrough",
+    "title": "Scoperta Scientifica Rivoluzionaria",
+    "description": "I ricercatori hanno fatto una scoperta eccezionale che accelera lo sviluppo dell'IA. L'entusiasmo scientifico spinge tutti verso l'innovazione.",
+    "effect": {
+      "techPoints": 5
+    },
+    "targets": "all",
+    "category": "tech"
+  },
+  {
+    "id": "public-protest",
+    "title": "Proteste Pubbliche per l'IA",
+    "description": "Grandi manifestazioni pubbliche chiedono maggiore trasparenza e controllo etico sullo sviluppo dell'IA. La pressione sociale è forte.",
+    "effect": {
+      "ethicsPoints": -3,
+      "techPoints": -2
+    },
+    "targets": "all",
+    "category": "ethics"
+  },
+  {
+    "id": "ai-breakthrough",
+    "title": "Breakthrough dell'Intelligenza Artificiale",
+    "description": "Un'importante svolta nel campo del Neuralforming ha suscitato grande interesse. Tutti i progetti ne beneficiano.",
+    "effect": {
+      "neuralformingPoints": 8
+    },
+    "targets": "all",
+    "category": "breakthrough"
+  },
+  {
+    "id": "tech-scandal",
+    "title": "Scandalo Tecnologico",
+    "description": "Uno scandalo legato all'uso improprio di dati personali ha scosso il settore tecnologico. La fiducia pubblica è stata compromessa.",
+    "effect": {
+      "techPoints": -4,
+      "ethicsPoints": -5
+    },
+    "targets": "all",
+    "category": "crisis"
+  },
+  {
+    "id": "ethical-movement",
+    "title": "Movimento Etico Globale",
+    "description": "Un movimento globale chiede maggiore attenzione all'etica nell'IA. La società premia chi dimostra responsabilità.",
+    "effect": {
+      "ethicsPoints": 6
+    },
+    "targets": "all",
+    "category": "ethics"
+  },
+  {
+    "id": "quantum-advance",
+    "title": "Progressi nel Computing Quantistico",
+    "description": "Nuovi progressi nel computing quantistico aprono possibilità inimmaginabili per l'IA. Tutti ne traggono vantaggio.",
+    "effect": {
+      "techPoints": 7,
+      "neuralformingPoints": 5
+    },
+    "targets": "all",
+    "category": "tech"
+  },
+  {
+    "id": "privacy-concerns",
+    "title": "Preoccupazioni sulla Privacy",
+    "description": "Crescono le preoccupazioni sulla privacy dei cittadini. I progetti che non tengono conto di questo vengono penalizzati.",
+    "effect": {
+      "ethicsPoints": -4,
+      "neuralformingPoints": -3
+    },
+    "targets": "all",
+    "category": "crisis"
+  },
+  {
+    "id": "ai-assistance",
+    "title": "IA Assistente nella Medicina",
+    "description": "L'IA ha dimostrato capacità straordinarie nell'assistere i medici, salvando molte vite. Il supporto pubblico è alto.",
+    "effect": {
+      "ethicsPoints": 5,
+      "neuralformingPoints": 6
+    },
+    "targets": "all",
+    "category": "breakthrough"
+  },
+  {
+    "id": "automation-fear",
+    "title": "Timore per l'Automazione",
+    "description": "Il timore per la perdita di posti di lavoro dovuta all'automazione crea tensioni sociali. L'opposizione ai progetti tecnologici aumenta.",
+    "effect": {
+      "techPoints": -3,
+      "neuralformingPoints": -2
+    },
+    "targets": "all",
+    "category": "crisis"
+  },
+  {
+    "id": "sustainable-tech",
+    "title": "Movimento per Tecnologie Sostenibili",
+    "description": "Un movimento globale promuove tecnologie che rispettino l'ambiente e la società. I progetti bilanciati ricevono supporto.",
+    "effect": {
+      "techPoints": 4,
+      "ethicsPoints": 4,
+      "neuralformingPoints": 4
+    },
+    "targets": "all",
+    "category": "neutral"
+  },
+  {
+    "id": "ai-regulation",
+    "title": "Nuove Regolamentazioni",
+    "description": "Il governo introduce nuove regolamentazioni che favoriscono progetti eticamente responsabili. Chi segue le linee guida è premiato.",
+    "effect": {
+      "ethicsPoints": 7,
+      "techPoints": 2
+    },
+    "targets": "all",
+    "category": "ethics"
+  },
+  {
+    "id": "tech-investment",
+    "title": "Massiccio Investimento in Tecnologia",
+    "description": "Grandi investimenti nel settore tecnologico accelerano tutti i progetti. Il settore prospera.",
+    "effect": {
+      "techPoints": 6,
+      "neuralformingPoints": 4
+    },
+    "targets": "all",
+    "category": "tech"
+  }
+]
+

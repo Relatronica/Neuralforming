@@ -46,6 +46,7 @@ export const PlayerVoting: React.FC<PlayerVotingProps> = ({
                 technology={pendingVote.technology}
                 isSelectable={false}
                 isInHand={true}
+                showVotingEffects={true}
               />
             </div>
           </div>

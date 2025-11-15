@@ -5,6 +5,8 @@ import { conductParliamentVote, calculateVotingEffects } from './ParliamentVotin
 import { checkGlobalEvents } from './GlobalEvents';
 import { checkMilestones, applyMilestoneVotingBonus, calculateMilestonePointsBonus } from './Milestones';
 import { milestones } from './Milestones';
+import { Objectives } from './Objectives';
+import { News } from './News';
 import dilemmasData from '../data/dilemmas.json';
 import technologiesData from '../data/technologies.json';
 import consequencesData from '../data/consequences.json';
@@ -64,6 +66,13 @@ export class GameEngine {
       });
     }
 
+    // Assegna obiettivi randomicamente ai giocatori
+    const objectiveAssignments = Objectives.assignObjectives(players);
+    players = players.map(player => ({
+      ...player,
+      objectiveId: objectiveAssignments.get(player.id),
+    }));
+
     const initialState: GameState = {
       players,
       currentPlayerId: players[0].id, // Inizia con il giocatore umano
@@ -81,6 +90,8 @@ export class GameEngine {
       lastVoteMessage: null,
       currentGlobalEvent: null,
       newlyUnlockedMilestones: null,
+      currentNews: null,
+      lastNewsTurn: undefined,
     };
 
     return initialState;
@@ -233,8 +244,17 @@ export class GameEngine {
       hand: newHand,
     });
 
+    // Verifica se il giocatore ha raggiunto il suo obiettivo dopo aver aggiunto la tecnologia
+    // Questo è importante perché aggiungere una tecnologia potrebbe completare i requisiti
+    const stateAfterWinCheck = TurnManager.checkGameEnd(newState);
+    
+    // Se il gioco è finito, non continuare con il dilemma
+    if (stateAfterWinCheck.currentPhase === 'gameOver') {
+      return stateAfterWinCheck;
+    }
+
     // Pesca automaticamente un dilemma quando si gioca una carta tecnologia
-    return this.drawDilemma(newState);
+    return this.drawDilemma(stateAfterWinCheck);
   }
 
   /**
@@ -385,7 +405,7 @@ export class GameEngine {
 
   /**
    * Completa la fase di conseguenze e avanza al turno successivo
-   * Verifica anche se devono essere attivati eventi globali
+   * Verifica anche se devono essere attivati eventi globali e news
    */
   static completeConsequencePhase(gameState: GameState): GameState {
     const stateAfterConsequence = {
@@ -397,6 +417,9 @@ export class GameEngine {
     const { triggeredEvent, newGameState } = checkGlobalEvents(stateAfterConsequence);
     
     let finalState = TurnManager.nextPlayer(newGameState);
+    
+    // Processa le news se necessario (dopo il cambio turno)
+    finalState = News.processNews(finalState);
     
     // Se un evento è stato attivato, salvalo nello stato
     if (triggeredEvent) {

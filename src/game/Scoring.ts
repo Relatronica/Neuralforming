@@ -1,4 +1,5 @@
 import { PlayerState } from './types';
+import { Objectives } from './Objectives';
 
 /**
  * Modulo centralizzato per la gestione del sistema di punteggi
@@ -13,13 +14,16 @@ export class Scoring {
 
   /**
    * Verifica se il giocatore ha vinto
-   * Vincita bilanciata:
-   * - 65 punti Neuralforming (ridotto da 80 per renderlo raggiungibile con penalità votazioni)
-   * - 45 punti Ethics (aumentato da 40 per renderlo più sfidante)
-   * - 5 tecnologie sviluppate
-   * - Bilanciamento minimo 0.5 (aumentato da 0.4 per forzare vero equilibrio)
+   * Se il giocatore ha un obiettivo assegnato, verifica quello
+   * Altrimenti usa la condizione di vittoria standard (per retrocompatibilità)
    */
   static checkWinCondition(player: PlayerState): boolean {
+    // Se il giocatore ha un obiettivo, verifica quello
+    if (player.objectiveId) {
+      return Objectives.checkObjectiveCompletion(player, player.objectiveId);
+    }
+    
+    // Condizione di vittoria standard (per retrocompatibilità)
     const hasEnoughNeuralforming = player.neuralformingPoints >= 65;
     const hasEnoughEthics = player.ethicsPoints >= 45;
     const hasEnoughTechnologies = player.technologies.length >= 5;

@@ -1,0 +1,124 @@
+[
+  {
+    "id": "protect-humanity",
+    "title": "IA Guardiana dell'Umanità",
+    "description": "Sviluppa un'IA che protegga l'umanità dai rischi esistenziali. La tua missione è creare un sistema che bilanci innovazione e sicurezza, privilegiando l'etica senza compromettere l'innovazione.",
+    "requirements": {
+      "ethicsPoints": 55,
+      "neuralformingPoints": 70,
+      "balance": 0.6
+    },
+    "difficulty": "medium",
+    "category": "ethics"
+  },
+  {
+    "id": "tech-innovation",
+    "title": "Pioniere Tecnologico",
+    "description": "Spingi l'innovazione tecnologica al massimo livello. La tua visione è un futuro guidato dalla tecnologia avanzata, dove l'IA raggiunge capacità straordinarie attraverso un progresso continuo.",
+    "requirements": {
+      "techPoints": 60,
+      "neuralformingPoints": 65,
+      "technologiesCount": 6
+    },
+    "difficulty": "medium",
+    "category": "tech"
+  },
+  {
+    "id": "balanced-vision",
+    "title": "Visione Bilanciata",
+    "description": "Crea un'IA che rappresenti il perfetto equilibrio tra tecnologia ed etica. La tua filosofia è che solo attraverso un bilanciamento armonioso si può raggiungere il vero progresso.",
+    "requirements": {
+      "techPoints": 50,
+      "ethicsPoints": 50,
+      "neuralformingPoints": 68,
+      "balance": 0.8
+    },
+    "difficulty": "hard",
+    "category": "balanced"
+  },
+  {
+    "id": "neural-breakthrough",
+    "title": "Breakthrough Neuralforming",
+    "description": "Raggiungi il massimo livello di Neuralforming. La tua priorità è creare un sistema di IA così avanzato che rappresenti un vero salto quantico nell'intelligenza artificiale.",
+    "requirements": {
+      "neuralformingPoints": 80,
+      "technologiesCount": 5
+    },
+    "difficulty": "hard",
+    "category": "neural"
+  },
+  {
+    "id": "ethical-guardian",
+    "title": "Guardiano Etico",
+    "description": "Metti l'etica al centro di tutto. La tua missione è garantire che l'IA sviluppata rispetti i valori umani fondamentali, anche a costo di rallentare il progresso tecnologico.",
+    "requirements": {
+      "ethicsPoints": 65,
+      "neuralformingPoints": 60,
+      "balance": 0.7
+    },
+    "difficulty": "medium",
+    "category": "ethics"
+  },
+  {
+    "id": "tech-dominance",
+    "title": "Dominanza Tecnologica",
+    "description": "Costruisci un'IA superiore attraverso la pura potenza tecnologica. La tecnologia prima di tutto - questo è il tuo credo per raggiungere l'eccellenza.",
+    "requirements": {
+      "techPoints": 70,
+      "neuralformingPoints": 62,
+      "technologiesCount": 7
+    },
+    "difficulty": "hard",
+    "category": "tech"
+  },
+  {
+    "id": "sustainable-innovation",
+    "title": "Innovazione Sostenibile",
+    "description": "Sviluppa tecnologie che siano sia innovative che responsabili. Il tuo approccio privilegia soluzioni che uniscano progresso e sostenibilità etica.",
+    "requirements": {
+      "techPoints": 45,
+      "ethicsPoints": 50,
+      "neuralformingPoints": 65,
+      "technologiesCount": 6
+    },
+    "difficulty": "medium",
+    "category": "balanced"
+  },
+  {
+    "id": "neural-synergy",
+    "title": "Sinergia Neuralforming",
+    "description": "Raggiungi l'eccellenza attraverso la combinazione di tecnologie avanzate. Il tuo obiettivo è creare un ecosistema di IA interconnesso e potente.",
+    "requirements": {
+      "neuralformingPoints": 75,
+      "technologiesCount": 6,
+      "balance": 0.5
+    },
+    "difficulty": "medium",
+    "category": "neural"
+  },
+  {
+    "id": "ethical-pioneer",
+    "title": "Pioniere Etico",
+    "description": "Stabilisci nuovi standard etici per l'IA. La tua leadership etica guiderà la società verso un futuro più giusto e responsabile.",
+    "requirements": {
+      "ethicsPoints": 70,
+      "techPoints": 40,
+      "neuralformingPoints": 63
+    },
+    "difficulty": "hard",
+    "category": "ethics"
+  },
+  {
+    "id": "rapid-advancement",
+    "title": "Progresso Rapido",
+    "description": "Sviluppa il maggior numero di tecnologie possibili in tempi brevi. La velocità è essenziale per mantenere il vantaggio competitivo.",
+    "requirements": {
+      "technologiesCount": 8,
+      "neuralformingPoints": 60,
+      "techPoints": 50
+    },
+    "difficulty": "hard",
+    "category": "tech"
+  }
+]
+

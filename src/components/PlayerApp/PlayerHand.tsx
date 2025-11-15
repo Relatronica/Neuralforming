@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { GameState, PlayerState, Technology } from '../../game/types';
 import { TechnologyCard } from '../Cards/TechnologyCard';
-import { Plus, Hand, ScrollText, Brain, Scale, Microscope, Trophy, Sparkles } from 'lucide-react';
+import { Plus, Hand, ScrollText, Brain, Scale, Microscope, Trophy, Sparkles, Target } from 'lucide-react';
 import { milestones } from '../../game/Milestones';
+import { Objectives } from '../../game/Objectives';
 
 interface PlayerHandProps {
   player: PlayerState;
@@ -17,7 +18,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
   onDrawTechnology,
   onAddTechnology,
 }) => {
-  const [activeTab, setActiveTab] = useState<'hand' | 'laws' | 'milestones'>('hand');
+  const [activeTab, setActiveTab] = useState<'hand' | 'laws' | 'milestones' | 'objective'>('hand');
   const [hasProposedTechnology, setHasProposedTechnology] = useState(false);
   
   // Reset quando cambia il turno
@@ -51,59 +52,98 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 p-3 sm:p-4 pb-6 sm:pb-8">
       <div className="max-w-2xl mx-auto">
         {/* Header con tabs */}
-        <div className="bg-gray-900 rounded-xl shadow-2xl p-4 sm:p-6 mb-4 border border-gray-700">
-          <div className="flex items-center gap-2 mb-3 sm:mb-4">
+        <div className="bg-gray-900 rounded-xl shadow-2xl p-3 sm:p-4 mb-4 border border-gray-700">
+          <div className="flex items-center gap-2 mb-3 border-b border-gray-700 pb-2">
             {activeTab === 'hand' ? (
               <Hand className="w-5 h-5 sm:w-6 sm:h-6 text-gray-100 flex-shrink-0" />
             ) : activeTab === 'laws' ? (
               <ScrollText className="w-5 h-5 sm:w-6 sm:h-6 text-gray-100 flex-shrink-0" />
-            ) : (
+            ) : activeTab === 'milestones' ? (
               <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-gray-100 flex-shrink-0" />
+            ) : (
+              <Target className="w-5 h-5 sm:w-6 sm:h-6 text-gray-100 flex-shrink-0" />
             )}
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-100">
-              {activeTab === 'hand' ? 'Le Tue Proposte' : activeTab === 'laws' ? 'Leggi Approvate' : 'I Tuoi Milestone'}
+            <h1 className="text-base sm:text-xl font-bold text-gray-100 truncate flex-1">
+              {activeTab === 'hand' ? 'Le Tue Proposte' : activeTab === 'laws' ? 'Leggi Approvate' : activeTab === 'milestones' ? 'I Tuoi Milestone' : 'Il Tuo Obiettivo'}
             </h1>
           </div>
           
-          {/* Tabs */}
-          <div className="flex gap-2 border-b border-gray-700">
+          {/* Tabs - Layout compatto per evitare overflow */}
+          <div className="grid grid-cols-4 gap-1 sm:gap-2">
             <button
               onClick={() => setActiveTab('hand')}
-              className={`flex-1 py-2 px-4 text-sm sm:text-base font-semibold rounded-t-lg transition-colors duration-200 ${
+              className={`py-2 px-1.5 sm:px-3 text-xs font-semibold rounded-lg transition-colors duration-200 min-w-0 ${
                 activeTab === 'hand'
-                  ? 'bg-gray-600 text-white border-b-2 border-gray-500'
+                  ? 'bg-gray-600 text-white'
                   : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800'
               }`}
             >
-              <div className="flex items-center justify-center gap-2">
-                <Hand className="w-4 h-4" />
-                <span>Proposte ({player.hand.length})</span>
+              <div className="flex flex-col items-center gap-1">
+                <Hand className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                <span className="text-[10px] sm:text-xs font-medium text-center leading-tight">
+                  <span className="hidden sm:inline">Proposte</span>
+                  <span className="sm:hidden">{player.hand.length}</span>
+                </span>
+                <span className="hidden sm:block text-[9px] opacity-75">
+                  ({player.hand.length})
+                </span>
               </div>
             </button>
             <button
               onClick={() => setActiveTab('laws')}
-              className={`flex-1 py-2 px-4 text-sm sm:text-base font-semibold rounded-t-lg transition-colors duration-200 ${
+              className={`py-2 px-1.5 sm:px-3 text-xs font-semibold rounded-lg transition-colors duration-200 min-w-0 ${
                 activeTab === 'laws'
-                  ? 'bg-gray-600 text-white border-b-2 border-gray-500'
+                  ? 'bg-gray-600 text-white'
                   : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800'
               }`}
             >
-              <div className="flex items-center justify-center gap-2">
-                <ScrollText className="w-4 h-4" />
-                <span>Leggi ({player.technologies.length}/5)</span>
+              <div className="flex flex-col items-center gap-1">
+                <ScrollText className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                <span className="text-[10px] sm:text-xs font-medium text-center leading-tight">
+                  <span className="hidden sm:inline">Leggi</span>
+                  <span className="sm:hidden">{player.technologies.length}</span>
+                </span>
+                <span className="hidden sm:block text-[9px] opacity-75">
+                  ({player.technologies.length}/5)
+                </span>
               </div>
             </button>
             <button
               onClick={() => setActiveTab('milestones')}
-              className={`flex-1 py-2 px-4 text-sm sm:text-base font-semibold rounded-t-lg transition-colors duration-200 ${
+              className={`py-2 px-1.5 sm:px-3 text-xs font-semibold rounded-lg transition-colors duration-200 min-w-0 ${
                 activeTab === 'milestones'
-                  ? 'bg-gray-600 text-white border-b-2 border-gray-500'
+                  ? 'bg-gray-600 text-white'
                   : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800'
               }`}
             >
-              <div className="flex items-center justify-center gap-2">
-                <Trophy className="w-4 h-4" />
-                <span>Milestone ({player.unlockedMilestones?.length || 0})</span>
+              <div className="flex flex-col items-center gap-1">
+                <Trophy className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                <span className="text-[10px] sm:text-xs font-medium text-center leading-tight">
+                  <span className="hidden sm:inline">Milestone</span>
+                  <span className="sm:hidden">{player.unlockedMilestones?.length || 0}</span>
+                </span>
+                <span className="hidden sm:block text-[9px] opacity-75">
+                  ({player.unlockedMilestones?.length || 0})
+                </span>
+              </div>
+            </button>
+            <button
+              onClick={() => setActiveTab('objective')}
+              className={`py-2 px-1.5 sm:px-3 text-xs font-semibold rounded-lg transition-colors duration-200 min-w-0 ${
+                activeTab === 'objective'
+                  ? 'bg-gray-600 text-white'
+                  : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800'
+              }`}
+            >
+              <div className="flex flex-col items-center gap-1">
+                <Target className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                <span className="text-[10px] sm:text-xs font-medium text-center leading-tight">
+                  <span className="hidden sm:inline">Obiettivo</span>
+                  <span className="sm:hidden">Target</span>
+                </span>
+                <span className="hidden sm:block text-[9px] opacity-75">
+                  Missione
+                </span>
               </div>
             </button>
           </div>
@@ -146,6 +186,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
                       }}
                       isSelectable={canProposeTechnology}
                       isInHand={true}
+                      showVotingEffects={true}
                     />
                   </div>
                 ))}
@@ -264,6 +305,98 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
                 );
               })
             )}
+          </div>
+        )}
+
+        {/* Contenuto tab Obiettivo */}
+        {activeTab === 'objective' && (
+          <div className="space-y-3 sm:space-y-4">
+            {!player.objectiveId ? (
+              <div className="bg-gray-900 rounded-xl shadow-2xl p-6 sm:p-8 text-center border border-gray-700">
+                <Target className="w-12 h-12 mx-auto mb-4 text-gray-500" />
+                <p className="text-gray-300 text-sm sm:text-base mb-2">Nessun obiettivo assegnato</p>
+                <p className="text-gray-400 text-xs sm:text-sm">Un obiettivo verrà assegnato all'inizio della partita</p>
+              </div>
+            ) : (() => {
+              const objective = Objectives.getObjectiveById(player.objectiveId);
+              if (!objective) return null;
+
+              const progressDetails = Objectives.getObjectiveProgressDetails(player, player.objectiveId);
+              
+              return (
+                <div className="bg-gray-900 rounded-xl shadow-2xl p-4 sm:p-6 border border-gray-700">
+                  <div className="mb-4 sm:mb-6">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Target className="w-6 h-6 sm:w-8 sm:h-8 text-gray-300" />
+                      <h2 className="text-lg sm:text-xl font-bold text-gray-100">
+                        {objective.title}
+                      </h2>
+                    </div>
+                    <p className="text-sm sm:text-base text-gray-300 leading-relaxed mb-4">
+                      {objective.description}
+                    </p>
+                    
+                    {/* Progresso complessivo */}
+                    <div className="bg-gray-800 rounded-lg p-3 sm:p-4 mb-4 border border-gray-700">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs sm:text-sm font-semibold text-gray-300">Progresso Complessivo</span>
+                        <span className={`text-sm sm:text-base font-bold ${
+                          progressDetails.completed ? 'text-green-400' : 'text-gray-100'
+                        }`}>
+                          {progressDetails.overallProgress}%
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-700 rounded-full h-3 sm:h-4">
+                        <div
+                          className={`h-3 sm:h-4 rounded-full transition-all duration-500 ${
+                            progressDetails.completed 
+                              ? 'bg-gradient-to-r from-green-500 to-green-400' 
+                              : 'bg-gradient-to-r from-gray-500 to-gray-400'
+                          }`}
+                          style={{ width: `${Math.min(100, progressDetails.overallProgress)}%` }}
+                        />
+                      </div>
+                      {progressDetails.completed && (
+                        <p className="text-xs sm:text-sm text-green-400 font-semibold mt-2 text-center">
+                          ✓ Obiettivo Raggiunto!
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Dettagli requisiti */}
+                    <div className="space-y-2 sm:space-y-3">
+                      <h3 className="text-sm sm:text-base font-semibold text-gray-200 mb-2">
+                        Requisiti:
+                      </h3>
+                      {progressDetails.details.map((detail, index) => (
+                        <div key={index} className="bg-gray-800 rounded-lg p-3 border border-gray-700">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs sm:text-sm font-semibold text-gray-300">
+                              {detail.requirement}
+                            </span>
+                            <span className={`text-xs sm:text-sm font-bold ${
+                              detail.progress >= 100 ? 'text-green-400' : 'text-gray-200'
+                            }`}>
+                              {detail.current} / {detail.target}
+                            </span>
+                          </div>
+                          <div className="w-full bg-gray-700 rounded-full h-2">
+                            <div
+                              className={`h-2 rounded-full transition-all duration-500 ${
+                                detail.progress >= 100 
+                                  ? 'bg-gradient-to-r from-green-500 to-green-400' 
+                                  : 'bg-gradient-to-r from-gray-500 to-gray-400'
+                              }`}
+                              style={{ width: `${Math.min(100, detail.progress)}%` }}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         )}
       </div>

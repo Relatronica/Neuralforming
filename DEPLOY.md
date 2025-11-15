@@ -17,11 +17,20 @@ Questa guida spiega come mettere online l'app Neuralforming usando **Netlify** p
 4. Seleziona il repository `Neuralforming`
 
 ### 2. Configurazione del Servizio
+
+**Opzione A: Usa il file `render.yaml` (Consigliato)**
+1. Durante la creazione del servizio, Render dovrebbe rilevare automaticamente il file `render.yaml`
+2. Se non lo rileva, puoi specificarlo manualmente nella configurazione
+
+**Opzione B: Configurazione Manuale**
 - **Name**: `neuralforming-server` (o un nome a tua scelta)
 - **Environment**: `Node`
-- **Build Command**: `cd server && npm install && npm run build`
-- **Start Command**: `cd server && npm start`
+- **Root Directory**: `server` ⚠️ IMPORTANTE: imposta questa opzione
+- **Build Command**: `npm install && npm run build`
+- **Start Command**: `npm start`
 - **Plan**: Scegli il piano gratuito (Free) o a pagamento
+
+⚠️ **ATTENZIONE**: Se non imposti correttamente la **Root Directory** su `server`, Render eseguirà i comandi dalla root del progetto e il deploy fallirà!
 
 ### 3. Variabili d'Ambiente
 Aggiungi queste variabili d'ambiente nella sezione **Environment**:
