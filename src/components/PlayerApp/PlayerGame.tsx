@@ -107,13 +107,28 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
   }
 
   // Attesa che il gioco inizi
-  if (!gameState || !roomInfo?.isGameStarted) {
+  // IMPORTANTE: Controlla solo roomInfo.isGameStarted, non gameState
+  // perché gameState potrebbe arrivare con un leggero ritardo dopo gameStarted
+  if (!roomInfo?.isGameStarted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
         <div className="bg-gray-900 rounded-xl shadow-2xl p-6 max-w-md w-full text-center border border-gray-700">
           <Users className="w-12 h-12 mx-auto mb-4 text-gray-400" />
           <h2 className="text-xl font-bold text-gray-100 mb-2">In attesa...</h2>
           <p className="text-gray-300">Il master sta avviando la partita...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Se il gioco è iniziato ma gameState non è ancora arrivato, mostra un messaggio di caricamento
+  if (!gameState) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
+        <div className="bg-gray-900 rounded-xl shadow-2xl p-6 max-w-md w-full text-center border border-gray-700">
+          <Loader2 className="w-12 h-12 mx-auto mb-4 text-gray-400 animate-spin" />
+          <h2 className="text-xl font-bold text-gray-100 mb-2">Caricamento partita...</h2>
+          <p className="text-gray-300">Il master sta sincronizzando lo stato del gioco...</p>
         </div>
       </div>
     );

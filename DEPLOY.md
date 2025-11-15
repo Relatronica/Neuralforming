@@ -26,7 +26,8 @@ Questa guida spiega come mettere online l'app Neuralforming usando **Netlify** p
 - **Name**: `neuralforming-server` (o un nome a tua scelta)
 - **Environment**: `Node`
 - **Root Directory**: `server` ⚠️ IMPORTANTE: imposta questa opzione
-- **Build Command**: `npm install && npm run build`
+- **Build Command**: `npm install --include dev && npm run build`
+  - ⚠️ `--include dev` è necessario perché Render imposta `NODE_ENV=production`, quindi npm non installa le devDependencies di default (necessarie per TypeScript)
 - **Start Command**: `npm start`
 - **Plan**: Scegli il piano gratuito (Free) o a pagamento
 

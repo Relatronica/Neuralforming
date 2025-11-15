@@ -30,7 +30,8 @@ Questo dice a Render di eseguire tutti i comandi dalla directory `server` invece
 
 Assicurati che i comandi siano impostati come segue (senza `cd server &&` perché Render usa già la root directory):
 
-- **Build Command**: `npm install && npm run build`
+- **Build Command**: `npm install --include dev && npm run build`
+  - `--include dev` assicura che le devDependencies (inclusi `@types/*`) vengano installate durante il build (necessario perché Render imposta NODE_ENV=production)
 - **Start Command**: `npm start`
 
 ### Step 4: Salva e Riavvia
@@ -54,6 +55,19 @@ Se vedi ancora errori, verifica che:
 - ✅ Root Directory sia impostato su `server` (non `/server` o `./server`)
 - ✅ I comandi non includano `cd server &&`
 - ✅ Il file `server/package.json` contenga lo script `start`
+
+## Problema 3: "Could not find a declaration file for module 'express'"
+
+Se vedi errori TypeScript che dicono che non trova i file di dichiarazione per i moduli (come `express`, `socket.io`, etc.), il problema è che le `devDependencies` (che contengono i tipi `@types/*`) non vengono installate durante il build.
+
+**Soluzione**: Assicurati che il Build Command includa `--include dev`:
+```
+npm install --include dev && npm run build
+```
+
+⚠️ **IMPORTANTE**: Render imposta `NODE_ENV=production` durante il build, quindi npm di default non installa le `devDependencies`. Devi esplicitamente includerle con `--include dev`.
+
+In alternativa, se Render continua a non installare le devDependencies, puoi spostare `@types/*` nelle `dependencies` invece che in `devDependencies` (anche se non è ideale per produzione).
 
 ## Note Importanti
 

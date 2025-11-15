@@ -7,7 +7,8 @@
 3. Configurazione:
    - **Name**: `neuralforming-server`
    - **Root Directory**: `server` ⚠️ IMPORTANTE: imposta questa opzione!
-   - **Build Command**: `npm install && npm run build`
+   - **Build Command**: `npm install --include dev && npm run build`
+     - ⚠️ `--include dev` è necessario per installare i tipi TypeScript
    - **Start Command**: `npm start`
    - **Plan**: Free
 
