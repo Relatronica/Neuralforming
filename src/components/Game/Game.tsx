@@ -341,14 +341,6 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
     }
   }, [currentPlayer, mode, sendAction, setGameState]);
 
-  const handleDrawDilemma = useCallback(() => {
-    if (mode === 'multiplayer') {
-      sendAction('drawDilemma', {});
-    } else {
-    setGameState(prev => GameEngine.drawDilemma(prev));
-    }
-  }, [mode, sendAction, setGameState]);
-
   const handleResolveDilemma = useCallback((option: DilemmaOption) => {
     if (!currentPlayer) return;
     if (mode === 'multiplayer') {

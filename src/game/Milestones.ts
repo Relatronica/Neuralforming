@@ -123,7 +123,7 @@ export function checkMilestones(player: PlayerState, unlockedMilestones: string[
  */
 export function applyMilestoneVotingBonus(
   approvalRate: number,
-  player: PlayerState,
+  _player: PlayerState,
   unlockedAbilities: MilestoneAbility[]
 ): number {
   let bonus = 0;
@@ -142,7 +142,7 @@ export function applyMilestoneVotingBonus(
  * Verifica se un giocatore è protetto da un evento globale
  */
 export function isPlayerProtectedFromEvent(
-  player: PlayerState,
+  _player: PlayerState,
   unlockedAbilities: MilestoneAbility[],
   eventId: string
 ): boolean {
@@ -159,7 +159,7 @@ export function isPlayerProtectedFromEvent(
  */
 export function calculateMilestonePointsBonus(
   technology: { techPoints: number; ethicsPoints?: number },
-  player: PlayerState,
+  _player: PlayerState,
   unlockedAbilities: MilestoneAbility[]
 ): number {
   const balanceAbility = unlockedAbilities.find(a => a.effect === 'double-points');

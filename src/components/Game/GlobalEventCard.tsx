@@ -1,6 +1,6 @@
 import React from 'react';
 import { GlobalEventInfo } from '../../game/types';
-import { AlertTriangle, TrendingUp, TrendingDown, Users } from 'lucide-react';
+import { AlertTriangle, TrendingUp, Users } from 'lucide-react';
 
 interface GlobalEventCardProps {
   event: GlobalEventInfo;

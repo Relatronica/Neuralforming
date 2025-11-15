@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { PlayerState } from '../../game/types';
+import { getPartyColor } from '../../game/partyColors';
 
 interface BoardGridProps {
   players: PlayerState[];
@@ -265,9 +266,13 @@ export const BoardGrid: React.FC<BoardGridProps> = ({ players, currentPlayerId }
             return (
               <div key={player.id} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className={`
-                    w-4 h-4 rounded-full border-2 ${playerColors[player.id] || 'bg-gray-500'}
-                  `} />
+                  <span 
+                    className="w-4 h-4 rounded-full border-2"
+                    style={{ 
+                      backgroundColor: getPartyColor(player.id, player.color),
+                      borderColor: getPartyColor(player.id, player.color)
+                    }}
+                  />
                   <span className="text-gray-700">{player.name}:</span>
                 </div>
                 <span className="text-gray-600 font-semibold">

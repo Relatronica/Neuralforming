@@ -1,11 +1,10 @@
-import { GameState, Dilemma, Technology, Consequence, DilemmaOption, PlayerState } from './types';
+import { GameState, Dilemma, Technology, Consequence, DilemmaOption, PlayerState, MilestoneUnlocked } from './types';
 import { Scoring } from './Scoring';
 import { TurnManager } from './TurnManager';
 import { conductParliamentVote, calculateVotingEffects } from './ParliamentVoting';
 import { checkGlobalEvents } from './GlobalEvents';
-import { checkMilestones, applyMilestoneVotingBonus, isPlayerProtectedFromEvent, calculateMilestonePointsBonus } from './Milestones';
+import { checkMilestones, applyMilestoneVotingBonus, calculateMilestonePointsBonus } from './Milestones';
 import { milestones } from './Milestones';
-import type { MilestoneAbility } from './Milestones';
 import dilemmasData from '../data/dilemmas.json';
 import technologiesData from '../data/technologies.json';
 import consequencesData from '../data/consequences.json';

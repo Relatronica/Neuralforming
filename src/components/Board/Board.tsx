@@ -9,7 +9,7 @@ interface BoardProps {
   currentPlayerId: string;
 }
 
-export const Board: React.FC<BoardProps> = ({ technologies, players, currentPlayerId }) => {
+export const Board: React.FC<BoardProps> = ({ players, currentPlayerId }) => {
   const currentPlayer = players.find(p => p.id === currentPlayerId);
   
   if (!currentPlayer) return null;

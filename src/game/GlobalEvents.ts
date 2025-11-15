@@ -1,4 +1,4 @@
-import { GameState, PlayerState } from './types';
+import { GameState } from './types';
 import { Scoring } from './Scoring';
 import { isPlayerProtectedFromEvent } from './Milestones';
 import { milestones } from './Milestones';

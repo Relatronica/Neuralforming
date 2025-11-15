@@ -1,8 +1,6 @@
 import React from 'react';
 import { PlayerState } from '../../game/types';
 import { Scoring } from '../../game/Scoring';
-import { getPartyColor } from '../../game/partyColors';
-import { milestones } from '../../game/Milestones';
 import { Bot, User, Trophy, Microscope, Scale, Brain, Award } from 'lucide-react';
 
 // Mappa icone a emoji
@@ -29,7 +27,6 @@ interface PlayerCardProps {
 
 export const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentPlayer, isWinner = false }) => {
   const balance = Scoring.calculateBalance(player);
-  const partyColor = getPartyColor(player.id, player.color);
   
   // Calcola il progresso verso la vittoria
   const neuralformingProgress = Math.min(100, Math.round((player.neuralformingPoints / 65) * 100));
@@ -45,9 +42,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentPlayer,
      balanceProgress * 0.15)
   );
 
-  // Calcola il colore di sfondo con opacità
-  const bgColor = `${partyColor}10`; // Opacità ridotta per un look più pulito
-  const borderColor = isCurrentPlayer ? partyColor : `${partyColor}60`;
+  // Calcola il colore di sfondo con opacità (non usato direttamente, ma mantenuto per riferimento)
 
   return (
     <div

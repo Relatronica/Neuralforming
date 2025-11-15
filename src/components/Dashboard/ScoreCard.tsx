@@ -7,7 +7,7 @@ interface ScoreCardProps {
   icon?: string;
 }
 
-export const ScoreCard: React.FC<ScoreCardProps> = ({ label, value, color, icon }) => {
+export const ScoreCard: React.FC<ScoreCardProps> = ({ label, value, icon }) => {
   return (
     <div className={`bg-gray-800 rounded-lg shadow-md p-4 border-l-4 border-gray-600`}>
       <div className="flex items-center justify-between">

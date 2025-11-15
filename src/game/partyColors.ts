@@ -1,4 +1,3 @@
-import { PlayerState } from './types';
 
 // Colori distintivi per ogni partito
 const partyColors: Record<string, string> = {
