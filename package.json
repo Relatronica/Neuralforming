@@ -13,6 +13,7 @@
     "d3": "^7.9.0",
     "d3-parliament-chart": "^0.0.8",
     "lucide-react": "^0.553.0",
+    "qrcode.react": "^4.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^7.9.6",

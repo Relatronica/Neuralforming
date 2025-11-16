@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useGameSocketContext } from '../../contexts/GameSocketContext';
 import { RoomInfo } from '../../hooks/useGameSocket';
 import { Users, Play, Copy, Check } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
+import { buildPlayerJoinUrl } from '../../utils/deeplink';
 
 interface RoomSetupProps {
   onGameStart: (roomId: string) => void;
@@ -25,6 +27,7 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
   const [playerColor, setPlayerColor] = useState(PARTY_COLORS[0].value);
   const [isMaster, setIsMaster] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
 
   // Connetti sempre (anche senza roomId per creare room)
   const socketContext = useGameSocketContext(); // Usa il context invece di creare una nuova istanza
@@ -173,6 +176,15 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
     }
   };
 
+  const joinUrl = roomId ? buildPlayerJoinUrl(roomId) : '';
+  const copyJoinUrl = () => {
+    if (joinUrl) {
+      navigator.clipboard.writeText(joinUrl);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    }
+  };
+
   const canStart = isMaster && roomInfo && roomInfo.players.length >= 2 && !roomInfo.isGameStarted;
 
   return (
@@ -273,6 +285,45 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
               <p className="text-xs text-gray-400 mt-1">
                 Gli altri giocatori possono unirsi usando questo ID
               </p>
+            </div>
+
+            {/* QR Join */}
+            <div className="border-t border-gray-700 pt-4">
+              <label className="block text-sm font-medium text-gray-300 mb-3">
+                Inquadra per entrare nella PWA giocatore
+              </label>
+              <div className="flex flex-col sm:flex-row items-center gap-4">
+                <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
+                  {joinUrl && (
+                    <QRCodeSVG
+                      value={joinUrl}
+                      size={200}
+                      bgColor="#1f2937"
+                      fgColor="#e5e7eb"
+                      includeMargin={true}
+                    />
+                  )}
+                </div>
+                <div className="flex-1 w-full">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={joinUrl}
+                      readOnly
+                      className="flex-1 px-4 py-2 border border-gray-600 rounded-lg bg-gray-800 font-mono text-sm text-gray-100"
+                    />
+                    <button
+                      onClick={copyJoinUrl}
+                      className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors flex items-center gap-2 text-gray-100"
+                    >
+                      {copiedLink ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                    </button>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1">
+                    Link diretto alla PWA giocatore con l'ID già compilato
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* Join form (se non master e non ancora unito) */}

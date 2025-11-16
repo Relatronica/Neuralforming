@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { 
   Landmark, 
   Check, 
@@ -10,6 +10,7 @@ import {
   Globe, 
   Flashlight 
 } from 'lucide-react';
+import { getQueryParam } from '../../utils/deeplink';
 
 interface PlayerLoginProps {
   onLogin: (roomId: string, playerName: string, playerColor: string, playerIcon: string) => void;
@@ -44,6 +45,14 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
   const [playerName, setPlayerName] = useState('');
   const [selectedColor, setSelectedColor] = useState(availableColors[0].value);
   const [selectedIcon, setSelectedIcon] = useState(availableIcons[0].value);
+
+  // Pre-compila l'ID stanza dai query param, se presente (?room=...)
+  useEffect(() => {
+    const qp = getQueryParam('room');
+    if (qp) {
+      setRoomId(qp);
+    }
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
