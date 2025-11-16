@@ -1,8 +1,8 @@
 [
   {
     "id": "protect-humanity",
-    "title": "IA Guardiana dell'Umanità",
-    "description": "Sviluppa un'IA che protegga l'umanità dai rischi esistenziali. La tua missione è creare un sistema che bilanci innovazione e sicurezza, privilegiando l'etica senza compromettere l'innovazione.",
+    "title": "Custode dell'Umanità",
+    "description": "Progetta un'IA sentinella capace di intercettare minacce esistenziali prima che emergano. Il tuo compito è forgiare un sistema che coniughi coraggio innovativo e responsabilità etica, proteggendo vite reali senza frenare il progresso.",
     "requirements": {
       "ethicsPoints": 55,
       "neuralformingPoints": 70,
@@ -14,7 +14,7 @@
   {
     "id": "tech-innovation",
     "title": "Pioniere Tecnologico",
-    "description": "Spingi l'innovazione tecnologica al massimo livello. La tua visione è un futuro guidato dalla tecnologia avanzata, dove l'IA raggiunge capacità straordinarie attraverso un progresso continuo.",
+    "description": "Schiudi la prossima frontiera dell'IA. Guida un'ondata di scoperte che trasformi prototipi audaci in strumenti rivoluzionari, dove ogni tecnologia sblocca nuove possibilità prima ritenute impossibili.",
     "requirements": {
       "techPoints": 60,
       "neuralformingPoints": 65,
@@ -25,8 +25,8 @@
   },
   {
     "id": "balanced-vision",
-    "title": "Visione Bilanciata",
-    "description": "Crea un'IA che rappresenti il perfetto equilibrio tra tecnologia ed etica. La tua filosofia è che solo attraverso un bilanciamento armonioso si può raggiungere il vero progresso.",
+    "title": "Equilibrio Lungimirante",
+    "description": "Doma la tensione tra potenza e principio. Costruisci un'IA che unisca rigore etico e spinta tecnologica in un equilibrio vivo, capace di reggere decisioni complesse nel mondo reale.",
     "requirements": {
       "techPoints": 50,
       "ethicsPoints": 50,
@@ -38,8 +38,8 @@
   },
   {
     "id": "neural-breakthrough",
-    "title": "Breakthrough Neuralforming",
-    "description": "Raggiungi il massimo livello di Neuralforming. La tua priorità è creare un sistema di IA così avanzato che rappresenti un vero salto quantico nell'intelligenza artificiale.",
+    "title": "Svolta Neuralforming",
+    "description": "Apri una breccia nel possibile. Porta il Neuralforming a una soglia di complessità inedita, dove l'IA non solo apprende: evolve, astrae e genera insight che ridefiniscono l'intero campo.",
     "requirements": {
       "neuralformingPoints": 80,
       "technologiesCount": 5
@@ -50,7 +50,7 @@
   {
     "id": "ethical-guardian",
     "title": "Guardiano Etico",
-    "description": "Metti l'etica al centro di tutto. La tua missione è garantire che l'IA sviluppata rispetti i valori umani fondamentali, anche a costo di rallentare il progresso tecnologico.",
+    "description": "Rendi l'etica il motore, non il freno. Definisci confini chiari e verificabili, assicurando che ogni scelta dell'IA sia allineata a valori umani non negoziabili, anche sotto pressione.",
     "requirements": {
       "ethicsPoints": 65,
       "neuralformingPoints": 60,
@@ -61,8 +61,8 @@
   },
   {
     "id": "tech-dominance",
-    "title": "Dominanza Tecnologica",
-    "description": "Costruisci un'IA superiore attraverso la pura potenza tecnologica. La tecnologia prima di tutto - questo è il tuo credo per raggiungere l'eccellenza.",
+    "title": "Egemone Tecnologico",
+    "description": "Spingi al limite l'arsenale tecnico. Aggrega stack avanzati, ottimizza ogni ciclo, supera ogni benchmark: un'IA affilata come un rasoio, progettata per primeggiare senza compromessi.",
     "requirements": {
       "techPoints": 70,
       "neuralformingPoints": 62,
@@ -74,7 +74,7 @@
   {
     "id": "sustainable-innovation",
     "title": "Innovazione Sostenibile",
-    "description": "Sviluppa tecnologie che siano sia innovative che responsabili. Il tuo approccio privilegia soluzioni che uniscano progresso e sostenibilità etica.",
+    "description": "Innova senza lasciare macerie. Progetta tecnologie che creino valore duraturo, riducano rischi sistemici e integrino salvaguardie etiche fin dall'architettura.",
     "requirements": {
       "techPoints": 45,
       "ethicsPoints": 50,
@@ -86,8 +86,8 @@
   },
   {
     "id": "neural-synergy",
-    "title": "Sinergia Neuralforming",
-    "description": "Raggiungi l'eccellenza attraverso la combinazione di tecnologie avanzate. Il tuo obiettivo è creare un ecosistema di IA interconnesso e potente.",
+    "title": "Sinergia Neurale",
+    "description": "Orchestra un ecosistema di modelli e moduli che si potenziano a vicenda. La potenza emerge dall'insieme: interoperabilità, composizione e feedback in tempo reale.",
     "requirements": {
       "neuralformingPoints": 75,
       "technologiesCount": 6,
@@ -99,7 +99,7 @@
   {
     "id": "ethical-pioneer",
     "title": "Pioniere Etico",
-    "description": "Stabilisci nuovi standard etici per l'IA. La tua leadership etica guiderà la società verso un futuro più giusto e responsabile.",
+    "description": "Scrivi le regole del gioco. Definisci standard etici adottabili e misurabili che altri vorranno seguire, trasformando la prudenza in vantaggio competitivo.",
     "requirements": {
       "ethicsPoints": 70,
       "techPoints": 40,
@@ -110,8 +110,8 @@
   },
   {
     "id": "rapid-advancement",
-    "title": "Progresso Rapido",
-    "description": "Sviluppa il maggior numero di tecnologie possibili in tempi brevi. La velocità è essenziale per mantenere il vantaggio competitivo.",
+    "title": "Accelerazione Inarrestabile",
+    "description": "Scala la curva dell'innovazione prima degli altri. Riduci il tempo dall'idea all'adozione, moltiplica i rilasci e converti la velocità in leadership di mercato.",
     "requirements": {
       "technologiesCount": 8,
       "neuralformingPoints": 60,

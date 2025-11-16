@@ -754,6 +754,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
               }
               players={gameState.players}
               currentPlayerId={gameState.currentPlayerId}
+              voteResult={gameState.lastVoteResult || null}
             />
           </div>
         </div>

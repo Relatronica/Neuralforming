@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { PlayerState } from '../../game/types';
+import { PlayerState, VoteResult } from '../../game/types';
 import * as d3 from 'd3';
 // @ts-ignore - d3-parliament-chart non ha types ufficiali
 import { parliamentChart } from 'd3-parliament-chart';
@@ -9,11 +9,15 @@ import { Bot, User } from 'lucide-react';
 interface ParliamentHemicycleProps {
   players: PlayerState[];
   currentPlayerId: string;
+  mode?: 'composition' | 'vote';
+  voteResult?: VoteResult | null;
 }
 
 export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({ 
   players, 
-  currentPlayerId 
+  currentPlayerId,
+  mode = 'composition',
+  voteResult = null,
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -28,7 +32,8 @@ export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
   const calculateSeats = (player: PlayerState): number => {
     const totalScore = player.neuralformingPoints + player.ethicsPoints;
     // Ridotto ulteriormente il divisore per avere molti più seggi e riempire le zone vuote
-    return Math.floor(totalScore / 2); // Ogni 2 punti = 1 seggio (più seggi per partito)
+    // Assegna almeno 1 seggio per garantire visibilità a tutti i giocatori
+    return Math.max(1, Math.floor(totalScore / 2)); // Ogni 2 punti = 1 seggio (minimo 1)
   };
 
   // Numero totale di seggi nel parlamento (fisso)
@@ -42,7 +47,7 @@ export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
     // Pulisci il contenuto precedente
     d3.select(svgRef.current).selectAll('*').remove();
 
-    // Calcola seggi occupati
+    // Calcola seggi occupati per modalità "composition"
     const occupiedSeats = playersWithColors.reduce((sum, player) => {
       return sum + calculateSeats(player);
     }, 0);
@@ -50,25 +55,96 @@ export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
     // Prepara dati aggregati per d3-parliament-chart
     const aggregatedData: Array<{ seats: number; color: string; playerId?: string }> = [];
 
-    // Aggiungi seggi per ogni partito
-    playersWithColors.forEach(player => {
-      const seats = calculateSeats(player);
-      if (seats > 0) {
+    if (mode === 'composition' || !voteResult) {
+      // Aggiungi seggi per ogni partito
+      playersWithColors.forEach(player => {
+        const seats = calculateSeats(player);
+        if (seats > 0) {
+          aggregatedData.push({ 
+            seats,
+            color: player.color,
+            playerId: player.id 
+          });
+        }
+      });
+    } else {
+      // Modalità "vote": ripartisci i seggi tra vincitori e sconfitti
+      const approval = voteResult.approvalRate; // 0..1
+      const isApproved = approval >= 0.5;
+      const winnersIds = isApproved ? voteResult.supporters : voteResult.opponents;
+      let losersIds = isApproved ? voteResult.opponents : voteResult.supporters;
+
+      // Includi eventuali astenuti nel gruppo perdente per garantire visibilità a tutti
+      const allIds = new Set(playersWithColors.map(p => p.id));
+      const knownIds = new Set([...winnersIds, ...losersIds]);
+      const abstainers = [...allIds].filter(id => !knownIds.has(id));
+      if (abstainers.length > 0) {
+        losersIds = [...losersIds, ...abstainers];
+      }
+
+      const winners = playersWithColors.filter(p => winnersIds.includes(p.id));
+      const losers = playersWithColors.filter(p => losersIds.includes(p.id));
+
+      const winnersSeatsTotal = Math.round(totalParliamentSeats * (isApproved ? approval : (1 - approval)));
+      const losersSeatsTotal = Math.max(0, totalParliamentSeats - winnersSeatsTotal);
+
+      const distributeSeatsEqually = (count: number, group: typeof playersWithColors) => {
+        if (group.length === 0 || count <= 0) return new Map<string, number>();
+        // Se possibile, assegna almeno 1 seggio a ciascun membro del gruppo
+        const ensureAtLeastOne = count >= group.length;
+        const base = ensureAtLeastOne ? Math.floor((count - group.length) / group.length) + 1 : 0;
+        let remainder = ensureAtLeastOne ? (count - group.length) - (base - 1) * group.length : count;
+        const map = new Map<string, number>();
+        if (ensureAtLeastOne) {
+          group.forEach((p) => {
+            const extra = remainder > 0 ? 1 : 0;
+            map.set(p.id, base + extra);
+            if (remainder > 0) remainder -= 1;
+          });
+        } else {
+          // Se i seggi sono meno dei membri, assegna 1 ai primi "count" e 0 agli altri (inevitabile per conservare il totale)
+          group.forEach((p, idx) => {
+            const seats = idx < count ? 1 : 0;
+            map.set(p.id, seats);
+          });
+        }
+        return map;
+      };
+
+      const winnersSeatsMap = distributeSeatsEqually(winnersSeatsTotal, winners);
+      const losersSeatsMap = distributeSeatsEqually(losersSeatsTotal, losers);
+
+      winners.forEach(player => {
+        const seats = winnersSeatsMap.get(player.id) || 0;
+        if (seats > 0) {
+          aggregatedData.push({
+            seats,
+            color: player.color,
+            playerId: player.id,
+          });
+        }
+      });
+      losers.forEach(player => {
+        const seats = losersSeatsMap.get(player.id) || 0;
+        if (seats > 0) {
+          aggregatedData.push({
+            seats,
+            color: player.color,
+            playerId: player.id,
+          });
+        }
+      });
+    }
+
+    // Aggiungi seggi vuoti (grigi scuri per dark mode) solo in modalità "composition"
+    if (mode === 'composition' || !voteResult) {
+      const emptySeats = totalParliamentSeats - occupiedSeats;
+      if (emptySeats > 0) {
         aggregatedData.push({ 
-          seats,
-          color: player.color,
-          playerId: player.id 
+          seats: emptySeats, 
+          color: '#374151' // gray-700 per dark mode
         });
       }
-    });
-
-    // Aggiungi seggi vuoti (grigi scuri per dark mode)
-    const emptySeats = totalParliamentSeats - occupiedSeats;
-    if (emptySeats > 0) {
-      aggregatedData.push({ 
-        seats: emptySeats, 
-        color: '#374151' // gray-700 per dark mode
-      });
     }
 
     // Ottieni dimensioni del container
@@ -145,7 +221,7 @@ export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
         });
     }, 0);
 
-  }, [players, currentPlayerId, playersWithColors]);
+  }, [players, currentPlayerId, playersWithColors, mode, voteResult]);
 
   // Raggruppa seggi per partito per la legenda
   const seatsByParty = playersWithColors.map(player => ({
@@ -171,48 +247,117 @@ export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
         />
       </div>
 
-      {/* Legenda partiti */}
-      <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
-        <div className="flex items-center justify-between mb-2">
-          <h4 className="text-xs font-bold text-gray-100">Composizione Parlamentare</h4>
-          <span className="text-[10px] text-gray-400">
-            {occupiedSeats}/{totalParliamentSeats} seggi occupati
-          </span>
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          {seatsByParty.map(({ player, seats, color }) => {
-            const isCurrent = player.id === currentPlayerId;
-            return (
-              <div
-                key={player.id}
-                className={`
-                  flex items-center gap-2 p-1.5 rounded text-xs border
-                  ${isCurrent ? 'bg-gray-700 border-gray-600' : 'bg-gray-800 border-gray-700'}
-                `}
-              >
+      {/* Legenda */}
+      {mode === 'composition' || !voteResult ? (
+        <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-xs font-bold text-gray-100">Composizione Parlamentare</h4>
+            <span className="text-[10px] text-gray-400">
+              {occupiedSeats}/{totalParliamentSeats} seggi occupati
+            </span>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            {seatsByParty.map(({ player, seats, color }) => {
+              const isCurrent = player.id === currentPlayerId;
+              return (
                 <div
-                  className="w-4 h-4 rounded-full border-2 border-gray-700 shadow-sm"
-                  style={{ backgroundColor: color }}
-                />
-                      <div className="flex items-center gap-1.5 font-semibold text-gray-100 flex-1">
-                        {player.isAI ? (
-                          <Bot className="w-3 h-3" />
-                        ) : (
-                          <User className="w-3 h-3" />
-                        )}
-                        <span>{player.name}</span>
-                      </div>
-                <span className="text-gray-300 font-bold">{seats}</span>
-                {isCurrent && (
-                  <span className="text-[10px] bg-gray-600 text-gray-100 px-1.5 py-0.5 rounded font-bold">
-                    TU
-                  </span>
-                )}
-              </div>
-            );
-          })}
+                  key={player.id}
+                  className={`
+                    flex items-center gap-2 p-1.5 rounded text-xs border
+                    ${isCurrent ? 'bg-gray-700 border-gray-600' : 'bg-gray-800 border-gray-700'}
+                  `}
+                >
+                  <div
+                    className="w-4 h-4 rounded-full border-2 border-gray-700 shadow-sm"
+                    style={{ backgroundColor: color }}
+                  />
+                  <div className="flex items-center gap-1.5 font-semibold text-gray-100 flex-1">
+                    {player.isAI ? (
+                      <Bot className="w-3 h-3" />
+                    ) : (
+                      <User className="w-3 h-3" />
+                    )}
+                    <span>{player.name}</span>
+                  </div>
+                  <span className="text-gray-300 font-bold">{seats}</span>
+                  {isCurrent && (
+                    <span className="text-[10px] bg-gray-600 text-gray-100 px-1.5 py-0.5 rounded font-bold">
+                      TU
+                    </span>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-xs font-bold text-gray-100">Esito Votazione</h4>
+            <span className="text-[10px] text-gray-400">
+              {Math.round((voteResult.approvalRate || 0) * 100)}% favorevoli
+            </span>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            {playersWithColors
+              .filter(p => voteResult.supporters.includes(p.id))
+              .map(player => {
+                const isCurrent = player.id === currentPlayerId;
+                return (
+                  <div
+                    key={player.id}
+                    className={`
+                      flex items-center gap-2 p-1.5 rounded text-xs border
+                      ${isCurrent ? 'bg-gray-700 border-gray-600' : 'bg-gray-800 border-gray-700'}
+                    `}
+                  >
+                    <div
+                      className="w-4 h-4 rounded-full border-2 border-gray-700 shadow-sm"
+                      style={{ backgroundColor: player.color }}
+                    />
+                    <div className="flex items-center gap-1.5 font-semibold text-gray-100 flex-1">
+                      {player.isAI ? (
+                        <Bot className="w-3 h-3" />
+                      ) : (
+                        <User className="w-3 h-3" />
+                      )}
+                      <span>{player.name}</span>
+                    </div>
+                    <span className="text-gray-300">Sì</span>
+                  </div>
+                );
+              })}
+            {playersWithColors
+              .filter(p => voteResult.opponents.includes(p.id))
+              .map(player => {
+                const isCurrent = player.id === currentPlayerId;
+                return (
+                  <div
+                    key={player.id}
+                    className={`
+                      flex items-center gap-2 p-1.5 rounded text-xs border
+                      ${isCurrent ? 'bg-gray-700 border-gray-600' : 'bg-gray-800 border-gray-700'}
+                    `}
+                  >
+                    <div
+                      className="w-4 h-4 rounded-full border-2 border-gray-700 shadow-sm"
+                      style={{ backgroundColor: player.color }}
+                    />
+                    <div className="flex items-center gap-1.5 font-semibold text-gray-100 flex-1">
+                      {player.isAI ? (
+                        <Bot className="w-3 h-3" />
+                      ) : (
+                        <User className="w-3 h-3" />
+                      )}
+                      <span>{player.name}</span>
+                    </div>
+                    <span className="text-gray-300">No</span>
+                  </div>
+                );
+              })}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Technology, PlayerState } from '../../game/types';
+import { Technology, PlayerState, VoteResult } from '../../game/types';
 import { ParliamentHemicycle } from './ParliamentHemicycle';
 import { Landmark } from 'lucide-react';
 
@@ -7,9 +7,10 @@ interface BoardProps {
   technologies: Technology[];
   players: PlayerState[];
   currentPlayerId: string;
+  voteResult?: VoteResult | null;
 }
 
-export const Board: React.FC<BoardProps> = ({ players, currentPlayerId }) => {
+export const Board: React.FC<BoardProps> = ({ players, currentPlayerId, voteResult = null }) => {
   const currentPlayer = players.find(p => p.id === currentPlayerId);
   
   if (!currentPlayer) return null;
@@ -34,6 +35,8 @@ export const Board: React.FC<BoardProps> = ({ players, currentPlayerId }) => {
         <ParliamentHemicycle 
           players={players}
           currentPlayerId={currentPlayerId}
+          mode={voteResult ? 'vote' : 'composition'}
+          voteResult={voteResult || undefined}
         />
       </div>
 
