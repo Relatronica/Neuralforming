@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { SocietyNews } from '../../game/types';
 import { Newspaper, TrendingUp, AlertTriangle, Sparkles, Zap } from 'lucide-react';
 
@@ -8,6 +8,21 @@ interface NewsCardProps {
 }
 
 export const NewsCard: React.FC<NewsCardProps> = ({ news, onDismiss }) => {
+  const [timeLeft, setTimeLeft] = useState(20);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft((prevTime) => {
+        if (prevTime <= 1) {
+          onDismiss();
+          return 0;
+        }
+        return prevTime - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [onDismiss]);
   // Determina lo stile in base alla categoria
   const getNewsStyle = (category: string) => {
     switch (category) {
@@ -102,12 +117,17 @@ export const NewsCard: React.FC<NewsCardProps> = ({ news, onDismiss }) => {
                 {news.title}
               </h3>
             </div>
-            <button
-              onClick={onDismiss}
-              className={`${style.text} hover:opacity-70 hover:bg-gray-700 rounded-full p-1 sm:p-2 transition-all duration-200 text-base sm:text-lg font-bold flex-shrink-0`}
-            >
-              ✕
-            </button>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <div className={`text-xs ${style.text} opacity-70 bg-gray-700 px-2 py-1 rounded-full`}>
+                {timeLeft}s
+              </div>
+              <button
+                onClick={onDismiss}
+                className={`${style.text} hover:opacity-70 hover:bg-gray-700 rounded-full p-1 sm:p-2 transition-all duration-200 text-base sm:text-lg font-bold`}
+              >
+                ✕
+              </button>
+            </div>
           </div>
           <p className={`${style.text} text-sm sm:text-base leading-relaxed mb-3 break-words`}>
             {news.description}

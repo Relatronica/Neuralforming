@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { GlobalEventInfo } from '../../game/types';
 import { AlertTriangle, TrendingUp, Users } from 'lucide-react';
 
@@ -8,6 +8,21 @@ interface GlobalEventCardProps {
 }
 
 export const GlobalEventCard: React.FC<GlobalEventCardProps> = ({ event, onDismiss }) => {
+  const [timeLeft, setTimeLeft] = useState(20);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft((prevTime) => {
+        if (prevTime <= 1) {
+          onDismiss();
+          return 0;
+        }
+        return prevTime - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [onDismiss]);
   // Determina lo stile in base al tipo di evento
   const getEventStyle = (eventId: string) => {
     if (eventId.includes('crisis')) {
@@ -49,12 +64,17 @@ export const GlobalEventCard: React.FC<GlobalEventCardProps> = ({ event, onDismi
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between mb-3 gap-2">
             <h3 className={`text-xl sm:text-2xl font-bold ${style.text} break-words flex-1`}>{event.title}</h3>
-            <button
-              onClick={onDismiss}
-              className={`${style.text} hover:opacity-70 hover:bg-gray-700 rounded-full p-2 transition-all duration-200 text-lg sm:text-xl font-bold flex-shrink-0`}
-            >
-              ✕
-            </button>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <div className={`text-xs ${style.text} opacity-70 bg-gray-700 px-2 py-1 rounded-full`}>
+                {timeLeft}s
+              </div>
+              <button
+                onClick={onDismiss}
+                className={`${style.text} hover:opacity-70 hover:bg-gray-700 rounded-full p-2 transition-all duration-200 text-lg sm:text-xl font-bold`}
+              >
+                ✕
+              </button>
+            </div>
           </div>
           <p className={`${style.text} text-sm sm:text-base leading-relaxed mb-4 break-words`}>{event.description}</p>
           <div className={`mt-4 pt-4 border-t-2 ${style.border} bg-gray-700 bg-opacity-50 rounded-lg p-3`}>

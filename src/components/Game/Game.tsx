@@ -927,7 +927,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
             
             {/* Mostra risultato votazione dopo aver giocato una tecnologia */}
             {(() => {
-              const shouldShowVoteResult = gameState.lastVoteResult && gameState.currentPhase === 'dilemma';
+              const shouldShowVoteResult = gameState.lastVoteResult !== null;
               return shouldShowVoteResult && gameState.lastVoteResult ? (
                 <div className="mb-2">
                   <VotingResult
@@ -1077,11 +1077,6 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
               currentPlayerId={gameState.currentPlayerId}
               winnerId={gameState.winnerId}
             />
-            <div className="mt-2 bg-gray-800 rounded p-2 border border-gray-700">
-              <p className="text-[10px] text-gray-300 mb-0.5">
-                <strong className="text-gray-100">Obiettivo:</strong> 65+ Neuralforming, 45+ Etica, 5+ Tecnologie, Bilanciamento ≥0.5
-              </p>
-            </div>
           </div>
         </div>
       </div>

@@ -84,9 +84,9 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentPlayer,
 
       {/* Barre di Progresso - solo visuali, numeri su hover */}
       <div className="space-y-1.5 mb-2">
-        <div 
+        <div
           className="group relative"
-          title={`Tech: ${player.techPoints}/50`}
+          title={`Tech: ${Math.round((player.techPoints / 50) * 100)}%`}
         >
           <div className="flex items-center justify-between mb-0.5">
             <div className="flex items-center gap-1">
@@ -94,7 +94,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentPlayer,
               <span className="text-[10px] text-gray-400">Tech</span>
             </div>
             <span className="text-[10px] font-bold text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity">
-              {player.techPoints}/50
+              {Math.round((player.techPoints / 50) * 100)}%
             </span>
           </div>
           <div className="w-full bg-gray-700 rounded-full h-1.5">
@@ -104,9 +104,9 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentPlayer,
             />
           </div>
         </div>
-        <div 
+        <div
           className="group relative"
-          title={`Etica: ${player.ethicsPoints}/45`}
+          title={`Etica: ${Math.round((player.ethicsPoints / 45) * 100)}%`}
         >
           <div className="flex items-center justify-between mb-0.5">
             <div className="flex items-center gap-1">
@@ -114,7 +114,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentPlayer,
               <span className="text-[10px] text-gray-400">Etica</span>
             </div>
             <span className="text-[10px] font-bold text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity">
-              {player.ethicsPoints}/45
+              {Math.round((player.ethicsPoints / 45) * 100)}%
             </span>
           </div>
           <div className="w-full bg-gray-700 rounded-full h-1.5">
@@ -124,9 +124,9 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentPlayer,
             />
           </div>
         </div>
-        <div 
+        <div
           className="group relative"
-          title={`Neural: ${player.neuralformingPoints}`}
+          title={`Neural: ${Math.round((player.neuralformingPoints / 65) * 100)}%`}
         >
           <div className="flex items-center justify-between mb-0.5">
             <div className="flex items-center gap-1">
@@ -134,7 +134,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentPlayer,
               <span className="text-[10px] text-gray-400">Neural</span>
             </div>
             <span className="text-[10px] font-bold text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity">
-              {player.neuralformingPoints}
+              {Math.round((player.neuralformingPoints / 65) * 100)}%
             </span>
           </div>
           <div className="w-full bg-gray-700 rounded-full h-1.5">

@@ -32,10 +32,10 @@ export const Board: React.FC<BoardProps> = ({ players, currentPlayerId, voteResu
           <Landmark className="w-3 h-3 text-gray-300" />
           <h3 className="text-[10px] font-bold text-gray-100">Parlamento</h3>
         </div>
-        <ParliamentHemicycle 
+        <ParliamentHemicycle
           players={players}
           currentPlayerId={currentPlayerId}
-          mode={voteResult ? 'vote' : 'composition'}
+          mode={voteResult ? 'vote' : undefined}
           voteResult={voteResult || undefined}
         />
       </div>

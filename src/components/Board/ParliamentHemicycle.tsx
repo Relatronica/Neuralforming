@@ -9,14 +9,14 @@ import { Bot, User } from 'lucide-react';
 interface ParliamentHemicycleProps {
   players: PlayerState[];
   currentPlayerId: string;
-  mode?: 'composition' | 'vote';
+  mode?: 'composition' | 'vote' | undefined;
   voteResult?: VoteResult | null;
 }
 
-export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({ 
-  players, 
+export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
+  players,
   currentPlayerId,
-  mode = 'composition',
+  mode,
   voteResult = null,
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
@@ -55,19 +55,19 @@ export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
     // Prepara dati aggregati per d3-parliament-chart
     const aggregatedData: Array<{ seats: number; color: string; playerId?: string }> = [];
 
-    if (mode === 'composition' || !voteResult) {
-      // Aggiungi seggi per ogni partito
+    if (mode === 'composition') {
+      // Aggiungi seggi per ogni partito basati sui punteggi
       playersWithColors.forEach(player => {
         const seats = calculateSeats(player);
         if (seats > 0) {
-          aggregatedData.push({ 
+          aggregatedData.push({
             seats,
             color: player.color,
-            playerId: player.id 
+            playerId: player.id
           });
         }
       });
-    } else {
+    } else if (voteResult) {
       // Modalità "vote": ripartisci i seggi tra vincitori e sconfitti
       const approval = voteResult.approvalRate; // 0..1
       const isApproved = approval >= 0.5;
@@ -89,25 +89,29 @@ export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
       const losersSeatsTotal = Math.max(0, totalParliamentSeats - winnersSeatsTotal);
 
       const distributeSeatsEqually = (count: number, group: typeof playersWithColors) => {
-        if (group.length === 0 || count <= 0) return new Map<string, number>();
-        // Se possibile, assegna almeno 1 seggio a ciascun membro del gruppo
-        const ensureAtLeastOne = count >= group.length;
-        const base = ensureAtLeastOne ? Math.floor((count - group.length) / group.length) + 1 : 0;
-        let remainder = ensureAtLeastOne ? (count - group.length) - (base - 1) * group.length : count;
         const map = new Map<string, number>();
-        if (ensureAtLeastOne) {
-          group.forEach((p) => {
-            const extra = remainder > 0 ? 1 : 0;
-            map.set(p.id, base + extra);
-            if (remainder > 0) remainder -= 1;
-          });
-        } else {
-          // Se i seggi sono meno dei membri, assegna 1 ai primi "count" e 0 agli altri (inevitabile per conservare il totale)
+
+        if (group.length === 0 || count <= 0) {
+          group.forEach(p => map.set(p.id, 0));
+          return map;
+        }
+
+        if (count >= group.length) {
+          // Assegna almeno 1 seggio a ciascuno, poi distribuisci il resto equamente
+          const baseSeats = Math.floor(count / group.length);
+          const remainder = count % group.length;
+
           group.forEach((p, idx) => {
-            const seats = idx < count ? 1 : 0;
+            const seats = baseSeats + (idx < remainder ? 1 : 0);
             map.set(p.id, seats);
           });
+        } else {
+          // Se i seggi sono meno dei membri, assegna 1 ai primi "count" e 0 agli altri
+          group.forEach((p, idx) => {
+            map.set(p.id, idx < count ? 1 : 0);
+          });
         }
+
         return map;
       };
 
@@ -134,14 +138,20 @@ export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
           });
         }
       });
+    } else {
+      // Visualizzazione di default: tutti i seggi sono vuoti (non assegnati)
+      aggregatedData.push({
+        seats: totalParliamentSeats,
+        color: '#374151' // gray-700 per dark mode
+      });
     }
 
     // Aggiungi seggi vuoti (grigi scuri per dark mode) solo in modalità "composition"
-    if (mode === 'composition' || !voteResult) {
+    if (mode === 'composition') {
       const emptySeats = totalParliamentSeats - occupiedSeats;
       if (emptySeats > 0) {
-        aggregatedData.push({ 
-          seats: emptySeats, 
+        aggregatedData.push({
+          seats: emptySeats,
           color: '#374151' // gray-700 per dark mode
         });
       }
@@ -207,19 +217,21 @@ export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
     // Chiama il chart sul gruppo usando .call()
     g.call(chart);
 
-    // Aggiungi interattività: evidenzia i seggi del giocatore corrente
-    setTimeout(() => {
-      g.selectAll('circle')
-        .each(function(_d: any, i: number) {
-          const seat = seatData[i];
-          if (seat && seat.playerId === currentPlayerId) {
-            d3.select(this)
-              .attr('stroke', '#fbbf24')
-              .attr('stroke-width', '2')
-              .attr('r', 5); // Leggermente più grande
-          }
-        });
-    }, 0);
+    // Aggiungi interattività: evidenzia i seggi del giocatore corrente solo quando non c'è votazione
+    if (!voteResult) {
+      setTimeout(() => {
+        g.selectAll('circle')
+          .each(function(_d: any, i: number) {
+            const seat = seatData[i];
+            if (seat && seat.playerId === currentPlayerId) {
+              d3.select(this)
+                .attr('stroke', '#fbbf24')
+                .attr('stroke-width', '2')
+                .attr('r', 5); // Leggermente più grande
+            }
+          });
+      }, 0);
+    }
 
   }, [players, currentPlayerId, playersWithColors, mode, voteResult]);
 
@@ -248,7 +260,7 @@ export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
       </div>
 
       {/* Legenda */}
-      {mode === 'composition' || !voteResult ? (
+      {mode === 'composition' ? (
         <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
           <div className="flex items-center justify-between mb-2">
             <h4 className="text-xs font-bold text-gray-100">Composizione Parlamentare</h4>
@@ -290,7 +302,7 @@ export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
             })}
           </div>
         </div>
-      ) : (
+      ) : voteResult ? (
         <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
           <div className="flex items-center justify-between mb-2">
             <h4 className="text-xs font-bold text-gray-100">Esito Votazione</h4>
@@ -355,6 +367,18 @@ export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
                   </div>
                 );
               })}
+          </div>
+        </div>
+      ) : (
+        <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-xs font-bold text-gray-100">Emiciclo Parlamentare</h4>
+            <span className="text-[10px] text-gray-400">
+              {totalParliamentSeats} seggi disponibili
+            </span>
+          </div>
+          <div className="text-center text-gray-400 text-xs py-4">
+            I seggi non sono ancora stati assegnati
           </div>
         </div>
       )}

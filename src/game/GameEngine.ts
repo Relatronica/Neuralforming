@@ -265,7 +265,31 @@ export class GameEngine {
     };
 
     let updatedPlayer = Scoring.addPoints(player, finalPoints);
-    
+
+    // Assegna punteggi ai votanti che hanno votato a favore (solo se la legge è stata approvata)
+    let updatedState = gameState;
+    if (realVotes) {
+      // Calcola i punti per i votanti (25% dei punti base)
+      const voterPoints = {
+        techPoints: Math.floor(basePoints.techPoints * 0.25),
+        ethicsPoints: Math.floor((basePoints.ethicsPoints || 0) * 0.25),
+        neuralformingPoints: Math.floor(basePoints.neuralformingPoints * 0.25),
+      };
+
+      // Assegna punti a tutti i votanti che hanno votato sì (escludendo il proponente)
+      for (const [voterId, vote] of realVotes.entries()) {
+        if (vote && voterId !== playerId && voterPoints.techPoints > 0) { // Solo votanti sì, non il proponente
+          const voter = this.getPlayer(updatedState, voterId);
+          if (voter && !voter.isAI) { // Solo giocatori umani ricevono punti dai voti
+            const updatedVoter = Scoring.addPoints(voter, voterPoints);
+            updatedState = this.updatePlayer(updatedState, voterId, updatedVoter);
+
+            console.log(`🎯 Voter ${voter.name} received points for supporting the proposal:`, voterPoints);
+          }
+        }
+      }
+    }
+
     // Verifica milestone raggiunti dopo aver aggiunto punti
     const newMilestones = checkMilestones(updatedPlayer, updatedPlayer.unlockedMilestones);
     let newlyUnlocked: MilestoneUnlocked[] = [];
@@ -284,7 +308,7 @@ export class GameEngine {
     // Reset del risultato della votazione precedente quando si passa al dilemma
     // Lo salviamo temporaneamente qui, poi lo resettiamo dopo aver mostrato il messaggio
     const newState = this.updatePlayer({
-      ...gameState,
+      ...updatedState,
       // Salva il risultato della votazione nello stato
       lastVoteResult: voteResult,
       lastVoteMessage: votingEffects.message,

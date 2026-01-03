@@ -18,20 +18,20 @@ export const Dashboard: React.FC<DashboardProps> = ({ player, turn }) => {
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <ScoreCard
-          label="Punti Tecnologia"
-          value={player.techPoints}
+          label="Tecnologia %"
+          value={Math.round((player.techPoints / 50) * 100)}
           color="border-gray-600"
           icon="🔬"
         />
         <ScoreCard
-          label="Punti Etica"
-          value={player.ethicsPoints}
+          label="Etica %"
+          value={Math.round((player.ethicsPoints / 45) * 100)}
           color="border-gray-600"
           icon="⚖️"
         />
         <ScoreCard
-          label="Neuralforming"
-          value={player.neuralformingPoints}
+          label="Neuralforming %"
+          value={Math.round((player.neuralformingPoints / 65) * 100)}
           color="border-gray-600"
           icon="🧠"
         />
