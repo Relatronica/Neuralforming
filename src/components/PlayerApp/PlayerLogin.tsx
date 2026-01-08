@@ -8,9 +8,11 @@ import {
   Zap, 
   Crown, 
   Globe, 
-  Flashlight 
+  Flashlight,
+  QrCode
 } from 'lucide-react';
-import { getQueryParam } from '../../utils/deeplink';
+import { getQueryParam, extractRoomId } from '../../utils/deeplink';
+import { QRCodeScanner } from './QRCodeScanner';
 
 interface PlayerLoginProps {
   onLogin: (roomId: string, playerName: string, playerColor: string, playerIcon: string) => void;
@@ -46,6 +48,7 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
   const [selectedColor, setSelectedColor] = useState(availableColors[0].value);
   const [selectedIcon, setSelectedIcon] = useState(availableIcons[0].value);
   const [nameError, setNameError] = useState<string | null>(null);
+  const [showScanner, setShowScanner] = useState(false);
 
   // Pre-compila l'ID stanza dai query param, se presente (?room=...)
   useEffect(() => {
@@ -111,9 +114,43 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (roomId.trim() && playerName.trim()) {
-      onLogin(roomId.trim(), playerName.trim(), selectedColor, selectedIcon);
+    const extractedRoomId = extractRoomId(roomId);
+    if (extractedRoomId && playerName.trim()) {
+      onLogin(extractedRoomId, playerName.trim(), selectedColor, selectedIcon);
     }
+  };
+
+  const handleQRScanSuccess = (decodedText: string) => {
+    console.log('📷 QR Code scanned:', decodedText);
+    const extractedRoomId = extractRoomId(decodedText);
+    if (extractedRoomId) {
+      setRoomId(extractedRoomId);
+      setShowScanner(false);
+      // Focus sul campo nome per permettere all'utente di inserire il nome
+      setTimeout(() => {
+        const nameInput = document.querySelector('input[type="text"][placeholder*="nome"]') as HTMLInputElement;
+        if (nameInput) {
+          nameInput.focus();
+        }
+      }, 100);
+    } else {
+      console.error('❌ Could not extract roomId from QR code:', decodedText);
+      setShowScanner(false);
+      // Mostra un messaggio di errore
+      setNameError('QR code non valido. Assicurati di scansionare il QR code della partita.');
+    }
+  };
+
+  const handleNewGame = () => {
+    // Pulisci tutto e resetta il form
+    setRoomId('');
+    setPlayerName('');
+    setSelectedColor(availableColors[0].value);
+    setSelectedIcon(availableIcons[0].value);
+    setNameError(null);
+    // Rimuovi anche la sessione salvata
+    localStorage.removeItem('neuralforming_player_session');
+    console.log('🆕 New game: session cleared');
   };
 
   return (
@@ -128,6 +165,27 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
           Accedi alla partita con il tuo nome e l'ID della partita
         </p>
 
+        {/* Pulsante Scansiona QR Code */}
+        <div className="mb-4">
+          <button
+            type="button"
+            onClick={() => setShowScanner(true)}
+            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+          >
+            <QrCode className="w-5 h-5" />
+            Scansiona QR Code
+          </button>
+        </div>
+
+        <div className="relative mb-4">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-600"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-gray-900 text-gray-400">oppure</span>
+          </div>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -136,8 +194,11 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
             <input
               type="text"
               value={roomId}
-              onChange={(e) => setRoomId(e.target.value)}
-              placeholder="Incolla l'ID della partita"
+              onChange={(e) => {
+                setRoomId(e.target.value);
+                setNameError(null); // Pulisci errori quando l'utente modifica
+              }}
+              placeholder="Inserisci ID partita o incolla URL completo"
               className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent font-mono text-sm text-gray-100 placeholder-gray-500"
               required
             />
@@ -231,6 +292,28 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
             Accedi alla Partita
           </button>
         </form>
+
+        {/* Pulsante Nuova Partita */}
+        <div className="mt-4 pt-4 border-t border-gray-700">
+          <button
+            type="button"
+            onClick={handleNewGame}
+            className="w-full bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 text-sm"
+          >
+            🆕 Nuova Partita
+          </button>
+          <p className="text-xs text-gray-500 text-center mt-2">
+            Pulisce la sessione salvata per entrare in una nuova partita
+          </p>
+        </div>
+
+        {/* Scanner QR Code Overlay */}
+        {showScanner && (
+          <QRCodeScanner
+            onScanSuccess={handleQRScanSuccess}
+            onClose={() => setShowScanner(false)}
+          />
+        )}
       </div>
     </div>
   );

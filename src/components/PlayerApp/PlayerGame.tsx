@@ -6,7 +6,7 @@ import { PlayerDilemma } from './PlayerDilemma';
 import { PlayerConsequence } from './PlayerConsequence';
 import { PlayerWaiting } from './PlayerWaiting';
 import { NewsCard } from '../Game/NewsCard';
-import { Users, Loader2 } from 'lucide-react';
+import { Users, Loader2, LogOut, Menu } from 'lucide-react';
 
 interface PlayerGameProps {
   roomId: string;
@@ -16,7 +16,7 @@ interface PlayerGameProps {
   onLogout?: () => void;
 }
 
-export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, playerColor = '#3B82F6', playerIcon = 'landmark' }) => {
+export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, playerColor = '#3B82F6', playerIcon = 'landmark', onLogout }) => {
   const socketContext = useGameSocketContext();
   
   const {
@@ -46,6 +46,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
   // Usiamo un Set per tenere traccia degli ID delle news già chiuse
   const [dismissedNewsIds, setDismissedNewsIds] = useState<Set<string>>(new Set());
   const [lastNewsId, setLastNewsId] = useState<string | null>(null);
+  const [showMenu, setShowMenu] = useState(false);
 
   // Reset delle news chiuse quando arriva una nuova news (ID diverso)
   useEffect(() => {
@@ -98,19 +99,10 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       // Previeni il refresh e mostra un warning
-      // NOTA: I browser moderni (Chrome, Firefox, Safari) mostrano un messaggio standard
-      // e ignorano il testo personalizzato per motivi di sicurezza. Tuttavia, possiamo
-      // comunque prevenire l'azione e il browser mostrerà un messaggio di conferma.
       e.preventDefault();
-      
-      // Messaggio personalizzato (anche se i browser lo mostrano in modo standardizzato)
-      // Il messaggio verrà mostrato come "Le modifiche non salvate potrebbero andare perse"
-      // o simile, a seconda del browser
-      const message = 'Sei sicuro di voler uscire? Verrai escluso dalla partita in corso e non potrai più partecipare.';
-      e.returnValue = message;
-      
-      // Alcuni browser richiedono anche il return del valore
-      return message;
+      // I browser moderni mostrano un messaggio standard, ma possiamo comunque prevenire
+      e.returnValue = 'Sei sicuro di voler uscire? Potresti perdere la connessione alla partita.';
+      return e.returnValue;
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
@@ -241,6 +233,61 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
     );
   }
 
+  // Handler per nuova partita
+  const handleNewGame = () => {
+    if (window.confirm('Vuoi uscire dalla partita corrente e iniziare una nuova partita?')) {
+      // Pulisci la sessione
+      localStorage.removeItem('neuralforming_player_session');
+      // Chiama onLogout se disponibile
+      if (onLogout) {
+        onLogout();
+      } else {
+        // Fallback: ricarica la pagina
+        window.location.reload();
+      }
+    }
+    setShowMenu(false);
+  };
+
+  // Componente per il menu in alto
+  const GameMenu = () => (
+    <div className="fixed top-4 right-4 z-40">
+      <div className="relative">
+        <button
+          onClick={() => setShowMenu(!showMenu)}
+          className="p-2 bg-gray-800 hover:bg-gray-700 rounded-lg border border-gray-700 transition-colors"
+          aria-label="Menu"
+        >
+          <Menu className="w-5 h-5 text-gray-300" />
+        </button>
+        {showMenu && (
+          <>
+            {/* Overlay per chiudere il menu cliccando fuori */}
+            <div
+              className="fixed inset-0 z-30"
+              onClick={() => setShowMenu(false)}
+            />
+            {/* Menu dropdown */}
+            <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-40">
+              <div className="p-2">
+                <div className="px-3 py-2 text-xs text-gray-400 border-b border-gray-700 mb-1">
+                  {playerId}
+                </div>
+                <button
+                  onClick={handleNewGame}
+                  className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded flex items-center gap-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Nuova Partita
+                </button>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+
   // Wrapper per mostrare le news se presenti
   const contentWithNews = (content: React.ReactNode) => {
     // Verifica se la news corrente è stata chiusa dall'utente
@@ -251,6 +298,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
     if (currentPhase === 'development') {
       return (
         <>
+          <GameMenu />
           {shouldShowNews && gameState.currentNews && (
             <div className="fixed top-0 left-0 right-0 z-50 p-3 sm:p-4 max-w-2xl mx-auto">
               <NewsCard
@@ -272,6 +320,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
     // Per altre fasi, wrappiamo normalmente
     return (
       <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 p-3 sm:p-4">
+        <GameMenu />
         <div className="max-w-2xl mx-auto">
           {shouldShowNews && gameState.currentNews && (
             <div className="mb-4">
