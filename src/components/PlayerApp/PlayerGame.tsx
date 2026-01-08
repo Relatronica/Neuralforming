@@ -117,13 +117,28 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
     );
   }
 
-  // Errore
+  // Errore - ma solo se non è un errore di nome già usato (quello viene gestito diversamente)
+  // Gli errori di nome già usato vengono mostrati con un messaggio più chiaro e un pulsante per tornare al login
   if (error) {
+    const isNameTakenError = error.includes('Player name already taken') || error.includes('name already taken');
+    
     return (
       <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
         <div className="bg-gray-900 rounded-xl shadow-2xl p-6 max-w-md w-full text-center border border-gray-700">
           <h2 className="text-xl font-bold text-gray-200 mb-2">Errore</h2>
-          <p className="text-gray-300">{error}</p>
+          <p className="text-gray-300 mb-4">{error}</p>
+          {isNameTakenError && (
+            <button
+              onClick={() => {
+                // Pulisci le credenziali e torna al login
+                localStorage.removeItem('neuralforming_player_session');
+                window.location.reload(); // Ricarica per tornare al form di login
+              }}
+              className="w-full bg-red-600 hover:bg-red-500 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
+            >
+              Torna al Login
+            </button>
+          )}
         </div>
       </div>
     );
@@ -132,13 +147,32 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
   // Attesa che il gioco inizi
   // IMPORTANTE: Controlla solo roomInfo.isGameStarted, non gameState
   // perché gameState potrebbe arrivare con un leggero ritardo dopo gameStarted
-  if (!roomInfo?.isGameStarted) {
+  // Mostra la schermata di attesa solo se:
+  // 1. roomInfo esiste (siamo nella room)
+  // 2. Il gioco non è ancora iniziato
+  // 3. Non c'è un errore (gli errori vengono mostrati prima)
+  if (roomInfo && !roomInfo.isGameStarted) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
         <div className="bg-gray-900 rounded-xl shadow-2xl p-6 max-w-md w-full text-center border border-gray-700">
           <Users className="w-12 h-12 mx-auto mb-4 text-gray-400" />
           <h2 className="text-xl font-bold text-gray-100 mb-2">In attesa...</h2>
-          <p className="text-gray-300">Il master sta avviando la partita...</p>
+          <p className="text-gray-300 mb-2">Connesso alla partita come <span className="font-semibold text-gray-100">{playerId}</span></p>
+          <p className="text-gray-400 text-sm">Il master sta avviando la partita...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Se roomInfo non esiste ancora, mostra un messaggio di connessione
+  // Questo può accadere subito dopo il login, prima che arrivi l'update della room
+  if (!roomInfo && isConnected) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
+        <div className="bg-gray-900 rounded-xl shadow-2xl p-6 max-w-md w-full text-center border border-gray-700">
+          <Loader2 className="w-12 h-12 mx-auto mb-4 text-gray-400 animate-spin" />
+          <h2 className="text-xl font-bold text-gray-100 mb-2">Connessione...</h2>
+          <p className="text-gray-300">Unendosi alla partita...</p>
         </div>
       </div>
     );

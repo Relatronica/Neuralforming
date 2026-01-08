@@ -29,8 +29,22 @@ export const PlayerApp: React.FC = () => {
   const [isLoadingSession, setIsLoadingSession] = useState(true);
 
   // Ascolta eventi di errore per resettare il form quando il nome è già usato
+  // IMPORTANTE: questo viene chiamato solo quando c'è un errore specifico di nome già usato
+  // Non resetta se l'utente è già loggato e sta giocando
   useEffect(() => {
-    const handlePlayerNameTaken = () => {
+    const handlePlayerNameTaken = (event: Event) => {
+      // Solo se non siamo già in una partita (roomId e playerId sono null o non corrispondono)
+      // Questo evita di resettare durante una partita attiva
+      const customEvent = event as CustomEvent;
+      const eventRoomId = customEvent.detail?.roomId;
+      
+      // Se abbiamo un roomId e playerId, e corrispondono all'evento, significa che siamo già loggati
+      // In questo caso, NON resettare - l'errore verrà mostrato in PlayerGame
+      if (roomId && playerId && eventRoomId === roomId) {
+        console.log('⚠️ Player name taken error, but user is already logged in. Showing error in PlayerGame instead of resetting.');
+        return; // Non resettare, lascia che PlayerGame gestisca l'errore
+      }
+      
       console.log('🔄 Player name already taken, resetting form...');
       // Resetta tutto per permettere all'utente di inserire un nuovo nome
       setRoomId(null);
@@ -45,7 +59,7 @@ export const PlayerApp: React.FC = () => {
     return () => {
       window.removeEventListener('playerNameTaken', handlePlayerNameTaken);
     };
-  }, []);
+  }, [roomId, playerId]);
 
   // Carica credenziali salvate al mount
   useEffect(() => {
