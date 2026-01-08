@@ -167,16 +167,41 @@ export class GameServer {
       throw new Error('Game already started');
     }
 
+    // Se il giocatore è già nella room con questo socketId, aggiorna solo le info (riconnessione)
+    if (room.players.has(socketId)) {
+      const existingPlayer = room.players.get(socketId)!;
+      // Aggiorna le informazioni del giocatore (potrebbero essere cambiate)
+      existingPlayer.playerName = playerName;
+      existingPlayer.playerColor = playerColor;
+      existingPlayer.playerIcon = playerIcon || 'landmark';
+      console.log(`✅ Player ${playerName} reconnected with same socketId ${socketId}`);
+      return; // Già presente, non fare altro
+    }
+
+    // Verifica se c'è spazio nella room
     if (room.players.size >= room.maxPlayers) {
       throw new Error('Room is full');
     }
 
-    // Verifica che il nome non sia già usato
-    const nameExists = Array.from(room.players.values()).some(p => p.playerName === playerName);
+    // Verifica che il nome non sia già usato da UN ALTRO giocatore (non da questo socketId)
+    const nameExists = Array.from(room.players.values()).some(
+      p => p.playerName === playerName && p.socketId !== socketId
+    );
     if (nameExists) {
       throw new Error('Player name already taken');
     }
 
+    // Nuovo giocatore o riconnessione con socketId diverso ma stesso nome
+    // Rimuovi eventuali entry vecchie con lo stesso nome ma socketId diverso (riconnessione)
+    const oldEntries = Array.from(room.players.entries()).filter(
+      ([id, p]) => p.playerName === playerName && id !== socketId
+    );
+    oldEntries.forEach(([oldSocketId]) => {
+      console.log(`🔄 Removing old socket entry ${oldSocketId} for player ${playerName} (reconnecting)`);
+      room.players.delete(oldSocketId);
+    });
+
+    // Aggiungi il nuovo giocatore
     room.players.set(socketId, {
       socketId,
       playerId: `player-${socketId}`,
@@ -185,6 +210,8 @@ export class GameServer {
       playerIcon: playerIcon || 'landmark',
       isMaster: false,
     });
+    
+    console.log(`✅ Player ${playerName} joined room ${roomId} with socketId ${socketId}`);
   }
 
   private async startGame(roomId: string, socketId: string) {

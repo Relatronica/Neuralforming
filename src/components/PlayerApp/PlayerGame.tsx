@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useGameSocketContext } from '../../contexts/GameSocketContext';
 import { PlayerVoting } from './PlayerVoting';
 import { PlayerHand } from './PlayerHand';
@@ -65,12 +65,29 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
   }, [gameState?.currentNews?.id, lastNewsId]);
 
   // Unisciti alla room quando il socket è connesso
+  // IMPORTANTE: usa un ref per evitare doppi tentativi di joinRoom
+  const joinAttemptedRef = useRef(false);
+  
   useEffect(() => {
-    if (isConnected && roomId && !roomInfo?.players.some(p => p.name === playerId || p.id === playerId)) {
-      // Prova a unirti se non sei già nella lista
-      joinRoom(playerId, playerColor, playerIcon);
+    // Reset del flag quando cambiano roomId o playerId
+    joinAttemptedRef.current = false;
+  }, [roomId, playerId]);
+
+  useEffect(() => {
+    if (isConnected && roomId && playerId && !joinAttemptedRef.current) {
+      // Verifica se siamo già nella lista dei giocatori
+      const alreadyInRoom = roomInfo?.players.some(p => p.name === playerId || p.id === playerId);
+      
+      if (!alreadyInRoom) {
+        // Marca come tentato per evitare doppi tentativi
+        joinAttemptedRef.current = true;
+        console.log('📤 Attempting to join room:', { roomId, playerId });
+        joinRoom(playerId, playerColor, playerIcon);
+      } else {
+        console.log('✅ Already in room, skipping joinRoom');
+      }
     }
-  }, [isConnected, roomId, roomInfo, playerId, playerColor, joinRoom]);
+  }, [isConnected, roomId, roomInfo, playerId, playerColor, playerIcon, joinRoom]);
 
   // Warning pre-refresh: avvisa l'utente se sta per uscire durante una partita attiva
   useEffect(() => {

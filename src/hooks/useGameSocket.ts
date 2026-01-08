@@ -84,42 +84,13 @@ export function useGameSocket(roomId: string | null) {
     newSocket.on('connect', () => {
       setIsConnected(true);
       setError(null);
-      console.log('✅ Socket connected, attempting to restore session...');
+      console.log('✅ Socket connected');
       
       // Se abbiamo un roomId quando il socket si connette, richiedi le informazioni della room
+      // NON fare joinRoom qui - lascia che PlayerGame lo gestisca quando necessario
+      // Questo evita doppi tentativi di joinRoom
       if (roomId) {
         newSocket.emit('requestRoomInfo', { roomId });
-        
-        // Prova a riconnettersi automaticamente se abbiamo credenziali salvate
-        // Questo gestisce il caso di refresh o riconnessione dopo disconnessione
-        try {
-          const saved = localStorage.getItem('neuralforming_player_session');
-          if (saved) {
-            const session = JSON.parse(saved);
-            // Se il roomId corrisponde e abbiamo un playerId, prova a riconnettersi
-            if (session.roomId === roomId && session.playerId) {
-              console.log('🔄 Auto-reconnecting with saved credentials...', {
-                roomId: session.roomId,
-                playerId: session.playerId,
-              });
-              
-              // Aspetta un po' per assicurarsi che la room sia pronta
-              setTimeout(() => {
-                if (newSocket.connected) {
-                  newSocket.emit('joinRoom', {
-                    roomId: session.roomId,
-                    playerName: session.playerId,
-                    playerColor: session.playerColor || '#3B82F6',
-                    playerIcon: session.playerIcon || 'landmark',
-                  });
-                  console.log('📤 Auto-reconnect joinRoom emitted');
-                }
-              }, 500);
-            }
-          }
-        } catch (e) {
-          console.error('❌ Failed to auto-reconnect:', e);
-        }
       }
     });
 
@@ -146,31 +117,35 @@ export function useGameSocket(roomId: string | null) {
     newSocket.on('joinedRoom', (data: { roomId: string; success: boolean; error?: string }) => {
       if (!data.success) {
         const errorMsg = data.error || 'Failed to join room';
+        console.error('❌ Join room failed:', errorMsg);
         setError(errorMsg);
         
-        // Se l'errore è "Game already started", "Room not found" o "Player name already taken"
-        // Pulisci le credenziali salvate per permettere un nuovo login
+        // Se l'errore è "Game already started" o "Room not found", pulisci le credenziali
         if (
           errorMsg.includes('already started') || 
           errorMsg.includes('not found') || 
-          errorMsg.includes('Room not found') ||
-          errorMsg.includes('Player name already taken') ||
-          errorMsg.includes('name already taken')
+          errorMsg.includes('Room not found')
         ) {
           console.log('🧹 Clearing session due to error:', errorMsg);
           try {
             localStorage.removeItem('neuralforming_player_session');
-            // Se è un errore di nome già usato, forziamo il reset dello stato per mostrare il form di login
-            if (errorMsg.includes('Player name already taken') || errorMsg.includes('name already taken')) {
-              // Emetti un evento custom per notificare il componente di resettare il form
-              window.dispatchEvent(new CustomEvent('playerNameTaken', { detail: { roomId } }));
-            }
           } catch (e) {
             console.error('Failed to clear session:', e);
           }
         }
+        
+        // Se è un errore di nome già usato, emetti evento per gestirlo
+        if (errorMsg.includes('Player name already taken') || errorMsg.includes('name already taken')) {
+          console.log('⚠️ Player name already taken, emitting event');
+          window.dispatchEvent(new CustomEvent('playerNameTaken', { detail: { roomId } }));
+        }
       } else {
+        console.log('✅ Successfully joined room:', roomId);
         setError(null);
+        // Richiedi aggiornamento della room dopo il join
+        if (roomId) {
+          newSocket.emit('requestRoomInfo', { roomId });
+        }
       }
     });
 
@@ -324,33 +299,10 @@ export function useGameSocket(roomId: string | null) {
   }, []); // Connetti solo una volta al mount del componente
   
   // Quando roomId cambia e il socket è connesso, richiedi le informazioni della room
+  // NON fare joinRoom qui - lascia che PlayerGame lo gestisca quando necessario
   useEffect(() => {
     if (roomId && socket?.connected) {
       socket.emit('requestRoomInfo', { roomId });
-      
-      // Se abbiamo credenziali salvate per questo roomId, prova a riconnettersi
-      try {
-        const saved = localStorage.getItem('neuralforming_player_session');
-        if (saved) {
-          const session = JSON.parse(saved);
-          if (session.roomId === roomId && session.playerId) {
-            // Aspetta un po' e poi prova a riconnettersi
-            setTimeout(() => {
-              if (socket.connected) {
-                socket.emit('joinRoom', {
-                  roomId: session.roomId,
-                  playerName: session.playerId,
-                  playerColor: session.playerColor || '#3B82F6',
-                  playerIcon: session.playerIcon || 'landmark',
-                });
-                console.log('📤 Reconnecting after roomId change');
-              }
-            }, 500);
-          }
-        }
-      } catch (e) {
-        console.error('❌ Failed to reconnect after roomId change:', e);
-      }
     }
   }, [roomId, socket]);
 
