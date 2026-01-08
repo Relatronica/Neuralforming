@@ -17,6 +17,7 @@ import { VoteLoadingScreen } from './VoteLoadingScreen';
 import { DilemmaTransitionScreen } from './DilemmaTransitionScreen';
 import { TurnTransitionScreen } from './TurnTransitionScreen';
 import { MilestoneUnlockAnimation } from './MilestoneUnlockAnimation';
+import { OpeningStoryModal } from './OpeningStoryModal';
 import { useGameSocketContext } from '../../contexts/GameSocketContext';
 import { Bot, Landmark, Users, CheckCircle2, XCircle } from 'lucide-react';
 import technologiesData from '../../data/technologies.json';
@@ -64,6 +65,8 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
   const [milestoneAnimation, setMilestoneAnimation] = useState<{ name: string } | null>(null);
   const [previousPlayerId, setPreviousPlayerId] = useState<string | null>(null);
   const [previousPhase, setPreviousPhase] = useState<string | null>(null);
+  const [showOpeningStory, setShowOpeningStory] = useState(false);
+  const [hasShownOpeningStory, setHasShownOpeningStory] = useState(false);
 
   // Multiplayer: stato dal server
   // Usa il context invece di creare una nuova istanza - questo condivide lo stato con RoomSetup
@@ -252,6 +255,29 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
   const gameState = mode === 'multiplayer' 
     ? serverGameState  // In multiplayer, usa SOLO serverGameState (null se non ancora arrivato)
     : localGameState;
+
+  // Mostra la storia di apertura quando il gioco inizia (turno 1, fase development)
+  useEffect(() => {
+    if (!gameState) return;
+    if (hasShownOpeningStory) return;
+    
+    // Mostra la storia solo al primo turno, in fase development, quando non ci sono dilemmi o conseguenze attivi
+    if (
+      gameState.turn === 1 &&
+      gameState.currentPhase === 'development' &&
+      !gameState.currentDilemma &&
+      !gameState.currentConsequence &&
+      gameState.players.length > 0
+    ) {
+      // Piccolo delay per permettere al gioco di renderizzare completamente
+      const timer = setTimeout(() => {
+        setShowOpeningStory(true);
+        setHasShownOpeningStory(true);
+      }, 500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [gameState, hasShownOpeningStory]);
   
   // Per multiplayer, il master gestisce lo stato e lo invia al server
   const setGameState = mode === 'multiplayer' && isMaster
@@ -422,6 +448,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
     } else {
     setGameState(GameEngine.initializeGame());
     setIsProcessingAI(false);
+    setHasShownOpeningStory(false); // Reset per mostrare la storia nella nuova partita
     }
   }, [mode, setGameState, onBackToSetup]);
 
@@ -802,6 +829,13 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
 
   return (
     <>
+      {/* Opening story modal */}
+      {showOpeningStory && (
+        <OpeningStoryModal
+          onClose={() => setShowOpeningStory(false)}
+        />
+      )}
+
       {/* Loading screens overlay */}
       {showTurnTransition && turnTransitionPlayer && (
         <TurnTransitionScreen
