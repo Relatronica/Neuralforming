@@ -30,7 +30,7 @@ export const PlayerApp: React.FC = () => {
 
   // Ascolta eventi di errore per resettare il form quando il nome è già usato
   useEffect(() => {
-    const handlePlayerNameTaken = (event: CustomEvent) => {
+    const handlePlayerNameTaken = () => {
       console.log('🔄 Player name already taken, resetting form...');
       // Resetta tutto per permettere all'utente di inserire un nuovo nome
       setRoomId(null);
@@ -40,10 +40,10 @@ export const PlayerApp: React.FC = () => {
       localStorage.removeItem(STORAGE_KEY);
     };
 
-    window.addEventListener('playerNameTaken', handlePlayerNameTaken as EventListener);
+    window.addEventListener('playerNameTaken', handlePlayerNameTaken);
 
     return () => {
-      window.removeEventListener('playerNameTaken', handlePlayerNameTaken as EventListener);
+      window.removeEventListener('playerNameTaken', handlePlayerNameTaken);
     };
   }, []);
 
