@@ -1,9 +1,10 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { GameEngine } from '../../game/GameEngine';
-import { GameState, Technology, DilemmaOption, PlayerState, Dilemma } from '../../game/types';
+import { GameState, Technology, DilemmaOption, PlayerState, Dilemma, VoteResult } from '../../game/types';
 import { TurnManager } from '../../game/TurnManager';
 import { AIPlayer } from '../../game/AIPlayer';
 import { Objectives } from '../../game/Objectives';
+import { milestones } from '../../game/Milestones';
 import { Board } from '../Board/Board';
 import { TechnologyCard } from '../Cards/TechnologyCard';
 import { DilemmaCard } from '../Cards/DilemmaCard';
@@ -642,7 +643,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
     const firstMilestone = gameState.newlyUnlockedMilestones[0];
     if (firstMilestone) {
       // Trova il nome del milestone
-      const milestone = require('../../game/Milestones').milestones.find((m: any) => m.id === firstMilestone.milestoneId);
+      const milestone = milestones.find((m) => m.id === firstMilestone.milestoneId);
       if (milestone) {
         setMilestoneAnimation({ name: milestone.name });
         setShowMilestoneAnimation(true);

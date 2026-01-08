@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { User, ArrowRight } from 'lucide-react';
-import { getPartyColor } from '../../game/partyColors';
 
 interface TurnTransitionScreenProps {
   playerName: string;

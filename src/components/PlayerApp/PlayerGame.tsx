@@ -16,7 +16,7 @@ interface PlayerGameProps {
   onLogout?: () => void;
 }
 
-export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, playerColor = '#3B82F6', playerIcon = 'landmark', onLogout }) => {
+export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, playerColor = '#3B82F6', playerIcon = 'landmark' }) => {
   const socketContext = useGameSocketContext();
   
   const {
