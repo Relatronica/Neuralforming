@@ -12,6 +12,10 @@ import { PlayersList } from '../Players/PlayersList';
 import { VotingResult } from './VotingResult';
 import { GlobalEventCard } from './GlobalEventCard';
 import { NewsCard } from './NewsCard';
+import { VoteLoadingScreen } from './VoteLoadingScreen';
+import { DilemmaTransitionScreen } from './DilemmaTransitionScreen';
+import { TurnTransitionScreen } from './TurnTransitionScreen';
+import { MilestoneUnlockAnimation } from './MilestoneUnlockAnimation';
 import { useGameSocketContext } from '../../contexts/GameSocketContext';
 import { Bot, Landmark, Users, CheckCircle2, XCircle } from 'lucide-react';
 import technologiesData from '../../data/technologies.json';
@@ -48,6 +52,17 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
   );
   const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [isMaster, setIsMaster] = useState(false);
+  
+  // Loading states
+  const [showVoteLoading, setShowVoteLoading] = useState(false);
+  const [pendingVoteResult, setPendingVoteResult] = useState<{ voteResult: VoteResult; players: PlayerState[]; message?: string } | null>(null);
+  const [showDilemmaTransition, setShowDilemmaTransition] = useState(false);
+  const [showTurnTransition, setShowTurnTransition] = useState(false);
+  const [turnTransitionPlayer, setTurnTransitionPlayer] = useState<{ name: string; color?: string; icon?: string } | null>(null);
+  const [showMilestoneAnimation, setShowMilestoneAnimation] = useState(false);
+  const [milestoneAnimation, setMilestoneAnimation] = useState<{ name: string } | null>(null);
+  const [previousPlayerId, setPreviousPlayerId] = useState<string | null>(null);
+  const [previousPhase, setPreviousPhase] = useState<string | null>(null);
 
   // Multiplayer: stato dal server
   // Usa il context invece di creare una nuova istanza - questo condivide lo stato con RoomSetup
@@ -354,11 +369,20 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
 
   const handleResolveDilemma = useCallback((option: DilemmaOption) => {
     if (!currentPlayer) return;
-    if (mode === 'multiplayer') {
-      sendAction('resolveDilemma', { option });
-    } else {
-    setGameState(prev => GameEngine.resolveDilemma(prev, currentPlayer.id, option));
-    }
+    // Mostra transizione prima di risolvere
+    setShowDilemmaTransition(true);
+    // Risolvi dopo un breve delay per permettere alla transizione di apparire
+    setTimeout(() => {
+      if (mode === 'multiplayer') {
+        sendAction('resolveDilemma', { option });
+      } else {
+        setGameState(prev => GameEngine.resolveDilemma(prev, currentPlayer.id, option));
+      }
+      // Nascondi transizione dopo che il dilemma è stato risolto
+      setTimeout(() => {
+        setShowDilemmaTransition(false);
+      }, 2000);
+    }, 100);
   }, [currentPlayer, mode, sendAction, setGameState]);
 
   const handleCompleteConsequence = useCallback(() => {
@@ -551,7 +575,23 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
           lastVoteMessage: newState.lastVoteMessage,
         });
 
-        setGameState(newState);
+        // Mostra loading prima del risultato
+        if (newState.lastVoteResult) {
+          setShowVoteLoading(true);
+          setPendingVoteResult({
+            voteResult: newState.lastVoteResult,
+            players: newState.players,
+            message: newState.lastVoteMessage || undefined,
+          });
+          // Il risultato verrà mostrato dopo il loading
+          setGameState({
+            ...newState,
+            lastVoteResult: null, // Nascondi temporaneamente
+            lastVoteMessage: null,
+          });
+        } else {
+          setGameState(newState);
+        }
       };
 
       socket.on('playerActionReceived', handlePlayerAction);
@@ -564,6 +604,51 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
       };
     }
   }, [mode, isMaster, socket, gameState, roomId, setGameState]);
+
+  // Rileva cambio turno per mostrare transizione
+  useEffect(() => {
+    if (!gameState) return;
+    
+    const currentPlayerId = gameState.currentPlayerId;
+    const currentPhase = gameState.currentPhase;
+    
+    // Se il playerId è cambiato, mostra transizione
+    if (previousPlayerId && previousPlayerId !== currentPlayerId) {
+      const newPlayer = gameState.players.find(p => p.id === currentPlayerId);
+      if (newPlayer) {
+        setTurnTransitionPlayer({
+          name: newPlayer.name,
+          color: newPlayer.color,
+          icon: newPlayer.icon,
+        });
+        setShowTurnTransition(true);
+      }
+    }
+    
+    // Se la fase è cambiata da dilemma a consequence, la transizione è già gestita
+    if (previousPhase === 'dilemma' && currentPhase === 'consequence') {
+      // La transizione dilemma è già gestita
+    }
+    
+    setPreviousPlayerId(currentPlayerId);
+    setPreviousPhase(currentPhase);
+  }, [gameState?.currentPlayerId, gameState?.currentPhase, gameState?.players, previousPlayerId, previousPhase]);
+
+  // Rileva milestone sbloccati
+  useEffect(() => {
+    if (!gameState?.newlyUnlockedMilestones || gameState.newlyUnlockedMilestones.length === 0) return;
+    
+    // Mostra animazione per il primo milestone
+    const firstMilestone = gameState.newlyUnlockedMilestones[0];
+    if (firstMilestone) {
+      // Trova il nome del milestone
+      const milestone = require('../../game/Milestones').milestones.find((m: any) => m.id === firstMilestone.milestoneId);
+      if (milestone) {
+        setMilestoneAnimation({ name: milestone.name });
+        setShowMilestoneAnimation(true);
+      }
+    }
+  }, [gameState?.newlyUnlockedMilestones]);
 
   // IMPORTANTE: Controllo anticipato per evitare errori quando gameState è null
   // In multiplayer, se il gioco è iniziato ma non abbiamo ancora lo stato, mostra attesa
@@ -715,10 +800,36 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
   }
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden relative" style={{
-      background: 'linear-gradient(135deg, #000000 0%, #0a0a0a 15%, #1a1a1a 30%, #2a2a2a 45%, #3a3a3a 60%, #4a4a4a 75%, #5a5a5a 90%, #6a6a6a 100%)'
-    }}>
-      {/* Header ultra-compatto */}
+    <>
+      {/* Loading screens overlay */}
+      {showTurnTransition && turnTransitionPlayer && (
+        <TurnTransitionScreen
+          playerName={turnTransitionPlayer.name}
+          playerColor={turnTransitionPlayer.color}
+          playerIcon={turnTransitionPlayer.icon}
+          onComplete={() => {
+            setShowTurnTransition(false);
+            setTurnTransitionPlayer(null);
+          }}
+          duration={2000}
+        />
+      )}
+
+      {showMilestoneAnimation && milestoneAnimation && (
+        <MilestoneUnlockAnimation
+          milestoneName={milestoneAnimation.name}
+          onComplete={() => {
+            setShowMilestoneAnimation(false);
+            setMilestoneAnimation(null);
+          }}
+          duration={1800}
+        />
+      )}
+
+      <div className="h-screen flex flex-col overflow-hidden relative" style={{
+        background: 'linear-gradient(135deg, #000000 0%, #0a0a0a 15%, #1a1a1a 30%, #2a2a2a 45%, #3a3a3a 60%, #4a4a4a 75%, #5a5a5a 90%, #6a6a6a 100%)'
+      }}>
+        {/* Header ultra-compatto */}
       <header className="flex-shrink-0 px-3 py-1.5 bg-gray-900/90 backdrop-blur-sm border-b border-gray-700/50 shadow-sm relative z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5">
@@ -925,9 +1036,30 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
               </div>
             )}
             
+            {/* Loading screen per votazione */}
+            {showVoteLoading && (
+              <div className="mb-2">
+                <VoteLoadingScreen
+                  onComplete={() => {
+                    setShowVoteLoading(false);
+                    if (pendingVoteResult) {
+                      // Mostra il risultato dopo il loading
+                      setGameState(prev => prev ? {
+                        ...prev,
+                        lastVoteResult: pendingVoteResult.voteResult,
+                        lastVoteMessage: pendingVoteResult.message || null,
+                      } : prev);
+                      setPendingVoteResult(null);
+                    }
+                  }}
+                  duration={2500}
+                />
+              </div>
+            )}
+
             {/* Mostra risultato votazione dopo aver giocato una tecnologia */}
             {(() => {
-              const shouldShowVoteResult = gameState.lastVoteResult !== null;
+              const shouldShowVoteResult = gameState.lastVoteResult !== null && !showVoteLoading;
               return shouldShowVoteResult && gameState.lastVoteResult ? (
                 <div className="mb-2">
                   <VotingResult
@@ -957,8 +1089,20 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
               </div>
             )}
 
+            {/* Transizione Dilemma → Consequence */}
+            {showDilemmaTransition && gameState.currentPhase === 'dilemma' && (
+              <div className="mb-2">
+                <DilemmaTransitionScreen
+                  onComplete={() => {
+                    setShowDilemmaTransition(false);
+                  }}
+                  duration={1200}
+                />
+              </div>
+            )}
+
             {/* Dilemma Phase - Mostrato a tutti, ma solo il giocatore corrente può interagire */}
-            {gameState.currentPhase === 'dilemma' && gameState.currentDilemma && (
+            {gameState.currentPhase === 'dilemma' && gameState.currentDilemma && !showDilemmaTransition && (
               <div className="bg-gradient-to-br from-gray-800 via-gray-700 to-gray-800 rounded-lg shadow-md p-3 border border-gray-600">
                 {!isHumanTurn && (
                   <div className="mb-2 text-center bg-gray-800 rounded-lg p-2 shadow-sm border border-gray-600">
@@ -975,6 +1119,30 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                   onSelectOption={isHumanTurn ? handleResolveDilemma : () => {}}
                   activeJoker={gameState.activeJoker ?? undefined}
                   isInteractive={isHumanTurn ?? false}
+                  showOptions={!!gameState.resolvedDilemmaOption} // Mostra opzioni solo dopo la risposta
+                  selectedOption={gameState.resolvedDilemmaOption ?? undefined}
+                />
+              </div>
+            )}
+
+            {/* Mostra il dilemma anche durante la fase consequence per vedere la scelta fatta */}
+            {gameState.currentPhase === 'consequence' && gameState.currentDilemma && gameState.resolvedDilemmaOption && (
+              <div className="bg-gradient-to-br from-gray-800 via-gray-700 to-gray-800 rounded-lg shadow-md p-3 border border-gray-600">
+                <div className="mb-2 text-center bg-gray-800 rounded-lg p-2 shadow-sm border border-gray-600">
+                  <div className="flex items-center justify-center gap-1.5 mb-1">
+                    <Users className="w-4 h-4 text-gray-400" />
+                    <p className="text-xs font-bold text-gray-200">
+                      Decisione presa da {gameState.players.find(p => p.id === gameState.currentPlayerId)?.name || 'il giocatore corrente'}
+                    </p>
+                  </div>
+                </div>
+                <DilemmaCard
+                  dilemma={gameState.currentDilemma}
+                  onSelectOption={() => {}} // Non interattivo durante consequence
+                  activeJoker={gameState.activeJoker ?? undefined}
+                  isInteractive={false}
+                  showOptions={true} // Mostra sempre le opzioni durante consequence
+                  selectedOption={gameState.resolvedDilemmaOption ?? undefined}
                 />
               </div>
             )}
@@ -1081,5 +1249,6 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
         </div>
       </div>
     </div>
+    </>
   );
 };

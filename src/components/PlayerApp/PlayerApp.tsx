@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { GameSocketProvider } from '../../contexts/GameSocketContext';
 import { PlayerLogin } from './PlayerLogin';
 import { PlayerGame } from './PlayerGame';
@@ -11,11 +11,66 @@ import { PlayerGame } from './PlayerGame';
  * - Dilemmi quando è il loro turno
  * - Consegue quando è il loro turno
  */
+
+const STORAGE_KEY = 'neuralforming_player_session';
+
+interface SavedSession {
+  roomId: string;
+  playerId: string;
+  playerColor: string;
+  playerIcon: string;
+}
+
 export const PlayerApp: React.FC = () => {
   const [roomId, setRoomId] = useState<string | null>(null);
   const [playerId, setPlayerId] = useState<string | null>(null);
   const [playerColor, setPlayerColor] = useState<string | null>(null);
   const [playerIcon, setPlayerIcon] = useState<string | null>(null);
+  const [isLoadingSession, setIsLoadingSession] = useState(true);
+
+  // Carica credenziali salvate al mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const session: SavedSession = JSON.parse(saved);
+        if (session.roomId && session.playerId) {
+          console.log('📦 Loading saved session:', { roomId: session.roomId, playerId: session.playerId });
+          setRoomId(session.roomId);
+          setPlayerId(session.playerId);
+          setPlayerColor(session.playerColor || null);
+          setPlayerIcon(session.playerIcon || null);
+        }
+      }
+    } catch (e) {
+      console.error('❌ Failed to load session from localStorage:', e);
+      // Se c'è un errore, pulisci i dati corrotti
+      localStorage.removeItem(STORAGE_KEY);
+    } finally {
+      setIsLoadingSession(false);
+    }
+  }, []);
+
+  // Salva credenziali ogni volta che cambiano
+  useEffect(() => {
+    if (roomId && playerId) {
+      const session: SavedSession = {
+        roomId,
+        playerId,
+        playerColor: playerColor || '#3B82F6',
+        playerIcon: playerIcon || 'landmark',
+      };
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(session));
+        console.log('💾 Session saved to localStorage');
+      } catch (e) {
+        console.error('❌ Failed to save session to localStorage:', e);
+      }
+    } else {
+      // Se non ci sono credenziali, rimuovi dalla localStorage
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  }, [roomId, playerId, playerColor, playerIcon]);
 
   const handleLogin = (room: string, player: string, color: string, icon: string) => {
     setRoomId(room);
@@ -23,6 +78,29 @@ export const PlayerApp: React.FC = () => {
     setPlayerColor(color);
     setPlayerIcon(icon);
   };
+
+  const handleLogout = () => {
+    // Pulisci tutto e rimuovi dalla localStorage
+    setRoomId(null);
+    setPlayerId(null);
+    setPlayerColor(null);
+    setPlayerIcon(null);
+    localStorage.removeItem(STORAGE_KEY);
+    console.log('🚪 Logout: session cleared');
+  };
+
+  // Mostra loading durante il caricamento della sessione
+  if (isLoadingSession) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
+        <div className="bg-gray-900 rounded-xl shadow-2xl p-8 max-w-md w-full text-center border border-gray-700">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
+          <h2 className="text-xl font-bold text-gray-100 mb-2">Caricamento...</h2>
+          <p className="text-gray-300">Ripristino sessione...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!roomId || !playerId) {
     return <PlayerLogin onLogin={handleLogin} />;
@@ -35,6 +113,7 @@ export const PlayerApp: React.FC = () => {
         playerId={playerId} 
         playerColor={playerColor || '#3B82F6'}
         playerIcon={playerIcon || 'landmark'}
+        onLogout={handleLogout}
       />
     </GameSocketProvider>
   );

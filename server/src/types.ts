@@ -97,5 +97,6 @@ export interface GameState {
   lastVoteMessage?: string | null;
   currentGlobalEvent?: GlobalEventInfo | null;
   newlyUnlockedMilestones?: MilestoneUnlocked[] | null;
+  resolvedDilemmaOption?: DilemmaOption | null; // Opzione scelta per il dilemma corrente (mostra le risposte nel tabellone)
 }
 

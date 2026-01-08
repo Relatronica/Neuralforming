@@ -149,5 +149,6 @@ export interface GameState {
   newlyUnlockedMilestones?: MilestoneUnlocked[] | null; // Milestone appena sbloccati (per mostrare notifica)
   currentNews?: SocietyNews | null; // News corrente dalla società
   lastNewsTurn?: number; // Turno in cui è apparsa l'ultima news
+  resolvedDilemmaOption?: DilemmaOption | null; // Opzione scelta per il dilemma corrente (mostra le risposte nel tabellone)
 }
 

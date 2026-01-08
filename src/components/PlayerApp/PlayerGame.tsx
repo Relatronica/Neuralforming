@@ -13,9 +13,10 @@ interface PlayerGameProps {
   playerId: string;
   playerColor?: string;
   playerIcon?: string;
+  onLogout?: () => void;
 }
 
-export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, playerColor = '#3B82F6', playerIcon = 'landmark' }) => {
+export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, playerColor = '#3B82F6', playerIcon = 'landmark', onLogout }) => {
   const socketContext = useGameSocketContext();
   
   const {
@@ -70,6 +71,28 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
       joinRoom(playerId, playerColor, playerIcon);
     }
   }, [isConnected, roomId, roomInfo, playerId, playerColor, joinRoom]);
+
+  // Warning pre-refresh: avvisa l'utente se sta per uscire durante una partita attiva
+  useEffect(() => {
+    // Solo durante una partita attiva (gioco iniziato e connesso)
+    if (!gameState || !isConnected || !roomInfo?.isGameStarted) {
+      return;
+    }
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      // Previeni il refresh e mostra un warning
+      e.preventDefault();
+      // I browser moderni mostrano un messaggio standard, ma possiamo comunque prevenire
+      e.returnValue = 'Sei sicuro di voler uscire? Potresti perdere la connessione alla partita.';
+      return e.returnValue;
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [gameState, isConnected, roomInfo?.isGameStarted]);
 
   // Trova il giocatore corrente
   // Usa playerState se disponibile (ha l'ID corretto dal server), altrimenti cerca per nome

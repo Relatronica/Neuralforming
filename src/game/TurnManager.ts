@@ -40,6 +40,7 @@ export class TurnManager {
       currentPhase: 'development',
       currentDilemma: null,
       currentConsequence: null,
+      resolvedDilemmaOption: null, // Reset quando si passa al prossimo giocatore
       turn: nextIndex === 0 ? gameState.turn + 1 : gameState.turn,
       newlyUnlockedMilestones: null, // Reset milestone appena sbloccati
     };
@@ -78,6 +79,7 @@ export class TurnManager {
       ...gameState,
       currentPhase: 'dilemma',
       currentDilemma: dilemma,
+      resolvedDilemmaOption: null, // Reset quando viene pescato un nuovo dilemma
     };
   }
 

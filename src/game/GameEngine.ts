@@ -446,12 +446,14 @@ export class GameEngine {
       }, playerId, finalPlayer);
 
       // Avvia la fase di conseguenze e resetta il jolly e il risultato della votazione
+      // Mantieni il dilemma e l'opzione scelta per mostrare le risposte nel tabellone
       const stateWithConsequence = TurnManager.startConsequencePhase({
         ...newState,
-        currentDilemma: null,
+        // Non rimuovere currentDilemma qui - verrà rimosso quando si completa la consequence
         activeJoker: null,
         lastVoteResult: null,
         lastVoteMessage: null,
+        resolvedDilemmaOption: option, // Salva l'opzione scelta per mostrarla nel tabellone
       }, consequence);
       
       // Verifica condizioni di fine gioco
@@ -486,6 +488,8 @@ export class GameEngine {
     const stateAfterConsequence = {
       ...gameState,
       currentConsequence: null,
+      currentDilemma: null, // Rimuovi il dilemma quando viene completata la consequence
+      resolvedDilemmaOption: null, // Reset l'opzione scelta
     };
     
     // Verifica eventi globali prima di passare al prossimo giocatore

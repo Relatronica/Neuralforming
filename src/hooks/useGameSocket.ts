@@ -84,9 +84,42 @@ export function useGameSocket(roomId: string | null) {
     newSocket.on('connect', () => {
       setIsConnected(true);
       setError(null);
+      console.log('✅ Socket connected, attempting to restore session...');
+      
       // Se abbiamo un roomId quando il socket si connette, richiedi le informazioni della room
       if (roomId) {
         newSocket.emit('requestRoomInfo', { roomId });
+        
+        // Prova a riconnettersi automaticamente se abbiamo credenziali salvate
+        // Questo gestisce il caso di refresh o riconnessione dopo disconnessione
+        try {
+          const saved = localStorage.getItem('neuralforming_player_session');
+          if (saved) {
+            const session = JSON.parse(saved);
+            // Se il roomId corrisponde e abbiamo un playerId, prova a riconnettersi
+            if (session.roomId === roomId && session.playerId) {
+              console.log('🔄 Auto-reconnecting with saved credentials...', {
+                roomId: session.roomId,
+                playerId: session.playerId,
+              });
+              
+              // Aspetta un po' per assicurarsi che la room sia pronta
+              setTimeout(() => {
+                if (newSocket.connected) {
+                  newSocket.emit('joinRoom', {
+                    roomId: session.roomId,
+                    playerName: session.playerId,
+                    playerColor: session.playerColor || '#3B82F6',
+                    playerIcon: session.playerIcon || 'landmark',
+                  });
+                  console.log('📤 Auto-reconnect joinRoom emitted');
+                }
+              }, 500);
+            }
+          }
+        } catch (e) {
+          console.error('❌ Failed to auto-reconnect:', e);
+        }
       }
     });
 
@@ -271,6 +304,30 @@ export function useGameSocket(roomId: string | null) {
   useEffect(() => {
     if (roomId && socket?.connected) {
       socket.emit('requestRoomInfo', { roomId });
+      
+      // Se abbiamo credenziali salvate per questo roomId, prova a riconnettersi
+      try {
+        const saved = localStorage.getItem('neuralforming_player_session');
+        if (saved) {
+          const session = JSON.parse(saved);
+          if (session.roomId === roomId && session.playerId) {
+            // Aspetta un po' e poi prova a riconnettersi
+            setTimeout(() => {
+              if (socket.connected) {
+                socket.emit('joinRoom', {
+                  roomId: session.roomId,
+                  playerName: session.playerId,
+                  playerColor: session.playerColor || '#3B82F6',
+                  playerIcon: session.playerIcon || 'landmark',
+                });
+                console.log('📤 Reconnecting after roomId change');
+              }
+            }, 500);
+          }
+        }
+      } catch (e) {
+        console.error('❌ Failed to reconnect after roomId change:', e);
+      }
     }
   }, [roomId, socket]);
 

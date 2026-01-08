@@ -7,9 +7,18 @@ interface DilemmaCardProps {
   onSelectOption: (option: DilemmaOption) => void;
   activeJoker?: Technology | null;
   isInteractive?: boolean; // Se false, disabilita l'interazione
+  showOptions?: boolean; // Se false, nasconde le opzioni (mostra solo domanda e descrizione)
+  selectedOption?: DilemmaOption | null; // Opzione scelta (per evidenziarla quando mostrata)
 }
 
-export const DilemmaCard: React.FC<DilemmaCardProps> = ({ dilemma, onSelectOption, activeJoker, isInteractive = true }) => {
+export const DilemmaCard: React.FC<DilemmaCardProps> = ({ 
+  dilemma, 
+  onSelectOption, 
+  activeJoker, 
+  isInteractive = true,
+  showOptions = true, // Di default mostra sempre le opzioni (per retrocompatibilità)
+  selectedOption = null,
+}) => {
   return (
     <div 
       className="bg-gradient-to-br from-gray-800 to-gray-700 rounded-xl shadow-2xl p-4 sm:p-6 border-2 border-gray-600 transform-gpu w-full max-w-full"
@@ -48,30 +57,44 @@ export const DilemmaCard: React.FC<DilemmaCardProps> = ({ dilemma, onSelectOptio
         </div>
 
         {/* Colonna destra - Opzioni */}
-        <div className="flex flex-col min-w-0 flex-shrink-0">
-          <h3 className="font-semibold text-xs sm:text-sm text-gray-100 mb-3">Scegli la tua decisione:</h3>
-          <div className="space-y-2 sm:space-y-3 flex-grow min-h-0">
-            {dilemma.options.map((option, index) => (
-              <button
-                key={index}
-                onClick={() => isInteractive && onSelectOption(option)}
-                disabled={!isInteractive}
-                className={`w-full border-2 rounded-lg p-3 sm:p-4 text-left transition-all duration-300 transform-gpu ${
-                  isInteractive
-                    ? 'bg-gray-800 hover:bg-gray-700 active:bg-gray-600 border-gray-600 hover:border-gray-500 active:border-gray-400 hover:shadow-md active:shadow-lg cursor-pointer'
-                    : 'bg-gray-900 border-gray-700 cursor-not-allowed opacity-60'
-                }`}
-                style={{
-                  boxShadow: isInteractive ? '0 2px 4px rgba(0, 0, 0, 0.1)' : 'none',
-                }}
-              >
-                <p className={`text-xs sm:text-sm font-medium leading-relaxed break-words ${
-                  isInteractive ? 'text-gray-100' : 'text-gray-500'
-                }`}>{option.text}</p>
-              </button>
-            ))}
+        {showOptions && (
+          <div className="flex flex-col min-w-0 flex-shrink-0">
+            <h3 className="font-semibold text-xs sm:text-sm text-gray-100 mb-3">
+              {selectedOption ? 'Decisione presa:' : 'Scegli la tua decisione:'}
+            </h3>
+            <div className="space-y-2 sm:space-y-3 flex-grow min-h-0">
+              {dilemma.options.map((option, index) => {
+                const isSelected = selectedOption && option.text === selectedOption.text;
+                const isClickable = isInteractive && !selectedOption;
+                
+                return (
+                  <button
+                    key={index}
+                    onClick={() => isClickable && onSelectOption(option)}
+                    disabled={!isClickable}
+                    className={`w-full border-2 rounded-lg p-3 sm:p-4 text-left transition-all duration-300 transform-gpu ${
+                      isSelected
+                        ? 'bg-blue-700 border-blue-500 shadow-lg ring-2 ring-blue-400'
+                        : isClickable
+                        ? 'bg-gray-800 hover:bg-gray-700 active:bg-gray-600 border-gray-600 hover:border-gray-500 active:border-gray-400 hover:shadow-md active:shadow-lg cursor-pointer'
+                        : 'bg-gray-900 border-gray-700 cursor-not-allowed opacity-60'
+                    }`}
+                    style={{
+                      boxShadow: isClickable || isSelected ? '0 2px 4px rgba(0, 0, 0, 0.1)' : 'none',
+                    }}
+                  >
+                    <p className={`text-xs sm:text-sm font-medium leading-relaxed break-words ${
+                      isSelected ? 'text-white' : isClickable ? 'text-gray-100' : 'text-gray-500'
+                    }`}>
+                      {option.text}
+                      {isSelected && <span className="ml-2 text-blue-300">✓</span>}
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
