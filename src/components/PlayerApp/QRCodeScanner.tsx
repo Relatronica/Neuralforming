@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Html5Qrcode } from 'html5-qrcode';
+import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
 import { X } from 'lucide-react';
 
 interface QRCodeScannerProps {
@@ -10,6 +10,7 @@ interface QRCodeScannerProps {
 export const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onScanSuccess, onClose }) => {
   const scannerRef = useRef<Html5Qrcode | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isScanning, setIsScanning] = useState(false);
   const scannerId = 'qr-reader';
 
   useEffect(() => {
@@ -18,11 +19,24 @@ export const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onScanSuccess, onC
         const html5QrCode = new Html5Qrcode(scannerId);
         scannerRef.current = html5QrCode;
 
-        // Configurazione per mobile (fotocamera posteriore)
+        // Configurazione ottimizzata per mobile
         const config = {
-          fps: 10,
-          qrbox: { width: 250, height: 250 },
+          fps: 30, // Aumentato per migliore responsività
+          qrbox: (viewfinderWidth: number, viewfinderHeight: number) => {
+            // Calcola dimensioni dinamiche basate sulla viewport
+            const minEdgePercentage = 0.7; // 70% della dimensione minima
+            const minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
+            const qrboxSize = Math.floor(minEdgeSize * minEdgePercentage);
+            return {
+              width: Math.min(qrboxSize, 300), // Max 300px
+              height: Math.min(qrboxSize, 300),
+            };
+          },
           aspectRatio: 1.0,
+          // Supporta formati multipli (soprattutto QR_CODE)
+          formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
+          // Migliora la qualità di scansione
+          disableFlip: false, // Permette rotazione automatica
         };
 
         // Prova prima con la fotocamera posteriore (environment)
@@ -41,22 +55,45 @@ export const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onScanSuccess, onC
           console.warn('Could not enumerate cameras, using default:', err);
         }
 
+        console.log('📷 Starting QR scanner with config:', {
+          qrboxSize: config.qrbox,
+          fps: config.fps,
+          cameraId: cameraId || 'default (environment)',
+        });
+
         await html5QrCode.start(
           cameraId || { facingMode: 'environment' },
           config,
-          (decodedText) => {
+          (decodedText, decodedResult) => {
             // QR code decodificato con successo
-            console.log('✅ QR Code scanned:', decodedText);
+            console.log('✅ QR Code scanned successfully:', {
+              text: decodedText,
+              format: decodedResult?.result?.format,
+              timestamp: new Date().toISOString(),
+            });
+            
+            // Verifica che il testo decodificato non sia vuoto
+            if (!decodedText || decodedText.trim().length === 0) {
+              console.warn('⚠️ Empty QR code text, ignoring...');
+              return;
+            }
+            
             stopScanner();
             onScanSuccess(decodedText);
           },
-          () => {
-            // Ignora errori di scanning continuo (non è un errore critico)
-            // Solo log per debug, non mostrare all'utente
+          (errorMessage) => {
+            // Log errori di scanning continuo per debug
+            // Non mostrare all'utente (sono normali durante la scansione)
+            if (errorMessage && !errorMessage.includes('NotFoundException')) {
+              // Log solo errori non comuni
+              console.debug('🔍 Scanning...', errorMessage);
+            }
           }
         );
 
+        setIsScanning(true);
         setError(null);
+        console.log('✅ QR scanner started successfully');
       } catch (err: any) {
         console.error('Error starting QR scanner:', err);
         let errorMessage = 'Impossibile accedere alla fotocamera.';
@@ -86,10 +123,14 @@ export const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onScanSuccess, onC
   const stopScanner = async () => {
     if (scannerRef.current) {
       try {
+        console.log('🛑 Stopping QR scanner...');
         await scannerRef.current.stop();
         scannerRef.current.clear();
+        setIsScanning(false);
+        console.log('✅ QR scanner stopped');
       } catch (err) {
-        console.error('Error stopping scanner:', err);
+        console.error('❌ Error stopping scanner:', err);
+        setIsScanning(false);
       }
       scannerRef.current = null;
     }
@@ -129,14 +170,28 @@ export const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onScanSuccess, onC
             </div>
           ) : (
             <>
-              <div
-                id={scannerId}
-                className="w-full rounded-lg overflow-hidden bg-gray-800"
-                style={{ minHeight: '300px' }}
-              />
+              <div className="relative">
+                <div
+                  id={scannerId}
+                  className="w-full rounded-lg overflow-hidden bg-gray-800"
+                  style={{ minHeight: '300px' }}
+                />
+                {isScanning && (
+                  <div className="absolute top-2 left-2 bg-green-500 text-white px-2 py-1 rounded text-xs font-semibold animate-pulse">
+                    Scansione attiva...
+                  </div>
+                )}
+              </div>
               <p className="text-sm text-gray-400 text-center mt-4">
-                Inquadra il QR code per entrare automaticamente nella partita
+                {isScanning 
+                  ? 'Inquadra il QR code nella cornice per entrare automaticamente nella partita'
+                  : 'Avvio scanner...'}
               </p>
+              {isScanning && (
+                <p className="text-xs text-gray-500 text-center mt-2">
+                  Assicurati che il QR code sia ben illuminato e a fuoco
+                </p>
+              )}
             </>
           )}
         </div>
