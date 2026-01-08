@@ -28,6 +28,25 @@ export const PlayerApp: React.FC = () => {
   const [playerIcon, setPlayerIcon] = useState<string | null>(null);
   const [isLoadingSession, setIsLoadingSession] = useState(true);
 
+  // Ascolta eventi di errore per resettare il form quando il nome è già usato
+  useEffect(() => {
+    const handlePlayerNameTaken = (event: CustomEvent) => {
+      console.log('🔄 Player name already taken, resetting form...');
+      // Resetta tutto per permettere all'utente di inserire un nuovo nome
+      setRoomId(null);
+      setPlayerId(null);
+      setPlayerColor(null);
+      setPlayerIcon(null);
+      localStorage.removeItem(STORAGE_KEY);
+    };
+
+    window.addEventListener('playerNameTaken', handlePlayerNameTaken as EventListener);
+
+    return () => {
+      window.removeEventListener('playerNameTaken', handlePlayerNameTaken as EventListener);
+    };
+  }, []);
+
   // Carica credenziali salvate al mount
   useEffect(() => {
     try {
@@ -40,6 +59,7 @@ export const PlayerApp: React.FC = () => {
           
           // Se c'è un roomId nel query param diverso da quello salvato, non caricare la sessione
           // Questo permette di entrare in una nuova partita senza problemi
+          // IMPORTANTE: non pre-compilare il nome perché potrebbe essere già usato nella nuova partita
           if (queryRoomId && queryRoomId !== session.roomId) {
             console.log('🔄 New roomId from QR code detected, clearing old session:', {
               oldRoomId: session.roomId,
@@ -47,6 +67,8 @@ export const PlayerApp: React.FC = () => {
             });
             localStorage.removeItem(STORAGE_KEY);
             setIsLoadingSession(false);
+            // Non impostare roomId/playerId qui - lascia che l'utente faccia login manualmente
+            // Il roomId verrà pre-compilato dal PlayerLogin tramite query param
             return;
           }
           
@@ -89,6 +111,7 @@ export const PlayerApp: React.FC = () => {
 
   const handleLogin = (room: string, player: string, color: string, icon: string) => {
     // Se il roomId è diverso da quello salvato, pulisci le credenziali vecchie
+    // IMPORTANTE: questo assicura che quando si cambia partita, il nome venga resettato
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
@@ -97,6 +120,7 @@ export const PlayerApp: React.FC = () => {
           console.log('🔄 New roomId detected in login, clearing old session:', {
             oldRoomId: session.roomId,
             newRoomId: room,
+            oldPlayerName: session.playerId,
           });
           localStorage.removeItem(STORAGE_KEY);
         }

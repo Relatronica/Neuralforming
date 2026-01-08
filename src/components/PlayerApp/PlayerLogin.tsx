@@ -45,6 +45,7 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
   const [playerName, setPlayerName] = useState('');
   const [selectedColor, setSelectedColor] = useState(availableColors[0].value);
   const [selectedIcon, setSelectedIcon] = useState(availableIcons[0].value);
+  const [nameError, setNameError] = useState<string | null>(null);
 
   // Pre-compila l'ID stanza dai query param, se presente (?room=...)
   useEffect(() => {
@@ -52,24 +53,60 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
     if (qp) {
       setRoomId(qp);
       
-      // Se c'è un roomId nel query param, pulisci eventuali credenziali vecchie
-      // per permettere di entrare in una nuova partita senza conflitti
+      // Se c'è un roomId nel query param diverso da quello salvato, NON pre-compilare il nome
+      // perché potrebbe essere già usato nella nuova partita
       try {
         const saved = localStorage.getItem('neuralforming_player_session');
         if (saved) {
           const session = JSON.parse(saved);
           if (session.roomId && session.roomId !== qp) {
-            console.log('🔄 QR code roomId differs from saved session, will clear on login:', {
+            console.log('🔄 QR code roomId differs from saved session, not pre-filling name:', {
               savedRoomId: session.roomId,
               qrRoomId: qp,
             });
-            // Non pulire subito, ma quando l'utente fa login verrà gestito
+            // Non pre-compilare il nome - lascia che l'utente inserisca un nuovo nome
+            // per evitare conflitti con nomi già usati nella nuova partita
+          } else if (session.roomId === qp && session.playerId) {
+            // Solo se il roomId corrisponde, pre-compila il nome (stessa partita)
+            setPlayerName(session.playerId);
+            setSelectedColor(session.playerColor || availableColors[0].value);
+            setSelectedIcon(session.playerIcon || availableIcons[0].value);
           }
         }
       } catch (e) {
         console.error('Failed to check session:', e);
       }
+    } else {
+      // Se non c'è query param, prova a caricare la sessione salvata
+      try {
+        const saved = localStorage.getItem('neuralforming_player_session');
+        if (saved) {
+          const session = JSON.parse(saved);
+          if (session.roomId && session.playerId) {
+            setRoomId(session.roomId);
+            setPlayerName(session.playerId);
+            setSelectedColor(session.playerColor || availableColors[0].value);
+            setSelectedIcon(session.playerIcon || availableIcons[0].value);
+          }
+        }
+      } catch (e) {
+        console.error('Failed to load session:', e);
+      }
     }
+  }, []);
+
+  // Ascolta eventi di errore per mostrare messaggio quando il nome è già usato
+  useEffect(() => {
+    const handlePlayerNameTaken = () => {
+      setNameError('Questo nome è già usato in questa partita. Scegli un altro nome.');
+      setPlayerName(''); // Pulisci il campo nome
+    };
+
+    window.addEventListener('playerNameTaken', handlePlayerNameTaken);
+
+    return () => {
+      window.removeEventListener('playerNameTaken', handlePlayerNameTaken);
+    };
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -113,12 +150,20 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
             <input
               type="text"
               value={playerName}
-              onChange={(e) => setPlayerName(e.target.value)}
+              onChange={(e) => {
+                setPlayerName(e.target.value);
+                setNameError(null); // Pulisci l'errore quando l'utente inizia a digitare
+              }}
               placeholder="Il tuo nome partito"
-              className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent text-gray-100 placeholder-gray-500"
+              className={`w-full px-4 py-3 bg-gray-800 border rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent text-gray-100 placeholder-gray-500 ${
+                nameError ? 'border-red-500 focus:ring-red-500' : 'border-gray-600'
+              }`}
               maxLength={30}
               required
             />
+            {nameError && (
+              <p className="mt-2 text-sm text-red-400">{nameError}</p>
+            )}
           </div>
 
           <div>

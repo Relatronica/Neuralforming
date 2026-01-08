@@ -148,12 +148,23 @@ export function useGameSocket(roomId: string | null) {
         const errorMsg = data.error || 'Failed to join room';
         setError(errorMsg);
         
-        // Se l'errore è "Game already started" o "Room not found", potrebbe essere una partita vecchia
+        // Se l'errore è "Game already started", "Room not found" o "Player name already taken"
         // Pulisci le credenziali salvate per permettere un nuovo login
-        if (errorMsg.includes('already started') || errorMsg.includes('not found') || errorMsg.includes('Room not found')) {
-          console.log('🧹 Clearing session due to room error:', errorMsg);
+        if (
+          errorMsg.includes('already started') || 
+          errorMsg.includes('not found') || 
+          errorMsg.includes('Room not found') ||
+          errorMsg.includes('Player name already taken') ||
+          errorMsg.includes('name already taken')
+        ) {
+          console.log('🧹 Clearing session due to error:', errorMsg);
           try {
             localStorage.removeItem('neuralforming_player_session');
+            // Se è un errore di nome già usato, forziamo il reset dello stato per mostrare il form di login
+            if (errorMsg.includes('Player name already taken') || errorMsg.includes('name already taken')) {
+              // Emetti un evento custom per notificare il componente di resettare il form
+              window.dispatchEvent(new CustomEvent('playerNameTaken', { detail: { roomId } }));
+            }
           } catch (e) {
             console.error('Failed to clear session:', e);
           }
