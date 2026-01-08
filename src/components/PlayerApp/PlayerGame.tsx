@@ -98,10 +98,19 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       // Previeni il refresh e mostra un warning
+      // NOTA: I browser moderni (Chrome, Firefox, Safari) mostrano un messaggio standard
+      // e ignorano il testo personalizzato per motivi di sicurezza. Tuttavia, possiamo
+      // comunque prevenire l'azione e il browser mostrerà un messaggio di conferma.
       e.preventDefault();
-      // I browser moderni mostrano un messaggio standard, ma possiamo comunque prevenire
-      e.returnValue = 'Sei sicuro di voler uscire? Potresti perdere la connessione alla partita.';
-      return e.returnValue;
+      
+      // Messaggio personalizzato (anche se i browser lo mostrano in modo standardizzato)
+      // Il messaggio verrà mostrato come "Le modifiche non salvate potrebbero andare perse"
+      // o simile, a seconda del browser
+      const message = 'Sei sicuro di voler uscire? Verrai escluso dalla partita in corso e non potrai più partecipare.';
+      e.returnValue = message;
+      
+      // Alcuni browser richiedono anche il return del valore
+      return message;
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
