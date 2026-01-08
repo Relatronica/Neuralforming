@@ -145,7 +145,19 @@ export function useGameSocket(roomId: string | null) {
 
     newSocket.on('joinedRoom', (data: { roomId: string; success: boolean; error?: string }) => {
       if (!data.success) {
-        setError(data.error || 'Failed to join room');
+        const errorMsg = data.error || 'Failed to join room';
+        setError(errorMsg);
+        
+        // Se l'errore è "Game already started" o "Room not found", potrebbe essere una partita vecchia
+        // Pulisci le credenziali salvate per permettere un nuovo login
+        if (errorMsg.includes('already started') || errorMsg.includes('not found') || errorMsg.includes('Room not found')) {
+          console.log('🧹 Clearing session due to room error:', errorMsg);
+          try {
+            localStorage.removeItem('neuralforming_player_session');
+          } catch (e) {
+            console.error('Failed to clear session:', e);
+          }
+        }
       } else {
         setError(null);
       }

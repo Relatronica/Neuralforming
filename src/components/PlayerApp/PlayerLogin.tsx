@@ -51,6 +51,24 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
     const qp = getQueryParam('room');
     if (qp) {
       setRoomId(qp);
+      
+      // Se c'è un roomId nel query param, pulisci eventuali credenziali vecchie
+      // per permettere di entrare in una nuova partita senza conflitti
+      try {
+        const saved = localStorage.getItem('neuralforming_player_session');
+        if (saved) {
+          const session = JSON.parse(saved);
+          if (session.roomId && session.roomId !== qp) {
+            console.log('🔄 QR code roomId differs from saved session, will clear on login:', {
+              savedRoomId: session.roomId,
+              qrRoomId: qp,
+            });
+            // Non pulire subito, ma quando l'utente fa login verrà gestito
+          }
+        }
+      } catch (e) {
+        console.error('Failed to check session:', e);
+      }
     }
   }, []);
 

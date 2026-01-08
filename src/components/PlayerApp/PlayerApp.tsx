@@ -35,6 +35,21 @@ export const PlayerApp: React.FC = () => {
       if (saved) {
         const session: SavedSession = JSON.parse(saved);
         if (session.roomId && session.playerId) {
+          // Verifica se c'è un roomId nel query param (da QR code)
+          const queryRoomId = new URLSearchParams(window.location.search).get('room');
+          
+          // Se c'è un roomId nel query param diverso da quello salvato, non caricare la sessione
+          // Questo permette di entrare in una nuova partita senza problemi
+          if (queryRoomId && queryRoomId !== session.roomId) {
+            console.log('🔄 New roomId from QR code detected, clearing old session:', {
+              oldRoomId: session.roomId,
+              newRoomId: queryRoomId,
+            });
+            localStorage.removeItem(STORAGE_KEY);
+            setIsLoadingSession(false);
+            return;
+          }
+          
           console.log('📦 Loading saved session:', { roomId: session.roomId, playerId: session.playerId });
           setRoomId(session.roomId);
           setPlayerId(session.playerId);
@@ -73,6 +88,24 @@ export const PlayerApp: React.FC = () => {
   }, [roomId, playerId, playerColor, playerIcon]);
 
   const handleLogin = (room: string, player: string, color: string, icon: string) => {
+    // Se il roomId è diverso da quello salvato, pulisci le credenziali vecchie
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const session: SavedSession = JSON.parse(saved);
+        if (session.roomId && session.roomId !== room) {
+          console.log('🔄 New roomId detected in login, clearing old session:', {
+            oldRoomId: session.roomId,
+            newRoomId: room,
+          });
+          localStorage.removeItem(STORAGE_KEY);
+        }
+      }
+    } catch (e) {
+      console.error('❌ Failed to check old session:', e);
+    }
+    
+    // Imposta le nuove credenziali (verranno salvate automaticamente dal useEffect)
     setRoomId(room);
     setPlayerId(player);
     setPlayerColor(color);
