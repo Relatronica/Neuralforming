@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Html5Qrcode, Html5QrcodeSupportedFormats } from 'html5-qrcode';
+import { Html5Qrcode } from 'html5-qrcode';
 import { X } from 'lucide-react';
 
 interface QRCodeScannerProps {
@@ -20,24 +20,20 @@ export const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onScanSuccess, onC
         scannerRef.current = html5QrCode;
 
         // Configurazione ottimizzata per mobile
+        // Calcola dimensioni ottimali per il qrbox
+        const viewportWidth = Math.min(window.innerWidth - 64, 400);
+        const qrboxSize = Math.min(Math.floor(viewportWidth * 0.7), 300);
+        
         const config = {
-          fps: 30, // Aumentato per migliore responsività
-          qrbox: (viewfinderWidth: number, viewfinderHeight: number) => {
-            // Calcola dimensioni dinamiche basate sulla viewport
-            const minEdgePercentage = 0.7; // 70% della dimensione minima
-            const minEdgeSize = Math.min(viewfinderWidth, viewfinderHeight);
-            const qrboxSize = Math.floor(minEdgeSize * minEdgePercentage);
-            return {
-              width: Math.min(qrboxSize, 300), // Max 300px
-              height: Math.min(qrboxSize, 300),
-            };
-          },
+          fps: 10, // Ridotto per stabilità
+          qrbox: { width: qrboxSize, height: qrboxSize }, // Usa valori numerici invece di funzione
           aspectRatio: 1.0,
-          // Supporta formati multipli (soprattutto QR_CODE)
-          formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
-          // Migliora la qualità di scansione
+          // Rimuovi formatsToSupport per supportare tutti i formati (incluso QR_CODE)
+          // formatsToSupport potrebbe causare problemi
           disableFlip: false, // Permette rotazione automatica
         };
+        
+        console.log('📐 QR box size calculated:', qrboxSize, 'px');
 
         // Prova prima con la fotocamera posteriore (environment)
         // Se non disponibile, usa quella frontale (user)
@@ -56,9 +52,10 @@ export const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onScanSuccess, onC
         }
 
         console.log('📷 Starting QR scanner with config:', {
-          qrboxSize: config.qrbox,
+          qrbox: config.qrbox,
           fps: config.fps,
           cameraId: cameraId || 'default (environment)',
+          scannerId: scannerId,
         });
 
         await html5QrCode.start(
@@ -66,10 +63,12 @@ export const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onScanSuccess, onC
           config,
           (decodedText, decodedResult) => {
             // QR code decodificato con successo
-            console.log('✅ QR Code scanned successfully:', {
+            console.log('✅✅✅ QR Code scanned successfully:', {
               text: decodedText,
+              textLength: decodedText?.length,
               format: decodedResult?.result?.format,
               timestamp: new Date().toISOString(),
+              fullResult: decodedResult,
             });
             
             // Verifica che il testo decodificato non sia vuoto
@@ -78,15 +77,19 @@ export const QRCodeScanner: React.FC<QRCodeScannerProps> = ({ onScanSuccess, onC
               return;
             }
             
+            console.log('📤 Calling onScanSuccess with:', decodedText);
             stopScanner();
             onScanSuccess(decodedText);
           },
-          (errorMessage) => {
-            // Log errori di scanning continuo per debug
-            // Non mostrare all'utente (sono normali durante la scansione)
-            if (errorMessage && !errorMessage.includes('NotFoundException')) {
-              // Log solo errori non comuni
-              console.debug('🔍 Scanning...', errorMessage);
+          (errorMessage, error) => {
+            // Log TUTTI gli errori per debug - potrebbero essere importanti
+            if (errorMessage) {
+              // Log anche NotFoundException per vedere se sta cercando
+              console.log('🔍 Scanner error (this is normal during scanning):', {
+                message: errorMessage,
+                error: error,
+                timestamp: new Date().toISOString(),
+              });
             }
           }
         );

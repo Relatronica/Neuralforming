@@ -121,9 +121,14 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
   };
 
   const handleQRScanSuccess = (decodedText: string) => {
-    console.log('📷 QR Code scanned:', decodedText);
+    console.log('📷📷📷 handleQRScanSuccess called with:', decodedText);
+    console.log('📷 Full decoded text:', JSON.stringify(decodedText));
+    
     const extractedRoomId = extractRoomId(decodedText);
+    console.log('📷 Extracted roomId:', extractedRoomId);
+    
     if (extractedRoomId) {
+      console.log('✅ Setting roomId to:', extractedRoomId);
       setRoomId(extractedRoomId);
       setShowScanner(false);
       // Focus sul campo nome per permettere all'utente di inserire il nome
