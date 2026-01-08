@@ -72,7 +72,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
           </div>
           
           {/* Tabs - Layout compatto per evitare overflow */}
-          <div className="grid grid-cols-4 gap-1 sm:gap-2">
+          <div className="grid grid-cols-4 gap-1 sm:gap-2" data-tour="tabs">
             <button
               onClick={() => setActiveTab('hand')}
               className={`py-2 px-1.5 sm:px-3 text-xs font-semibold rounded-lg transition-colors duration-200 min-w-0 ${
@@ -80,6 +80,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
                   ? 'bg-gray-600 text-white'
                   : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800'
               }`}
+              data-tour="hand-tab"
             >
               <div className="flex flex-col items-center gap-1">
                 <Hand className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
@@ -99,6 +100,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
                   ? 'bg-gray-600 text-white'
                   : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800'
               }`}
+              data-tour="laws-tab"
             >
               <div className="flex flex-col items-center gap-1">
                 <ScrollText className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
@@ -118,6 +120,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
                   ? 'bg-gray-600 text-white'
                   : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800'
               }`}
+              data-tour="milestones-tab"
             >
               <div className="flex flex-col items-center gap-1">
                 <Trophy className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
@@ -137,6 +140,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
                   ? 'bg-gray-600 text-white'
                   : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800'
               }`}
+              data-tour="objective-tab"
             >
               <div className="flex flex-col items-center gap-1">
                 <Target className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
@@ -176,6 +180,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
                 <button
                   onClick={onDrawTechnology}
                   className="w-full bg-gray-600 hover:bg-gray-500 active:bg-gray-400 text-white font-semibold py-3 sm:py-4 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg active:shadow-md flex items-center justify-center gap-2 text-sm sm:text-base"
+                  data-tour="draw-button"
                 >
                   <Plus className="w-5 h-5 sm:w-6 sm:h-6" />
                   Pesca una Nuova Proposta
@@ -211,6 +216,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
                 <button
                   onClick={onDrawTechnology}
                   className="w-full bg-gray-600 hover:bg-gray-500 active:bg-gray-400 text-white font-semibold py-3 sm:py-4 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg active:shadow-md flex items-center justify-center gap-2 text-sm sm:text-base mt-4"
+                  data-tour="draw-button"
                 >
                   <Plus className="w-5 h-5 sm:w-6 sm:h-6" />
                   Pesca una Nuova Proposta

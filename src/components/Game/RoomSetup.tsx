@@ -293,13 +293,13 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
                 Inquadra per entrare nella PWA giocatore
               </label>
               <div className="flex flex-col sm:flex-row items-center gap-4">
-                <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
+                <div className="bg-white border border-gray-700 rounded-lg p-4">
                   {joinUrl && (
                     <QRCodeSVG
                       value={joinUrl}
                       size={200}
-                      bgColor="#1f2937"
-                      fgColor="#e5e7eb"
+                      bgColor="#ffffff"
+                      fgColor="#000000"
                       includeMargin={true}
                     />
                   )}

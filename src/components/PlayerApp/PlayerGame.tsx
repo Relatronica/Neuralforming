@@ -6,6 +6,7 @@ import { PlayerDilemma } from './PlayerDilemma';
 import { PlayerConsequence } from './PlayerConsequence';
 import { PlayerWaiting } from './PlayerWaiting';
 import { NewsCard } from '../Game/NewsCard';
+import { GameTour } from './GameTour';
 import { Users, Loader2, LogOut, Menu } from 'lucide-react';
 
 interface PlayerGameProps {
@@ -47,6 +48,10 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
   const [dismissedNewsIds, setDismissedNewsIds] = useState<Set<string>>(new Set());
   const [lastNewsId, setLastNewsId] = useState<string | null>(null);
   const [showMenu, setShowMenu] = useState(false);
+  
+  // Stato per il tour guidato
+  const [showTour, setShowTour] = useState(false);
+  const tourShownRef = useRef(false);
 
   // Reset delle news chiuse quando arriva una nuova news (ID diverso)
   useEffect(() => {
@@ -121,6 +126,33 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
 
   const isMyTurn = !!(gameState && currentPlayer && gameState.currentPlayerId === currentPlayer.id);
   const currentPhase = gameState?.currentPhase;
+
+  // Mostra il tour quando il gioco inizia per la prima volta
+  useEffect(() => {
+    // Mostra il tour solo se:
+    // 1. Il gioco è iniziato (gameState esiste)
+    // 2. Non abbiamo già mostrato il tour in questa sessione
+    // 3. Il tour non è stato completato in precedenza (controllo localStorage)
+    if (gameState && !tourShownRef.current && currentPhase === 'development') {
+      const tourCompleted = localStorage.getItem('neuralforming_tour_completed');
+      if (!tourCompleted) {
+        // Aspetta un po' per assicurarsi che il DOM sia renderizzato
+        const timer = setTimeout(() => {
+          setShowTour(true);
+          tourShownRef.current = true;
+        }, 1000);
+        return () => clearTimeout(timer);
+      } else {
+        tourShownRef.current = true;
+      }
+    }
+  }, [gameState, currentPhase]);
+
+  // Handler per completare il tour
+  const handleTourComplete = () => {
+    setShowTour(false);
+    localStorage.setItem('neuralforming_tour_completed', 'true');
+  };
 
   // Schermata di caricamento
   if (!isConnected) {
@@ -249,9 +281,16 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
     setShowMenu(false);
   };
 
+  // Handler per rivedere il tour
+  const handleShowTourAgain = () => {
+    setShowTour(true);
+    tourShownRef.current = false;
+    setShowMenu(false);
+  };
+
   // Componente per il menu in alto
   const GameMenu = () => (
-    <div className="fixed top-4 right-4 z-40">
+    <div className="fixed top-4 right-4 z-40" data-tour="menu">
       <div className="relative">
         <button
           onClick={() => setShowMenu(!showMenu)}
@@ -273,6 +312,13 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
                 <div className="px-3 py-2 text-xs text-gray-400 border-b border-gray-700 mb-1">
                   {playerId}
                 </div>
+                <button
+                  onClick={handleShowTourAgain}
+                  className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded flex items-center gap-2"
+                >
+                  <Users className="w-4 h-4" />
+                  Rivedi il Tour
+                </button>
                 <button
                   onClick={handleNewGame}
                   className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded flex items-center gap-2"
@@ -298,9 +344,15 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
     if (currentPhase === 'development') {
       return (
         <>
+          <GameTour 
+            run={showTour}
+            onComplete={handleTourComplete}
+            currentPhase={currentPhase}
+            hasNews={!!shouldShowNews}
+          />
           <GameMenu />
           {shouldShowNews && gameState.currentNews && (
-            <div className="fixed top-0 left-0 right-0 z-50 p-3 sm:p-4 max-w-2xl mx-auto">
+            <div className="fixed top-0 left-0 right-0 z-50 p-3 sm:p-4 max-w-2xl mx-auto" data-tour="news">
               <NewsCard
                 news={gameState.currentNews}
                 onDismiss={() => {
@@ -320,10 +372,16 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
     // Per altre fasi, wrappiamo normalmente
     return (
       <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 p-3 sm:p-4">
+        <GameTour 
+          run={showTour}
+          onComplete={handleTourComplete}
+          currentPhase={currentPhase}
+          hasNews={!!shouldShowNews}
+        />
         <GameMenu />
         <div className="max-w-2xl mx-auto">
           {shouldShowNews && gameState.currentNews && (
-            <div className="mb-4">
+            <div className="mb-4" data-tour="news">
               <NewsCard
                 news={gameState.currentNews}
                 onDismiss={() => {
