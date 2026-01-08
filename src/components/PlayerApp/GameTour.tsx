@@ -1,17 +1,17 @@
 import React from 'react';
 import Joyride, { CallBackProps, STATUS, Step } from 'react-joyride';
+import { GamePhase } from '../../game/types';
 
 interface GameTourProps {
   run: boolean;
   onComplete: () => void;
-  currentPhase?: 'development' | 'dilemma' | 'consequence';
+  currentPhase?: GamePhase;
   hasNews?: boolean;
 }
 
 export const GameTour: React.FC<GameTourProps> = ({ 
   run, 
   onComplete,
-  currentPhase = 'development',
   hasNews = false
 }) => {
   const newsStep: Step = {
@@ -165,7 +165,7 @@ export const GameTour: React.FC<GameTourProps> = ({
   const handleJoyrideCallback = (data: CallBackProps) => {
     const { status } = data;
     
-    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status as STATUS)) {
+    if (status === STATUS.FINISHED || status === STATUS.SKIPPED) {
       onComplete();
     }
   };
