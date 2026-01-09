@@ -18,6 +18,15 @@ interface PendingVote {
   startTime: number;
 }
 
+interface DisconnectedPlayer {
+  playerId: string;
+  playerName: string;
+  playerColor: string;
+  playerIcon?: string;
+  disconnectedAt: number;
+  timeoutId?: NodeJS.Timeout;
+}
+
 interface GameRoom {
   id: string;
   gameState: GameState | null;
@@ -26,6 +35,8 @@ interface GameRoom {
   pendingVotes: Map<string, PendingVote>; // technologyId -> pending vote
   isGameStarted: boolean;
   maxPlayers: number;
+  disconnectedPlayers: Map<string, DisconnectedPlayer>; // playerId -> disconnected player info
+  playerIdMap: Map<string, string>; // playerName -> playerId persistente
 }
 
 /**
@@ -148,6 +159,8 @@ export class GameServer {
       pendingVotes: new Map(),
       isGameStarted: false,
       maxPlayers: 5,
+      disconnectedPlayers: new Map(), // Giocatori disconnessi temporaneamente
+      playerIdMap: new Map(), // Mappa playerName -> playerId persistente
     };
 
     // Il master NON viene aggiunto come giocatore
@@ -157,14 +170,124 @@ export class GameServer {
     return roomId;
   }
 
+  /**
+   * Genera o recupera un playerId persistente per un giocatore
+   * Questo permette di mantenere lo stesso ID anche dopo riconnessione
+   */
+  private getOrCreatePlayerId(room: GameRoom, playerName: string): string {
+    if (!room.playerIdMap.has(playerName)) {
+      // Genera un nuovo ID persistente
+      const playerId = `player-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      room.playerIdMap.set(playerName, playerId);
+      console.log(`🆕 Created persistent playerId for ${playerName}: ${playerId}`);
+    }
+    return room.playerIdMap.get(playerName)!;
+  }
+
   private joinRoom(roomId: string, socketId: string, playerName: string, playerColor: string, playerIcon?: string) {
     const room = this.rooms.get(roomId);
     if (!room) {
       throw new Error('Room not found');
     }
 
+    // ✅ NUOVO: Permetti riconnessione se il giocatore era disconnesso (anche durante partita)
+    const disconnected = Array.from(room.disconnectedPlayers.values())
+      .find(p => p.playerName === playerName);
+    
+    if (disconnected) {
+      // Riconnessione: ripristina il giocatore
+      console.log(`🔄 Player ${playerName} reconnecting (was disconnected at ${new Date(disconnected.disconnectedAt).toISOString()})...`);
+      
+      // Cancella il timeout di rimozione se presente
+      if (disconnected.timeoutId) {
+        clearTimeout(disconnected.timeoutId);
+        console.log(`⏰ Cancelled removal timeout for ${playerName}`);
+      }
+      
+      // Rimuovi da disconnectedPlayers
+      room.disconnectedPlayers.delete(disconnected.playerId);
+      
+      // Ottieni o crea playerId persistente
+      const persistentPlayerId = this.getOrCreatePlayerId(room, playerName);
+      
+      // Rimuovi eventuali entry vecchie con lo stesso nome ma socketId diverso
+      const oldEntries = Array.from(room.players.entries()).filter(
+        ([id, p]) => p.playerName === playerName && id !== socketId
+      );
+      oldEntries.forEach(([oldSocketId]) => {
+        console.log(`🔄 Removing old socket entry ${oldSocketId} for player ${playerName} (reconnecting)`);
+        room.players.delete(oldSocketId);
+      });
+      
+      // Aggiungi di nuovo alla lista attiva con lo stesso playerId persistente
+      room.players.set(socketId, {
+        socketId,
+        playerId: persistentPlayerId, // ✅ Mantieni lo stesso playerId
+        playerName: disconnected.playerName,
+        playerColor: disconnected.playerColor, // Mantieni colore originale
+        playerIcon: disconnected.playerIcon || playerIcon || 'landmark',
+        isMaster: false,
+      });
+      
+      console.log(`✅ Player ${playerName} reconnected with persistent playerId ${persistentPlayerId}`);
+      
+      // Se il gioco è iniziato, invia lo stato del giocatore
+      if (room.isGameStarted && room.gameState) {
+        const playerState = room.gameState.players.find(p => p.id === persistentPlayerId);
+        if (playerState) {
+          // Invia lo stato del giocatore riconnesso
+          this.io.to(socketId).emit('playerStateUpdate', {
+            playerState: {
+              ...playerState,
+              hand: playerState.hand,
+            },
+            gameState: {
+              ...room.gameState,
+              players: room.gameState.players.map(p => ({
+                ...p,
+                hand: p.id === persistentPlayerId ? p.hand : [],
+              })),
+            },
+          });
+          console.log(`📤 Sent game state to reconnected player ${playerName}`);
+        } else {
+          console.warn(`⚠️ Player state not found in gameState for reconnected player ${playerName} (playerId: ${persistentPlayerId})`);
+        }
+        
+        // Se ci sono votazioni in corso, inviale al giocatore riconnesso
+        if (room.pendingVotes.size > 0) {
+          room.pendingVotes.forEach((pendingVote, technologyId) => {
+            console.log(`📊 Sending pending vote to reconnected player ${playerName}: ${technologyId}`);
+            this.io.to(socketId).emit('votingStarted', {
+              technologyId: pendingVote.technologyId,
+              technology: pendingVote.technology,
+              proposerId: pendingVote.proposerId,
+            });
+            
+            // Invia anche lo stato della votazione
+            const allPlayers = Array.from(room.players.values()).filter(p => p.playerId !== pendingVote.proposerId);
+            const votesCount = pendingVote.votes.size;
+            const myVote = pendingVote.votes.has(persistentPlayerId);
+            
+            this.io.to(socketId).emit('voteUpdate', {
+              technologyId,
+              votes: Array.from(pendingVote.votes.entries()).map(([pid, v]) => ({ playerId: pid, vote: v })),
+              totalVotes: votesCount,
+              requiredVotes: allPlayers.length,
+            });
+            
+            console.log(`📊 Sent vote status to reconnected player ${playerName}: ${votesCount}/${allPlayers.length} votes, hasVoted: ${myVote}`);
+          });
+        }
+      }
+      
+      this.broadcastRoomUpdate(roomId);
+      return; // ✅ Riconnessione completata
+    }
+
+    // Se non era disconnesso, applica la logica normale (solo se gioco non iniziato)
     if (room.isGameStarted) {
-      throw new Error('Game already started');
+      throw new Error('Game already started'); // Solo per nuovi giocatori
     }
 
     // Se il giocatore è già nella room con questo socketId, aggiorna solo le info (riconnessione)
@@ -191,7 +314,9 @@ export class GameServer {
       throw new Error('Player name already taken');
     }
 
-    // Nuovo giocatore o riconnessione con socketId diverso ma stesso nome
+    // Nuovo giocatore: genera playerId persistente
+    const persistentPlayerId = this.getOrCreatePlayerId(room, playerName);
+    
     // Rimuovi eventuali entry vecchie con lo stesso nome ma socketId diverso (riconnessione)
     const oldEntries = Array.from(room.players.entries()).filter(
       ([id, p]) => p.playerName === playerName && id !== socketId
@@ -201,17 +326,17 @@ export class GameServer {
       room.players.delete(oldSocketId);
     });
 
-    // Aggiungi il nuovo giocatore
+    // Aggiungi il nuovo giocatore con playerId persistente
     room.players.set(socketId, {
       socketId,
-      playerId: `player-${socketId}`,
+      playerId: persistentPlayerId,
       playerName,
       playerColor,
       playerIcon: playerIcon || 'landmark',
       isMaster: false,
     });
     
-    console.log(`✅ Player ${playerName} joined room ${roomId} with socketId ${socketId}`);
+    console.log(`✅ Player ${playerName} joined room ${roomId} with socketId ${socketId} and persistent playerId ${persistentPlayerId}`);
   }
 
   private async startGame(roomId: string, socketId: string) {
@@ -535,16 +660,53 @@ export class GameServer {
       if (room.masterSocketId === socketId) {
         // Se il gioco non è iniziato, elimina la room
         if (!room.isGameStarted) {
+          // Pulisci tutti i timeout di disconnectedPlayers prima di eliminare la room
+          room.disconnectedPlayers.forEach((disconnected) => {
+            if (disconnected.timeoutId) {
+              clearTimeout(disconnected.timeoutId);
+            }
+          });
           this.rooms.delete(roomId);
           this.io.to(roomId).emit('roomClosed');
         } else {
           // Se il gioco è iniziato, logga ma non elimina la room (per permettere riconnessione)
-          console.log(`Master disconnected from room ${roomId} (game in progress)`);
+          console.log(`⚠️ Master disconnected from room ${roomId} (game in progress)`);
         }
         break;
       } else if (room.players.has(socketId)) {
         // Giocatore normale si disconnette
+        const player = room.players.get(socketId)!;
+        
+        // ✅ NUOVO: Grace period - non rimuovere immediatamente, aggiungi a disconnectedPlayers
+        console.log(`⚠️ Player ${player.playerName} (${player.playerId}) disconnected from room ${roomId}`);
+        
+        // Aggiungi a disconnectedPlayers invece di rimuovere immediatamente
+        const GRACE_PERIOD_MS = 60000; // 60 secondi
+        const disconnected: DisconnectedPlayer = {
+          playerId: player.playerId,
+          playerName: player.playerName,
+          playerColor: player.playerColor,
+          playerIcon: player.playerIcon,
+          disconnectedAt: Date.now(),
+        };
+        
+        // Imposta timeout per rimozione dopo grace period
+        const timeoutId = setTimeout(() => {
+          if (room.disconnectedPlayers.has(player.playerId)) {
+            console.log(`⏰ Grace period expired for player ${player.playerName} (${player.playerId}), removing from room`);
+            room.disconnectedPlayers.delete(player.playerId);
+            this.broadcastRoomUpdate(roomId);
+          }
+        }, GRACE_PERIOD_MS);
+        
+        disconnected.timeoutId = timeoutId;
+        room.disconnectedPlayers.set(player.playerId, disconnected);
+        
+        // Rimuovi dalla lista attiva
         room.players.delete(socketId);
+        
+        console.log(`⏳ Player ${player.playerName} in grace period (${GRACE_PERIOD_MS / 1000}s) - can reconnect`);
+        
         this.broadcastRoomUpdate(roomId);
         break;
       }

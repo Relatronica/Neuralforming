@@ -54,6 +54,10 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
   // Stato per il tour guidato
   const [showTour, setShowTour] = useState(false);
   const tourShownRef = useRef(false);
+  
+  // Stato per riconnessione
+  const [isReconnecting, setIsReconnecting] = useState(false);
+  const wasConnectedRef = useRef(false);
 
   // Reset delle news chiuse quando arriva una nuova news (ID diverso)
   useEffect(() => {
@@ -133,6 +137,24 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
       }
     }
   }, [isConnected, roomId, roomInfo, playerId, playerColor, playerIcon, joinRoom]);
+
+  // Traccia stato di riconnessione
+  useEffect(() => {
+    if (isConnected) {
+      wasConnectedRef.current = true;
+      // Se eravamo disconnessi e ora siamo connessi, mostra stato di riconnessione
+      if (isReconnecting) {
+        // Aspetta un po' per assicurarsi che la riconnessione sia completa
+        const timer = setTimeout(() => {
+          setIsReconnecting(false);
+        }, 2000);
+        return () => clearTimeout(timer);
+      }
+    } else if (wasConnectedRef.current && roomInfo?.isGameStarted) {
+      // Eravamo connessi e ora siamo disconnessi durante una partita
+      setIsReconnecting(true);
+    }
+  }, [isConnected, roomInfo?.isGameStarted]);
 
   // Warning pre-refresh: avvisa l'utente se sta per uscire durante una partita attiva
   useEffect(() => {
@@ -390,8 +412,17 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
             hasNews={!!shouldShowNews}
           />
           <GameMenu />
+          {/* Banner di riconnessione */}
+          {isReconnecting && (
+            <div className="fixed top-0 left-0 right-0 z-50 bg-yellow-600 text-white p-3 text-center shadow-lg">
+              <div className="flex items-center justify-center gap-2">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span className="font-semibold">Riconnessione in corso...</span>
+              </div>
+            </div>
+          )}
           {shouldShowNews && gameState.currentNews && (
-            <div className="fixed top-0 left-0 right-0 z-50 p-3 sm:p-4 max-w-2xl mx-auto" data-tour="news">
+            <div className={`fixed left-0 right-0 z-50 p-3 sm:p-4 max-w-2xl mx-auto ${isReconnecting ? 'top-12' : 'top-0'}`} data-tour="news">
               <NewsCard
                 news={gameState.currentNews}
                 onDismiss={() => {
@@ -428,7 +459,16 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
           hasNews={!!shouldShowNews}
         />
         <GameMenu />
-        <div className="max-w-2xl mx-auto">
+        {/* Banner di riconnessione */}
+        {isReconnecting && (
+          <div className="fixed top-0 left-0 right-0 z-50 bg-yellow-600 text-white p-3 text-center shadow-lg">
+            <div className="flex items-center justify-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span className="font-semibold">Riconnessione in corso...</span>
+            </div>
+          </div>
+        )}
+        <div className={`max-w-2xl mx-auto ${isReconnecting ? 'mt-12' : ''}`}>
           {shouldShowNews && gameState.currentNews && (
             <div className="mb-4" data-tour="news">
               <NewsCard
