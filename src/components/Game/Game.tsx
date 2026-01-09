@@ -23,7 +23,6 @@ import { useGameSocketContext } from '../../contexts/GameSocketContext';
 import { Bot, Landmark, Users, CheckCircle2, XCircle } from 'lucide-react';
 import technologiesData from '../../data/technologies.json';
 import dilemmasData from '../../data/dilemmas.json';
-import newsData from '../../data/news.json';
 import headerNewsData from '../../data/headerNews.json';
 
 interface GameProps {
