@@ -262,6 +262,53 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
     ? serverGameState  // In multiplayer, usa SOLO serverGameState (null se non ancora arrivato)
     : localGameState;
 
+  // Warning pre-refresh: avvisa l'utente se sta per uscire durante una partita attiva
+  useEffect(() => {
+    // Solo durante una partita attiva
+    // In single player: sempre attivo se c'è uno stato di gioco
+    // In multiplayer: solo se il gioco è iniziato e siamo connessi
+    const isGameActive = mode === 'single' 
+      ? !!gameState && gameState.players.length > 0
+      : mode === 'multiplayer' && isConnected && roomInfo?.isGameStarted && !!gameState;
+    
+    if (!isGameActive) {
+      return;
+    }
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      // Previeni il refresh e mostra un warning
+      e.preventDefault();
+      // I browser moderni mostrano un messaggio standard, ma possiamo comunque prevenire
+      e.returnValue = 'Sei sicuro di voler uscire? Potresti perdere lo stato della partita.';
+      return e.returnValue;
+    };
+
+    // Su mobile, beforeunload spesso non funziona, quindi aggiungiamo anche pagehide
+    // che viene chiamato quando la pagina viene nascosta (anche su mobile)
+    const handlePageHide = (e: PageTransitionEvent) => {
+      // pagehide viene chiamato anche quando si naviga via, ma non possiamo prevenirlo
+      // Possiamo solo loggare o salvare lo stato
+      console.log('⚠️ Page is being hidden - game state may be lost');
+    };
+
+    // visibilitychange viene chiamato quando la pagina diventa nascosta (anche su mobile)
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        console.log('⚠️ Page became hidden - game state may be lost');
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('pagehide', handlePageHide);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('pagehide', handlePageHide);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [gameState, mode, isConnected, roomInfo?.isGameStarted]);
+
   // Mostra la storia di apertura quando il gioco inizia (turno 1, fase development)
   useEffect(() => {
     if (!gameState) return;

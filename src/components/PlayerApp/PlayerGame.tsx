@@ -143,16 +143,39 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       // Previeni il refresh e mostra un warning
+      // NOTA: Su mobile (iOS Safari, Chrome mobile), beforeunload spesso viene ignorato
+      // per motivi di UX, ma proviamo comunque
       e.preventDefault();
       // I browser moderni mostrano un messaggio standard, ma possiamo comunque prevenire
       e.returnValue = 'Sei sicuro di voler uscire? Potresti perdere la connessione alla partita.';
       return e.returnValue;
     };
 
+    // Su mobile, beforeunload spesso non funziona, quindi aggiungiamo anche pagehide
+    // che viene chiamato quando la pagina viene nascosta (anche su mobile)
+    const handlePageHide = (e: PageTransitionEvent) => {
+      // pagehide viene chiamato anche quando si naviga via, ma non possiamo prevenirlo
+      // Possiamo solo loggare o salvare lo stato
+      console.log('⚠️ Page is being hidden - connection may be lost');
+    };
+
+    // visibilitychange viene chiamato quando la pagina diventa nascosta (anche su mobile)
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        console.log('⚠️ Page became hidden - connection may be lost');
+        // Su mobile, possiamo mostrare un messaggio all'utente quando torna
+        // ma non possiamo prevenire la chiusura
+      }
+    };
+
     window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('pagehide', handlePageHide);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('pagehide', handlePageHide);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [gameState, isConnected, roomInfo?.isGameStarted]);
 
