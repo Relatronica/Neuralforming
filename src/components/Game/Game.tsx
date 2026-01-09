@@ -285,7 +285,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
 
     // Su mobile, beforeunload spesso non funziona, quindi aggiungiamo anche pagehide
     // che viene chiamato quando la pagina viene nascosta (anche su mobile)
-    const handlePageHide = (e: PageTransitionEvent) => {
+    const handlePageHide = () => {
       // pagehide viene chiamato anche quando si naviga via, ma non possiamo prevenirlo
       // Possiamo solo loggare o salvare lo stato
       console.log('⚠️ Page is being hidden - game state may be lost');
