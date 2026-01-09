@@ -248,18 +248,26 @@ export class GameEngine {
       }> = [];
       
       if (realVotes) {
+        // Helper function per calcolare penalità con minimo garantito
+        const calculatePenalty = (baseValue: number, percentage: number): number => {
+          if (baseValue === 0) return 0;
+          const calculated = Math.round(baseValue * percentage);
+          // Se il calcolo dà 0 ma la tecnologia ha punti, assicura almeno 1 punto di penalità
+          return calculated === 0 && baseValue > 0 ? -1 : -calculated;
+        };
+
         // Penalità per votanti SÌ: -10% punti base (hanno sostenuto una legge impopolare)
         const yesVoterPenalty = {
-          techPoints: -Math.floor(adjustedBasePoints.techPoints * 0.10),
-          ethicsPoints: -Math.floor(adjustedBasePoints.ethicsPoints * 0.10),
-          neuralformingPoints: -Math.floor(adjustedBasePoints.neuralformingPoints * 0.10),
+          techPoints: calculatePenalty(adjustedBasePoints.techPoints, 0.10),
+          ethicsPoints: calculatePenalty(adjustedBasePoints.ethicsPoints, 0.10),
+          neuralformingPoints: calculatePenalty(adjustedBasePoints.neuralformingPoints, 0.10),
         };
 
         // Penalità per votanti NO: -5% punti base (hanno bloccato il progresso)
         const noVoterPenalty = {
-          techPoints: -Math.floor(adjustedBasePoints.techPoints * 0.05),
-          ethicsPoints: -Math.floor(adjustedBasePoints.ethicsPoints * 0.05),
-          neuralformingPoints: -Math.floor(adjustedBasePoints.neuralformingPoints * 0.05),
+          techPoints: calculatePenalty(adjustedBasePoints.techPoints, 0.05),
+          ethicsPoints: calculatePenalty(adjustedBasePoints.ethicsPoints, 0.05),
+          neuralformingPoints: calculatePenalty(adjustedBasePoints.neuralformingPoints, 0.05),
         };
 
         // Applica penalità a tutti i votanti (escludendo il proponente)
@@ -329,18 +337,26 @@ export class GameEngine {
     }> = [];
     
     if (realVotes) {
+      // Helper function per calcolare bonus con minimo garantito
+      const calculateBonus = (baseValue: number, percentage: number): number => {
+        if (baseValue === 0) return 0;
+        const calculated = Math.round(baseValue * percentage);
+        // Se il calcolo dà 0 ma la tecnologia ha punti, assicura almeno 1 punto di bonus
+        return calculated === 0 && baseValue > 0 ? 1 : calculated;
+      };
+
       // Bonus per votanti SÌ: +25% punti base (hanno sostenuto una legge popolare)
       const yesVoterBonus = {
-        techPoints: Math.floor(adjustedBasePoints.techPoints * 0.25),
-        ethicsPoints: Math.floor(adjustedBasePoints.ethicsPoints * 0.25),
-        neuralformingPoints: Math.floor(adjustedBasePoints.neuralformingPoints * 0.25),
+        techPoints: calculateBonus(adjustedBasePoints.techPoints, 0.25),
+        ethicsPoints: calculateBonus(adjustedBasePoints.ethicsPoints, 0.25),
+        neuralformingPoints: calculateBonus(adjustedBasePoints.neuralformingPoints, 0.25),
       };
 
       // Bonus per votanti NO: +5% punti base (hanno sbagliato previsione, ma la legge è passata)
       const noVoterBonus = {
-        techPoints: Math.floor(adjustedBasePoints.techPoints * 0.05),
-        ethicsPoints: Math.floor(adjustedBasePoints.ethicsPoints * 0.05),
-        neuralformingPoints: Math.floor(adjustedBasePoints.neuralformingPoints * 0.05),
+        techPoints: calculateBonus(adjustedBasePoints.techPoints, 0.05),
+        ethicsPoints: calculateBonus(adjustedBasePoints.ethicsPoints, 0.05),
+        neuralformingPoints: calculateBonus(adjustedBasePoints.neuralformingPoints, 0.05),
       };
 
       // Applica bonus a tutti i votanti (escludendo il proponente)
