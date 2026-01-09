@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { GameEngine } from '../../game/GameEngine';
 import { GameState, Technology, DilemmaOption, PlayerState, Dilemma, VoteResult } from '../../game/types';
 import { TurnManager } from '../../game/TurnManager';
@@ -11,6 +11,7 @@ import { DilemmaCard } from '../Cards/DilemmaCard';
 import { ConsequenceCard } from '../Cards/ConsequenceCard';
 import { PlayersList } from '../Players/PlayersList';
 import { VotingResult } from './VotingResult';
+import { VoterPointsNotification } from './VoterPointsNotification';
 import { GlobalEventCard } from './GlobalEventCard';
 import { NewsCard } from './NewsCard';
 import { VoteLoadingScreen } from './VoteLoadingScreen';
@@ -22,6 +23,8 @@ import { useGameSocketContext } from '../../contexts/GameSocketContext';
 import { Bot, Landmark, Users, CheckCircle2, XCircle } from 'lucide-react';
 import technologiesData from '../../data/technologies.json';
 import dilemmasData from '../../data/dilemmas.json';
+import newsData from '../../data/news.json';
+import headerNewsData from '../../data/headerNews.json';
 
 interface GameProps {
   mode?: 'single' | 'multiplayer';
@@ -58,6 +61,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
   // Loading states
   const [showVoteLoading, setShowVoteLoading] = useState(false);
   const [pendingVoteResult, setPendingVoteResult] = useState<{ voteResult: VoteResult; players: PlayerState[]; message?: string } | null>(null);
+  const [showVoterPointsNotification, setShowVoterPointsNotification] = useState(false);
   const [showDilemmaTransition, setShowDilemmaTransition] = useState(false);
   const [showTurnTransition, setShowTurnTransition] = useState(false);
   const [turnTransitionPlayer, setTurnTransitionPlayer] = useState<{ name: string; color?: string; icon?: string } | null>(null);
@@ -67,6 +71,9 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
   const [previousPhase, setPreviousPhase] = useState<string | null>(null);
   const [showOpeningStory, setShowOpeningStory] = useState(false);
   const [hasShownOpeningStory, setHasShownOpeningStory] = useState(false);
+  const [headerNewsIndex, setHeaderNewsIndex] = useState(() => 
+    Math.floor(Math.random() * headerNewsData.length)
+  );
 
   // Multiplayer: stato dal server
   // Usa il context invece di creare una nuova istanza - questo condivide lo stato con RoomSetup
@@ -278,6 +285,43 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
       return () => clearTimeout(timer);
     }
   }, [gameState, hasShownOpeningStory]);
+
+  // Mostra automaticamente la notifica dei punti votanti quando disponibile
+  // Usa un ref per tracciare se abbiamo già mostrato questa notifica
+  const voterPointsShownRef = useRef<string | null>(null);
+  
+  useEffect(() => {
+    if (!gameState) return;
+    
+    // Crea un ID univoco per questa notifica basato sui dati
+    const notificationId = gameState.voterPointsInfo 
+      ? JSON.stringify(gameState.voterPointsInfo.map(v => ({ playerId: v.playerId, vote: v.vote })))
+      : null;
+    
+    // Mostra la notifica solo se:
+    // 1. voterPointsInfo è disponibile
+    // 2. Non è già mostrata
+    // 3. Non abbiamo già mostrato questa specifica notifica
+    if (
+      gameState.voterPointsInfo && 
+      gameState.voterPointsInfo.length > 0 && 
+      !showVoterPointsNotification &&
+      notificationId !== voterPointsShownRef.current
+    ) {
+      // Piccolo delay per permettere al VotingResult di essere mostrato prima
+      const timer = setTimeout(() => {
+        setShowVoterPointsNotification(true);
+        voterPointsShownRef.current = notificationId;
+      }, 1500);
+      
+      return () => clearTimeout(timer);
+    }
+    
+    // Reset il ref quando voterPointsInfo cambia (nuova votazione)
+    if (!gameState.voterPointsInfo) {
+      voterPointsShownRef.current = null;
+    }
+  }, [gameState?.voterPointsInfo, showVoterPointsNotification]);
   
   // Per multiplayer, il master gestisce lo stato e lo invia al server
   const setGameState = mode === 'multiplayer' && isMaster
@@ -633,6 +677,25 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
     }
   }, [mode, isMaster, socket, gameState, roomId, setGameState]);
 
+  // Rotazione automatica delle news nell'header ogni 20 secondi
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setHeaderNewsIndex((prev) => {
+        // Cambia alla news successiva, tornando all'inizio se necessario
+        return (prev + 1) % headerNewsData.length;
+      });
+    }, 20000); // Cambia ogni 20 secondi
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // Cambia la news nell'header anche quando cambia il turno (random)
+  useEffect(() => {
+    if (!gameState) return;
+    // Cambia news random ad ogni turno
+    setHeaderNewsIndex(Math.floor(Math.random() * headerNewsData.length));
+  }, [gameState?.turn]);
+
   // Rileva cambio turno per mostrare transizione
   useEffect(() => {
     if (!gameState) return;
@@ -864,12 +927,38 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
       <div className="h-screen flex flex-col overflow-hidden relative" style={{
         background: 'linear-gradient(135deg, #000000 0%, #0a0a0a 15%, #1a1a1a 30%, #2a2a2a 45%, #3a3a3a 60%, #4a4a4a 75%, #5a5a5a 90%, #6a6a6a 100%)'
       }}>
-        {/* Header ultra-compatto */}
-      <header className="flex-shrink-0 px-3 py-1.5 bg-gray-900/90 backdrop-blur-sm border-b border-gray-700/50 shadow-sm relative z-10">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1.5">
-            <Landmark className="w-4 h-4 text-gray-100" />
-            <h1 className="text-lg font-bold text-gray-100">Neuralforming</h1>
+        {/* Header con news */}
+      <header className="flex-shrink-0 px-4 py-4 bg-gray-900/90 backdrop-blur-sm border-b border-gray-700/50 shadow-sm relative z-10">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4 flex-1 min-w-0">
+            <div className="flex items-center gap-2 text-xs text-gray-400 whitespace-nowrap">
+              <span className="text-gray-500">📰</span>
+              <span>NEWS</span>
+            </div>
+            <div className="flex items-center gap-4 flex-1 min-w-0 overflow-hidden">
+              {headerNewsData[headerNewsIndex] && (
+                <>
+                  <div className="text-xs text-gray-500 whitespace-nowrap">
+                    {new Date(headerNewsData[headerNewsIndex].date).toLocaleDateString('it-IT', { 
+                      day: '2-digit', 
+                      month: 'short', 
+                      year: 'numeric' 
+                    })}
+                  </div>
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <span className="text-sm text-gray-300 font-medium truncate">
+                      {headerNewsData[headerNewsIndex].title}
+                    </span>
+                    <span className="text-xs text-gray-500 truncate hidden sm:inline">
+                      • {headerNewsData[headerNewsIndex].shortText}
+                    </span>
+                  </div>
+                  <div className="text-xs text-gray-500 whitespace-nowrap hidden md:inline">
+                    {headerNewsData[headerNewsIndex].source}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
           <div className="flex items-center gap-3">
             <div className="text-xs text-gray-300">
@@ -901,6 +990,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
               players={gameState.players}
               currentPlayerId={gameState.currentPlayerId}
               voteResult={gameState.lastVoteResult || null}
+              isVoting={mode === 'multiplayer' ? !!pendingVote : false}
             />
           </div>
         </div>
@@ -1105,6 +1195,20 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                 </div>
               ) : null;
             })()}
+
+            {/* Mostra notifica punti votanti */}
+            {gameState.voterPointsInfo && gameState.voterPointsInfo.length > 0 && showVoterPointsNotification && (
+              <VoterPointsNotification
+                voterPoints={gameState.voterPointsInfo}
+                players={gameState.players}
+                onDismiss={() => {
+                  setShowVoterPointsNotification(false);
+                  // Reset voterPointsInfo nello stato dopo aver mostrato la notifica
+                  setGameState(prev => prev ? { ...prev, voterPointsInfo: null } : prev);
+                }}
+                autoCloseDelay={5000}
+              />
+            )}
             
             {/* Development Phase - Solo per giocatore umano */}
             {gameState.currentPhase === 'development' && isHumanTurn && currentPlayer && currentPlayer.hand.length === 0 && (

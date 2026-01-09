@@ -6,6 +6,7 @@ import { PlayerDilemma } from './PlayerDilemma';
 import { PlayerConsequence } from './PlayerConsequence';
 import { PlayerWaiting } from './PlayerWaiting';
 import { NewsCard } from '../Game/NewsCard';
+import { VoterPointsNotification } from '../Game/VoterPointsNotification';
 import { GameTour } from './GameTour';
 import { Users, Loader2, LogOut, Menu } from 'lucide-react';
 
@@ -48,6 +49,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
   const [dismissedNewsIds, setDismissedNewsIds] = useState<Set<string>>(new Set());
   const [lastNewsId, setLastNewsId] = useState<string | null>(null);
   const [showMenu, setShowMenu] = useState(false);
+  const [showVoterPointsNotification, setShowVoterPointsNotification] = useState(false);
   
   // Stato per il tour guidato
   const [showTour, setShowTour] = useState(false);
@@ -69,6 +71,43 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
       setLastNewsId(null);
     }
   }, [gameState?.currentNews?.id, lastNewsId]);
+
+  // Mostra automaticamente la notifica dei punti votanti quando disponibile
+  // Usa un ref per tracciare se abbiamo già mostrato questa notifica
+  const voterPointsShownRef = useRef<string | null>(null);
+  
+  useEffect(() => {
+    if (!gameState) return;
+    
+    // Crea un ID univoco per questa notifica basato sui dati
+    const notificationId = gameState.voterPointsInfo 
+      ? JSON.stringify(gameState.voterPointsInfo.map(v => ({ playerId: v.playerId, vote: v.vote })))
+      : null;
+    
+    // Mostra la notifica solo se:
+    // 1. voterPointsInfo è disponibile
+    // 2. Non è già mostrata
+    // 3. Non abbiamo già mostrato questa specifica notifica
+    if (
+      gameState.voterPointsInfo && 
+      gameState.voterPointsInfo.length > 0 && 
+      !showVoterPointsNotification &&
+      notificationId !== voterPointsShownRef.current
+    ) {
+      // Piccolo delay per permettere al risultato della votazione di essere mostrato prima
+      const timer = setTimeout(() => {
+        setShowVoterPointsNotification(true);
+        voterPointsShownRef.current = notificationId;
+      }, 1500);
+      
+      return () => clearTimeout(timer);
+    }
+    
+    // Reset il ref quando voterPointsInfo cambia (nuova votazione)
+    if (!gameState.voterPointsInfo) {
+      voterPointsShownRef.current = null;
+    }
+  }, [gameState?.voterPointsInfo, showVoterPointsNotification]);
 
   // Unisciti alla room quando il socket è connesso
   // IMPORTANTE: usa un ref per evitare doppi tentativi di joinRoom
@@ -364,6 +403,16 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
               />
             </div>
           )}
+          {gameState.voterPointsInfo && gameState.voterPointsInfo.length > 0 && showVoterPointsNotification && (
+            <VoterPointsNotification
+              voterPoints={gameState.voterPointsInfo}
+              players={gameState.players}
+              onDismiss={() => {
+                setShowVoterPointsNotification(false);
+              }}
+              autoCloseDelay={5000}
+            />
+          )}
           {content}
         </>
       );
@@ -392,6 +441,16 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
                 }}
               />
             </div>
+          )}
+          {gameState.voterPointsInfo && gameState.voterPointsInfo.length > 0 && showVoterPointsNotification && (
+            <VoterPointsNotification
+              voterPoints={gameState.voterPointsInfo}
+              players={gameState.players}
+              onDismiss={() => {
+                setShowVoterPointsNotification(false);
+              }}
+              autoCloseDelay={5000}
+            />
           )}
           {content}
         </div>

@@ -150,5 +150,15 @@ export interface GameState {
   currentNews?: SocietyNews | null; // News corrente dalla società
   lastNewsTurn?: number; // Turno in cui è apparsa l'ultima news
   resolvedDilemmaOption?: DilemmaOption | null; // Opzione scelta per il dilemma corrente (mostra le risposte nel tabellone)
+  voterPointsInfo?: Array<{
+    playerId: string;
+    vote: boolean;
+    points: {
+      techPoints: number;
+      ethicsPoints: number;
+      neuralformingPoints: number;
+    };
+    isApproved: boolean;
+  }> | null; // Punti ricevuti dai votanti nell'ultima votazione
 }
 

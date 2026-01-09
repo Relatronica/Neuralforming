@@ -147,6 +147,11 @@ export class GameEngine {
    * Aggiunge una tecnologia alla IA di un giocatore
    * Se è una carta tecnologia normale, pesca automaticamente un dilemma
    * Se è un jolly, lo tiene attivo per il prossimo dilemma
+   * 
+   * Sistema di Reward/Penalty per votanti:
+   * - Se legge APPROVATA: votanti SÌ ricevono +25% punti base, votanti NO ricevono +5% punti base
+   * - Se legge BOCCIATA: votanti SÌ ricevono -10% punti base, votanti NO ricevono -5% punti base
+   * 
    * @param realVotes - Mappa dei voti reali dei giocatori (per multiplayer). Se fornita, usa questi invece della logica AI.
    */
   static addTechnology(gameState: GameState, playerId: string, technology: Technology, realVotes?: Map<string, boolean>): GameState {
@@ -233,13 +238,61 @@ export class GameEngine {
         };
       }
 
+      // Sistema Reward/Penalty per votanti quando legge è bocciata
+      let updatedState = gameState;
+      const voterPointsInfo: Array<{
+        playerId: string;
+        vote: boolean;
+        points: { techPoints: number; ethicsPoints: number; neuralformingPoints: number };
+        isApproved: boolean;
+      }> = [];
+      
+      if (realVotes) {
+        // Penalità per votanti SÌ: -10% punti base (hanno sostenuto una legge impopolare)
+        const yesVoterPenalty = {
+          techPoints: -Math.floor(adjustedBasePoints.techPoints * 0.10),
+          ethicsPoints: -Math.floor(adjustedBasePoints.ethicsPoints * 0.10),
+          neuralformingPoints: -Math.floor(adjustedBasePoints.neuralformingPoints * 0.10),
+        };
+
+        // Penalità per votanti NO: -5% punti base (hanno bloccato il progresso)
+        const noVoterPenalty = {
+          techPoints: -Math.floor(adjustedBasePoints.techPoints * 0.05),
+          ethicsPoints: -Math.floor(adjustedBasePoints.ethicsPoints * 0.05),
+          neuralformingPoints: -Math.floor(adjustedBasePoints.neuralformingPoints * 0.05),
+        };
+
+        // Applica penalità a tutti i votanti (escludendo il proponente)
+        for (const [voterId, vote] of realVotes.entries()) {
+          if (voterId !== playerId) {
+            const voter = this.getPlayer(updatedState, voterId);
+            if (voter && !voter.isAI) {
+              const penalty = vote ? yesVoterPenalty : noVoterPenalty;
+              const updatedVoter = Scoring.addPoints(voter, penalty);
+              updatedState = this.updatePlayer(updatedState, voterId, updatedVoter);
+
+              // Salva informazioni per la notifica
+              voterPointsInfo.push({
+                playerId: voterId,
+                vote,
+                points: penalty,
+                isApproved: false,
+              });
+
+              console.log(`🎯 Voter ${voter.name} received penalty for voting ${vote ? 'YES' : 'NO'} on rejected proposal:`, penalty);
+            }
+          }
+        }
+      }
+
       // NON aggiungere la tecnologia - la legge è bocciata
       // La carta viene comunque rimossa dalla mano (costa tentare)
       const newState = this.updatePlayer({
-        ...gameState,
+        ...updatedState,
         lastVoteResult: voteResult,
         lastVoteMessage: votingEffects.message,
         newlyUnlockedMilestones: newlyUnlocked.length > 0 ? newlyUnlocked : null,
+        voterPointsInfo: voterPointsInfo.length > 0 ? voterPointsInfo : null,
       }, playerId, {
         ...updatedPlayer,
         // NON aggiungere technologies: newTechnologies - la legge è bocciata
@@ -266,25 +319,48 @@ export class GameEngine {
 
     let updatedPlayer = Scoring.addPoints(player, finalPoints);
 
-    // Assegna punteggi ai votanti che hanno votato a favore (solo se la legge è stata approvata)
+    // Sistema Reward/Penalty per votanti quando legge è approvata
     let updatedState = gameState;
+    const voterPointsInfo: Array<{
+      playerId: string;
+      vote: boolean;
+      points: { techPoints: number; ethicsPoints: number; neuralformingPoints: number };
+      isApproved: boolean;
+    }> = [];
+    
     if (realVotes) {
-      // Calcola i punti per i votanti (25% dei punti base)
-      const voterPoints = {
-        techPoints: Math.floor(basePoints.techPoints * 0.25),
-        ethicsPoints: Math.floor((basePoints.ethicsPoints || 0) * 0.25),
-        neuralformingPoints: Math.floor(basePoints.neuralformingPoints * 0.25),
+      // Bonus per votanti SÌ: +25% punti base (hanno sostenuto una legge popolare)
+      const yesVoterBonus = {
+        techPoints: Math.floor(adjustedBasePoints.techPoints * 0.25),
+        ethicsPoints: Math.floor(adjustedBasePoints.ethicsPoints * 0.25),
+        neuralformingPoints: Math.floor(adjustedBasePoints.neuralformingPoints * 0.25),
       };
 
-      // Assegna punti a tutti i votanti che hanno votato sì (escludendo il proponente)
+      // Bonus per votanti NO: +5% punti base (hanno sbagliato previsione, ma la legge è passata)
+      const noVoterBonus = {
+        techPoints: Math.floor(adjustedBasePoints.techPoints * 0.05),
+        ethicsPoints: Math.floor(adjustedBasePoints.ethicsPoints * 0.05),
+        neuralformingPoints: Math.floor(adjustedBasePoints.neuralformingPoints * 0.05),
+      };
+
+      // Applica bonus a tutti i votanti (escludendo il proponente)
       for (const [voterId, vote] of realVotes.entries()) {
-        if (vote && voterId !== playerId && voterPoints.techPoints > 0) { // Solo votanti sì, non il proponente
+        if (voterId !== playerId) {
           const voter = this.getPlayer(updatedState, voterId);
-          if (voter && !voter.isAI) { // Solo giocatori umani ricevono punti dai voti
-            const updatedVoter = Scoring.addPoints(voter, voterPoints);
+          if (voter && !voter.isAI) {
+            const bonus = vote ? yesVoterBonus : noVoterBonus;
+            const updatedVoter = Scoring.addPoints(voter, bonus);
             updatedState = this.updatePlayer(updatedState, voterId, updatedVoter);
 
-            console.log(`🎯 Voter ${voter.name} received points for supporting the proposal:`, voterPoints);
+            // Salva informazioni per la notifica
+            voterPointsInfo.push({
+              playerId: voterId,
+              vote,
+              points: bonus,
+              isApproved: true,
+            });
+
+            console.log(`🎯 Voter ${voter.name} received ${vote ? 'YES' : 'NO'} bonus for approved proposal:`, bonus);
           }
         }
       }
@@ -313,6 +389,7 @@ export class GameEngine {
       lastVoteResult: voteResult,
       lastVoteMessage: votingEffects.message,
       newlyUnlockedMilestones: newlyUnlocked.length > 0 ? newlyUnlocked : null,
+      voterPointsInfo: voterPointsInfo.length > 0 ? voterPointsInfo : null,
     }, playerId, {
       ...updatedPlayer,
       technologies: newTechnologies, // Aggiungi la tecnologia solo se approvata

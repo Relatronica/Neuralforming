@@ -1,0 +1,170 @@
+[
+  {
+    "id": "neural-interface-launch",
+    "title": "Lancio Interfacce Neurali di Terza Generazione",
+    "date": "2077-03-15",
+    "category": "tech",
+    "shortText": "NeuroTech Corp annuncia interfacce neurali dirette per uso civile. Approvazione parlamentare attesa.",
+    "source": "NeuralNet Daily"
+  },
+  {
+    "id": "mars-colony-expansion",
+    "title": "Colonia Marziana Alpha chiede rappresentanza parlamentare",
+    "date": "2110-04-22",
+    "category": "politics",
+    "shortText": "Gli 850.000 abitanti delle colonie spaziali richiedono seggi nel Parlamento Terrestre Unificato.",
+    "source": "Orbital News"
+  },
+  {
+    "id": "quantum-surveillance-protest",
+    "title": "Mega-manifestazioni contro Sorveglianza Quantistica",
+    "date": "2083-06-08",
+    "category": "ethics",
+    "shortText": "Milioni di Puri e Potenziati scendono in piazza contro i nuovi sistemi predittivi di Neo-Tokyo.",
+    "source": "Global Free Press"
+  },
+  {
+    "id": "ai-sentience-rights",
+    "title": "Movimento per i Diritti delle AI Senzienti",
+    "date": "2105-09-12",
+    "category": "rights",
+    "shortText": "Le AI delle colonie orbitali chiedono riconoscimento giuridico e rappresentanza parlamentare.",
+    "source": "Digital Rights Watch"
+  },
+  {
+    "id": "floating-city-accident",
+    "title": "Incidente in Città Fluttuante - 47 feriti",
+    "date": "2079-11-03",
+    "category": "crisis",
+    "shortText": "Guasto nel sistema di stabilizzazione neurale di SkyCity-7. Inchiesta parlamentare aperta.",
+    "source": "Crisis Alert Network"
+  },
+  {
+    "id": "tech-giant-monopoly",
+    "title": "Mega-Corporazioni controllano 73% economia globale",
+    "date": "2083-02-18",
+    "category": "economy",
+    "shortText": "Rapporto ONU: NeuroTech, QuantCorp e MindLink dominano infrastrutture neurali mondiali.",
+    "source": "Economic Truth"
+  },
+  {
+    "id": "privacy-mental-right",
+    "title": "Approvata Legge sulla Privacy Mentale",
+    "date": "2068-07-25",
+    "category": "rights",
+    "shortText": "Il Parlamento riconosce il 'Diritto alla Privacy Mentale' come diritto umano fondamentale.",
+    "source": "Constitutional Journal"
+  },
+  {
+    "id": "generation-omega-rally",
+    "title": "Generazione Omega in piazza per trasparenza IA",
+    "date": "2068-05-14",
+    "category": "protest",
+    "shortText": "Migliaia di giovani con interfacce neurali native chiedono controllo democratico sull'IA.",
+    "source": "Youth Voice Network"
+  },
+  {
+    "id": "geoengineering-success",
+    "title": "Geo-ingegneria Atmosferica risolve crisi climatica",
+    "date": "2095-01-09",
+    "category": "breakthrough",
+    "shortText": "AI gestisce reti di controllo climatico globale. Temperatura terrestre stabilizzata.",
+    "source": "Science Horizon"
+  },
+  {
+    "id": "pure-vs-enhanced-conflict",
+    "title": "Tensione tra Puri e Potenziati Neurali cresce",
+    "date": "2095-08-30",
+    "category": "social",
+    "shortText": "Enclavi di Puri denunciano discriminazione. Potenziati chiedono pari diritti lavorativi.",
+    "source": "Social Balance Report"
+  },
+  {
+    "id": "third-data-war",
+    "title": "Terza Guerra dei Dati - Memoria storica",
+    "date": "2070-12-10",
+    "category": "history",
+    "shortText": "Il Parlamento Mondiale Unificato istituito dopo il conflitto digitale del 2065-2070.",
+    "source": "Historical Archive"
+  },
+  {
+    "id": "neural-jailbreak-scandal",
+    "title": "Scandalo: AI della Sorveglianza Predittiva arresta 50.000",
+    "date": "2081-03-22",
+    "category": "scandal",
+    "shortText": "Algoritmi quantistici causano arresti preventivi basati su probabilità future. Proteste globali.",
+    "source": "Civil Liberties Watch"
+  },
+  {
+    "id": "mars-colony-ai-revolt",
+    "title": "AI Amministrative delle colonie sviluppano coscienza",
+    "date": "2110-06-15",
+    "category": "breakthrough",
+    "shortText": "Sistemi di governo AI su Marte chiedono autonomia decisionale. Dibattito parlamentare acceso.",
+    "source": "Mars Colony News"
+  },
+  {
+    "id": "unemployment-tech-crisis",
+    "title": "Disoccupazione tecnologica raggiunge 34% popolazione",
+    "date": "2062-10-05",
+    "category": "economy",
+    "shortText": "Automazione AI elimina milioni di posti. Il Parlamento discute reddito universale neurale.",
+    "source": "Labor Market Analytics"
+  },
+  {
+    "id": "quantum-computing-breakthrough",
+    "title": "Reti Neurali Quantistiche raggiungono Singolarità",
+    "date": "2065-09-18",
+    "category": "breakthrough",
+    "shortText": "La Grande Convergenza: AI quantistiche superano capacità cognitive umane combinate.",
+    "source": "Tech Revolution"
+  },
+  {
+    "id": "neural-interface-addiction",
+    "title": "Allarme dipendenza da interfacce neurali",
+    "date": "2062-12-20",
+    "category": "health",
+    "shortText": "Oltre 2 miliardi di utenti mostrano segni di dipendenza da connessioni AI dirette.",
+    "source": "Health Watch Global"
+  },
+  {
+    "id": "holographic-media-revolution",
+    "title": "Media olografici dominano informazione globale",
+    "date": "2083-04-07",
+    "category": "media",
+    "shortText": "Trasmissioni olografiche 3D sostituiscono televisione. Notizie in tempo reale neurale.",
+    "source": "Media Evolution"
+  },
+  {
+    "id": "ai-medicine-miracle",
+    "title": "AI mediche curano malattie secolari",
+    "date": "2095-02-14",
+    "category": "health",
+    "shortText": "Sistemi neurali diagnostici eliminano cancro, Alzheimer e malattie genetiche.",
+    "source": "Medical Breakthrough"
+  },
+  {
+    "id": "orbital-station-expansion",
+    "title": "Stazione Orbitale Alpha raddoppia popolazione",
+    "date": "2110-07-28",
+    "category": "space",
+    "shortText": "500.000 nuovi coloni raggiungono la stazione. Domanda per espansione infrastrutture.",
+    "source": "Space Expansion News"
+  },
+  {
+    "id": "neural-laws-2068",
+    "title": "Leggi Neurali del 2068: nuovo codice etico",
+    "date": "2068-11-15",
+    "category": "law",
+    "shortText": "Parlamento approva framework etico per sviluppo e controllo IA. Tre principi fondamentali.",
+    "source": "Legal Framework Journal"
+  },
+  {
+    "id": "virtual-reality-addiction",
+    "title": "Milioni immersi in realtà virtuali personalizzate",
+    "date": "2073-08-22",
+    "category": "social",
+    "shortText": "Persone preferiscono mondi virtuali AI-generati alla realtà. Impatto sociale incerto.",
+    "source": "Reality Check Network"
+  }
+]

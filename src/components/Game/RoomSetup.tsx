@@ -190,7 +190,17 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
       <div className="bg-gray-900 rounded-xl shadow-2xl p-8 max-w-2xl w-full border border-gray-700">
-        <h1 className="text-3xl font-bold text-gray-100 mb-6 text-center">Neuralforming - Setup Partita</h1>
+        <div className="mb-6 flex justify-center">
+          <img 
+            src="/images/logo/logo_neuralforming.png" 
+            alt="Neuralforming Logo" 
+            className="h-52 w-auto object-contain"
+          />
+        </div>
+        <p className="text-gray-300 mb-4 text-center text-lg">
+          Governare l'Intelligenza Artificiale
+        </p>
+        <p className="text-gray-400 mb-6 text-center text-base">Setup Partita</p>
 
         {!isConnected && !error && (
           <div className="bg-gray-800 border border-gray-600 rounded-lg p-4 mb-6">
@@ -287,42 +297,78 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
               </p>
             </div>
 
-            {/* QR Join */}
+            {/* QR Join e Players list - Layout a due colonne */}
             <div className="border-t border-gray-700 pt-4">
-              <label className="block text-sm font-medium text-gray-300 mb-3">
-                Inquadra per entrare nella PWA giocatore
-              </label>
-              <div className="flex flex-col sm:flex-row items-center gap-4">
-                <div className="bg-white border border-gray-700 rounded-lg p-4">
-                  {joinUrl && (
-                    <QRCodeSVG
-                      value={joinUrl}
-                      size={200}
-                      bgColor="#ffffff"
-                      fgColor="#000000"
-                      includeMargin={true}
-                    />
-                  )}
-                </div>
-                <div className="flex-1 w-full">
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={joinUrl}
-                      readOnly
-                      className="flex-1 px-4 py-2 border border-gray-600 rounded-lg bg-gray-800 font-mono text-sm text-gray-100"
-                    />
-                    <button
-                      onClick={copyJoinUrl}
-                      className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors flex items-center gap-2 text-gray-100"
-                    >
-                      {copiedLink ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                    </button>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Colonna sinistra: QR Code */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-3">
+                    Inquadra per entrare nella PWA giocatore
+                  </label>
+                  <div className="flex flex-col items-center gap-4">
+                    <div className="bg-white border border-gray-700 rounded-lg p-4">
+                      {joinUrl && (
+                        <QRCodeSVG
+                          value={joinUrl}
+                          size={200}
+                          bgColor="#ffffff"
+                          fgColor="#000000"
+                          includeMargin={true}
+                        />
+                      )}
+                    </div>
+                    <div className="w-full">
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={joinUrl}
+                          readOnly
+                          className="flex-1 px-4 py-2 border border-gray-600 rounded-lg bg-gray-800 font-mono text-sm text-gray-100"
+                        />
+                        <button
+                          onClick={copyJoinUrl}
+                          className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors flex items-center gap-2 text-gray-100"
+                        >
+                          {copiedLink ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                        </button>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-1">
+                        Link diretto alla PWA giocatore con l'ID già compilato
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-xs text-gray-400 mt-1">
-                    Link diretto alla PWA giocatore con l'ID già compilato
-                  </p>
                 </div>
+
+                {/* Colonna destra: Players list */}
+                {roomInfo && (
+                  <div>
+                    <div className="flex items-center gap-2 mb-4">
+                      <Users className="w-5 h-5 text-gray-400" />
+                      <h2 className="text-lg font-semibold text-gray-100">
+                        Giocatori ({roomInfo.players.length}/{roomInfo.maxPlayers})
+                      </h2>
+                    </div>
+                    <div className="space-y-2 max-h-[400px] overflow-y-auto">
+                      {roomInfo.players.map((player: RoomInfo['players'][0]) => (
+                        <div
+                          key={player.id}
+                          className="flex items-center gap-3 p-3 bg-gray-800 rounded-lg border border-gray-700"
+                        >
+                          <div
+                            className="w-8 h-8 rounded-full border-2 border-gray-700"
+                            style={{ backgroundColor: player.color }}
+                          />
+                          <span className="flex-1 font-medium text-gray-100">{player.name}</span>
+                          {player.isMaster && (
+                            <span className="text-xs bg-gray-700 text-gray-200 px-2 py-1 rounded">
+                              Master
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -382,37 +428,6 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
                 <div className="bg-gray-800 border border-gray-600 rounded-lg p-4">
                   <p className="text-gray-200 font-semibold">✓ Ti sei unito alla partita!</p>
                   <p className="text-sm text-gray-300 mt-1">Aspetta che il master avvii il gioco...</p>
-                </div>
-              </div>
-            )}
-
-            {/* Players list */}
-            {roomInfo && (
-              <div className="border-t border-gray-700 pt-4">
-                <div className="flex items-center gap-2 mb-4">
-                  <Users className="w-5 h-5 text-gray-400" />
-                  <h2 className="text-lg font-semibold text-gray-100">
-                    Giocatori ({roomInfo.players.length}/{roomInfo.maxPlayers})
-                  </h2>
-                </div>
-                <div className="space-y-2">
-                  {roomInfo.players.map((player: RoomInfo['players'][0]) => (
-                    <div
-                      key={player.id}
-                      className="flex items-center gap-3 p-3 bg-gray-800 rounded-lg border border-gray-700"
-                    >
-                      <div
-                        className="w-8 h-8 rounded-full border-2 border-gray-700"
-                        style={{ backgroundColor: player.color }}
-                      />
-                      <span className="flex-1 font-medium text-gray-100">{player.name}</span>
-                      {player.isMaster && (
-                        <span className="text-xs bg-gray-700 text-gray-200 px-2 py-1 rounded">
-                          Master
-                        </span>
-                      )}
-                    </div>
-                  ))}
                 </div>
               </div>
             )}

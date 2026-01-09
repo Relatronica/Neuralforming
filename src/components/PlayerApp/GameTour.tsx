@@ -150,7 +150,8 @@ export const GameTour: React.FC<GameTourProps> = ({
           </p>
           <p className="text-gray-300 text-sm mb-2">
             <strong>Votazione:</strong> Quando qualcuno propone una tecnologia, tutti votano Sì o No.
-            Se passa, diventa una legge approvata.
+            Ogni voto ha conseguenze sui tuoi punti: votare SÌ su una legge approvata ti dà bonus, 
+            mentre votare NO può darti penalità se la legge passa comunque.
           </p>
           <p className="text-gray-300 text-sm">
             <strong>Dilemmi:</strong> A volte dovrai affrontare dilemmi etici che influenzano i tuoi punti.

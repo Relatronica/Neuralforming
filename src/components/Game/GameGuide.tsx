@@ -141,14 +141,46 @@ export const GameGuide = ({ onClose }: GameGuideProps) => {
               Alcune tecnologie richiedono l'approvazione del Parlamento prima di essere implementate. 
               Il risultato della votazione influisce sui punti che ricevi:
             </p>
+            
+            <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 mb-4">
+              <h4 className="font-semibold text-gray-100 mb-3">📊 Sistema di Reward/Penalty</h4>
+              <p className="text-gray-300 text-sm mb-3">
+                <strong>Ogni voto ha conseguenze!</strong> Non solo il proponente, ma anche tutti i votanti ricevono punti o penalità in base al loro voto e al risultato:
+              </p>
+              
+              <div className="space-y-3">
+                <div className="bg-green-900/30 rounded p-3 border border-green-700/50">
+                  <h5 className="font-semibold text-green-300 mb-2">✅ Se la legge è APPROVATA (≥50%):</h5>
+                  <ul className="list-disc list-inside text-gray-300 text-sm space-y-1 ml-4">
+                    <li><strong>Proponente:</strong> Riceve punti base + bonus in base all'approvazione (10-30%)</li>
+                    <li><strong>Votanti SÌ:</strong> Ricevono +25% dei punti base (hanno sostenuto una legge popolare)</li>
+                    <li><strong>Votanti NO:</strong> Ricevono +5% dei punti base (hanno sbagliato previsione, ma la legge è passata)</li>
+                  </ul>
+                </div>
+                
+                <div className="bg-red-900/30 rounded p-3 border border-red-700/50">
+                  <h5 className="font-semibold text-red-300 mb-2">❌ Se la legge è BOCCIATA (&lt;50%):</h5>
+                  <ul className="list-disc list-inside text-gray-300 text-sm space-y-1 ml-4">
+                    <li><strong>Proponente:</strong> Riceve penalità (-40% o -50% dei punti base)</li>
+                    <li><strong>Votanti SÌ:</strong> Ricevono -10% dei punti base (hanno sostenuto una legge impopolare)</li>
+                    <li><strong>Votanti NO:</strong> Ricevono -5% dei punti base (hanno bloccato il progresso)</li>
+                  </ul>
+                </div>
+              </div>
+              
+              <p className="text-gray-300 text-sm mt-3 italic">
+                💡 <strong>Strategia:</strong> Valuta attentamente se votare SÌ o NO - ogni scelta ha conseguenze reali sui tuoi punti!
+              </p>
+            </div>
+
             <ul className="list-disc list-inside text-gray-300 space-y-2 ml-4">
-              <li><strong>Approvazione ≥ 50%:</strong> La tecnologia viene approvata e ricevi i punti normalmente</li>
-              <li><strong>Approvazione &lt; 50%:</strong> La tecnologia viene bocciata e ricevi meno punti</li>
-              <li><strong>Approvazione ≥ 80%:</strong> Bonus extra per il consenso parlamentare!</li>
+              <li><strong>Approvazione ≥ 70%:</strong> Bonus extra per il proponente (+30% bonus)!</li>
+              <li><strong>Approvazione &lt; 30%:</strong> Penalità più severe per il proponente (-50% penalità)</li>
             </ul>
+            
             <p className="text-gray-300 leading-relaxed mt-3">
               In modalità <strong>single player</strong>, gli altri partiti (AI) votano automaticamente in base ai loro interessi. 
-              In modalità <strong>multiplayer</strong>, tutti i giocatori votano in tempo reale!
+              In modalità <strong>multiplayer</strong>, tutti i giocatori votano in tempo reale e ogni voto conta!
             </p>
           </section>
 
@@ -250,7 +282,8 @@ export const GameGuide = ({ onClose }: GameGuideProps) => {
             <ul className="list-disc list-inside text-gray-300 space-y-2 ml-4">
               <li><strong>Bilancia i tuoi punti:</strong> Non concentrarti solo su un tipo di punti, a meno che il tuo obiettivo non lo richieda</li>
               <li><strong>Leggi attentamente:</strong> Ogni decisione ha conseguenze a lungo termine</li>
-              <li><strong>Pianifica le votazioni:</strong> In multiplayer, considera come gli altri giocatori potrebbero votare</li>
+              <li><strong>Pianifica le votazioni:</strong> In multiplayer, considera come gli altri giocatori potrebbero votare. Ricorda: ogni voto ha conseguenze sui tuoi punti!</li>
+              <li><strong>Valuta il rischio:</strong> Votare NO può bloccare un avversario, ma se la legge passa comunque riceverai solo un piccolo bonus. Votare SÌ ti dà più punti se passa, ma penalità se viene bocciata</li>
               <li><strong>Usa i milestone:</strong> Sbloccare abilità speciali può cambiare le sorti della partita</li>
               <li><strong>Gestisci la tua mano:</strong> Non giocare tutte le carte subito, tieni alcune riserve per i momenti giusti</li>
               <li><strong>Monitora gli obiettivi:</strong> Controlla regolarmente il tuo obiettivo per sapere cosa ti serve per vincere</li>
