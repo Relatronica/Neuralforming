@@ -61,6 +61,15 @@ export interface PlayerState {
 
 export type GamePhase = 'development' | 'dilemma' | 'consequence' | 'gameOver' | 'aiTurn';
 
+// Risultato della votazione collettiva sul dilemma etico
+export interface DilemmaVoteResult {
+  optionIndex: number;
+  optionText: string;
+  votesPerOption: number[];
+  totalVotes: number;
+  voterChoices: Array<{ playerId: string; optionIndex: number }>;
+}
+
 export interface VoteResult {
   votesFor: number;
   votesAgainst: number;
@@ -98,5 +107,6 @@ export interface GameState {
   currentGlobalEvent?: GlobalEventInfo | null;
   newlyUnlockedMilestones?: MilestoneUnlocked[] | null;
   resolvedDilemmaOption?: DilemmaOption | null; // Opzione scelta per il dilemma corrente (mostra le risposte nel tabellone)
+  lastDilemmaVoteResult?: DilemmaVoteResult | null; // Risultato dell'ultima votazione sul dilemma
 }
 

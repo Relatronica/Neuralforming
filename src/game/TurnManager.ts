@@ -151,4 +151,68 @@ export class TurnManager {
   static getCurrentPlayer(gameState: GameState) {
     return gameState.players.find(p => p.id === gameState.currentPlayerId);
   }
+
+  /**
+   * Rimuove un giocatore dalla partita e aggiusta il turno se necessario
+   * Usato quando un giocatore lascia permanentemente la partita
+   */
+  static removePlayer(gameState: GameState, playerId: string): GameState {
+    const remainingPlayers = gameState.players.filter(p => p.id !== playerId);
+    
+    if (remainingPlayers.length === 0) {
+      return {
+        ...gameState,
+        players: [],
+        currentPhase: 'gameOver',
+        gameLost: true,
+      };
+    }
+
+    // Se il giocatore rimosso era il giocatore corrente, avanza al prossimo
+    let newCurrentPlayerId = gameState.currentPlayerId;
+    let newPhase = gameState.currentPhase;
+    let newDilemma = gameState.currentDilemma;
+    let newConsequence = gameState.currentConsequence;
+
+    if (gameState.currentPlayerId === playerId) {
+      // Trova l'indice del giocatore rimosso nell'array originale
+      const removedIndex = gameState.players.findIndex(p => p.id === playerId);
+      // Il prossimo giocatore è all'indice corrente (perché il rimosso è sparito)
+      const nextIndex = removedIndex % remainingPlayers.length;
+      newCurrentPlayerId = remainingPlayers[nextIndex].id;
+      newPhase = 'development';
+      newDilemma = null;
+      newConsequence = null;
+    } else {
+      // Verifica che il currentPlayerId esista ancora
+      const exists = remainingPlayers.some(p => p.id === newCurrentPlayerId);
+      if (!exists) {
+        newCurrentPlayerId = remainingPlayers[0].id;
+        newPhase = 'development';
+        newDilemma = null;
+        newConsequence = null;
+      }
+    }
+
+    // Se resta un solo giocatore, vince automaticamente
+    if (remainingPlayers.length === 1) {
+      return {
+        ...gameState,
+        players: remainingPlayers,
+        currentPlayerId: remainingPlayers[0].id,
+        currentPhase: 'gameOver',
+        gameWon: true,
+        winnerId: remainingPlayers[0].id,
+      };
+    }
+
+    return {
+      ...gameState,
+      players: remainingPlayers,
+      currentPlayerId: newCurrentPlayerId,
+      currentPhase: newPhase,
+      currentDilemma: newDilemma,
+      currentConsequence: newConsequence,
+    };
+  }
 }

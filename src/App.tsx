@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Game } from './components/Game/Game';
+import { SinglePlayerGame } from './components/SinglePlayer/SinglePlayerGame';
 import { RoomSetup } from './components/Game/RoomSetup';
 import { GameSocketProvider } from './contexts/GameSocketContext';
 import { PlayerApp } from './components/PlayerApp/PlayerApp';
@@ -87,9 +88,7 @@ function MainApp() {
 
   if (gameMode === 'single') {
     return (
-      <Game
-        mode={gameMode}
-        roomId={null}
+      <SinglePlayerGame
         onBackToSetup={handleBackToSetup}
       />
     );

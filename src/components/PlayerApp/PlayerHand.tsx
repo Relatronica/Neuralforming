@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { GameState, PlayerState, Technology } from '../../game/types';
 import { TechnologyCard } from '../Cards/TechnologyCard';
-import { Plus, Hand, ScrollText, Brain, Scale, Microscope, Trophy, Sparkles, Target, Users, Loader2 } from 'lucide-react';
+import { Plus, Hand, ScrollText, Brain, Scale, Microscope, Trophy, Sparkles, Target, Users, Loader2, ArrowRight, BarChart3, AlertTriangle } from 'lucide-react';
 import { milestones } from '../../game/Milestones';
 import { Objectives } from '../../game/Objectives';
 
@@ -24,6 +24,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
 }) => {
   const [activeTab, setActiveTab] = useState<'hand' | 'laws' | 'milestones' | 'objective'>('hand');
   const [hasProposedTechnology, setHasProposedTechnology] = useState(false);
+  const [confirmingTech, setConfirmingTech] = useState<Technology | null>(null);
   
   // Reset quando cambia il turno
   useEffect(() => {
@@ -156,22 +157,131 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
           </div>
         </div>
 
+        {/* Modale di conferma proposta */}
+        {confirmingTech && (
+          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-gray-900 rounded-xl shadow-2xl p-4 sm:p-6 max-w-md w-full border border-gray-700">
+              <div className="flex items-center gap-2 mb-3">
+                <AlertTriangle className="w-5 h-5 text-amber-400" />
+                <h3 className="text-lg font-bold text-gray-100">Conferma Proposta</h3>
+              </div>
+              <p className="text-gray-300 text-sm mb-4">
+                Stai per proporre <span className="font-bold text-gray-100">{confirmingTech.name}</span>. 
+                Tutti i giocatori voteranno su questa proposta. Puoi proporre <span className="font-bold text-amber-300">una sola legge per turno</span>.
+              </p>
+              <div className="bg-gray-800 rounded-lg p-3 mb-4 border border-gray-700">
+                <TechnologyCard
+                  technology={confirmingTech}
+                  isSelectable={false}
+                  isInHand={false}
+                  showVotingEffects={false}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => setConfirmingTech(null)}
+                  className="py-3 px-4 rounded-lg font-semibold text-sm bg-gray-700 hover:bg-gray-600 text-gray-200 transition-colors"
+                >
+                  Annulla
+                </button>
+                <button
+                  onClick={() => {
+                    setHasProposedTechnology(true);
+                    onAddTechnology(confirmingTech);
+                    setConfirmingTech(null);
+                  }}
+                  className="py-3 px-4 rounded-lg font-semibold text-sm bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white transition-all shadow-md hover:shadow-lg"
+                >
+                  Proponi Legge
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Contenuto tab Proposte */}
         {activeTab === 'hand' && (
           <>
             {!isMyTurn ? (
-              // Messaggio di attesa quando non è il turno del giocatore
-              <div className="bg-gray-900 rounded-xl shadow-2xl p-6 sm:p-8 text-center border border-gray-700">
-                <Users className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                <h2 className="text-lg sm:text-xl font-bold text-gray-100 mb-2">
-                  Turno di {currentPlayerName}
-                </h2>
-                <p className="text-gray-300 mb-4 text-sm sm:text-base">
-                  Aspetta il tuo turno...
-                </p>
-                <Loader2 className="w-8 h-8 mx-auto text-gray-400 animate-spin" />
-                <p className="text-gray-400 text-xs sm:text-sm mt-4">
-                  Consulta le altre tab per vedere il tuo obiettivo, le leggi approvate e i milestone
+              // Stato partita live durante l'attesa (NON più semplice spinner)
+              <div className="space-y-3">
+                {/* Chi sta giocando */}
+                <div className="bg-gray-900 rounded-xl shadow-2xl p-4 sm:p-5 border border-gray-700">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="bg-blue-600/20 rounded-full p-2">
+                      <Users className="w-5 h-5 text-blue-400" />
+                    </div>
+                    <div>
+                      <h2 className="text-base sm:text-lg font-bold text-gray-100">
+                        Turno di {currentPlayerName}
+                      </h2>
+                      <p className="text-gray-400 text-xs">
+                        Fase: {gameState.currentPhase === 'development' ? 'Sviluppo' : gameState.currentPhase === 'dilemma' ? 'Dilemma Etico' : gameState.currentPhase === 'consequence' ? 'Conseguenza' : gameState.currentPhase}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-gray-400">
+                    <Loader2 className="w-3 h-3 animate-spin text-blue-400" />
+                    <span>In attesa del tuo turno...</span>
+                  </div>
+                </div>
+
+                {/* Ordine turni */}
+                <div className="bg-gray-900 rounded-xl shadow-lg p-4 border border-gray-700">
+                  <div className="flex items-center gap-2 mb-3">
+                    <ArrowRight className="w-4 h-4 text-gray-400" />
+                    <h3 className="text-sm font-bold text-gray-200">Ordine Turni</h3>
+                  </div>
+                  <div className="space-y-1.5">
+                    {gameState.players.map((p, idx) => {
+                      const isCurrent = p.id === gameState.currentPlayerId;
+                      const isMe = p.id === player.id;
+                      return (
+                        <div
+                          key={p.id}
+                          className={`flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs ${
+                            isCurrent ? 'bg-blue-900/30 border border-blue-600/30' : isMe ? 'bg-gray-800 border border-gray-600' : 'bg-gray-800/50'
+                          }`}
+                        >
+                          <span className="text-gray-500 w-4 text-center font-mono">{idx + 1}</span>
+                          <span className={`font-semibold ${isCurrent ? 'text-blue-300' : isMe ? 'text-gray-100' : 'text-gray-400'}`}>
+                            {p.name}{isMe ? ' (tu)' : ''}
+                          </span>
+                          {isCurrent && <span className="ml-auto text-blue-400 text-xs font-bold">IN GIOCO</span>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Riepilogo rapido punti */}
+                <div className="bg-gray-900 rounded-xl shadow-lg p-4 border border-gray-700">
+                  <div className="flex items-center gap-2 mb-3">
+                    <BarChart3 className="w-4 h-4 text-gray-400" />
+                    <h3 className="text-sm font-bold text-gray-200">I tuoi punti</h3>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="bg-gray-800 rounded-lg p-2 text-center border border-blue-900/30">
+                      <Microscope className="w-4 h-4 text-blue-400 mx-auto mb-1" />
+                      <p className="text-lg font-bold text-blue-300">{player.techPoints}</p>
+                      <p className="text-xs text-gray-500">Tech</p>
+                    </div>
+                    <div className="bg-gray-800 rounded-lg p-2 text-center border border-emerald-900/30">
+                      <Scale className="w-4 h-4 text-emerald-400 mx-auto mb-1" />
+                      <p className="text-lg font-bold text-emerald-300">{player.ethicsPoints}</p>
+                      <p className="text-xs text-gray-500">Etica</p>
+                    </div>
+                    <div className="bg-gray-800 rounded-lg p-2 text-center border border-purple-900/30">
+                      <Brain className="w-4 h-4 text-purple-400 mx-auto mb-1" />
+                      <p className="text-lg font-bold text-purple-300">{player.neuralformingPoints}</p>
+                      <p className="text-xs text-gray-500">Neural</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Suggerimento tab */}
+                <p className="text-center text-gray-500 text-xs">
+                  Usa le tab sopra per consultare obiettivo, leggi e milestone
                 </p>
               </div>
             ) : player.hand.length === 0 ? (
@@ -203,13 +313,13 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
                       technology={tech}
                       onSelect={(tech) => {
                         if (canProposeTechnology) {
-                          setHasProposedTechnology(true);
-                          onAddTechnology(tech);
+                          // Apri il modale di conferma invece di proporre subito
+                          setConfirmingTech(tech);
                         }
                       }}
                       isSelectable={canProposeTechnology}
                       isInHand={true}
-                      showVotingEffects={true}
+                      showVotingEffects={false}
                     />
                   </div>
                 ))}

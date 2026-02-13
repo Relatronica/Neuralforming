@@ -64,6 +64,11 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Stats endpoint per monitoraggio
+app.get('/api/stats', (req, res) => {
+  res.json(gameServer.getStats());
+});
+
 // Inizializza il game server
 const gameServer = new GameServer(io);
 
@@ -118,6 +123,25 @@ app.post('/api/room/:roomId/start-voting', express.json(), (req, res) => {
   res.json({ success: true });
 });
 
+// Endpoint per avviare una votazione sul dilemma etico (chiamato dal master)
+app.post('/api/room/:roomId/start-dilemma-voting', express.json(), (req, res) => {
+  const room = gameServer.getRoom(req.params.roomId);
+  if (!room) {
+    console.error(`❌ POST /api/room/${req.params.roomId}/start-dilemma-voting: Room not found`);
+    return res.status(404).json({ error: 'Room not found' });
+  }
+  
+  const { dilemmaId, dilemma, currentPlayerId } = req.body;
+  console.log(`📥 POST /api/room/${req.params.roomId}/start-dilemma-voting:`, {
+    dilemmaId,
+    dilemmaTitle: dilemma?.title,
+    currentPlayerId,
+  });
+  
+  gameServer.startDilemmaVotingForRoom(req.params.roomId, dilemmaId, dilemma, currentPlayerId);
+  res.json({ success: true });
+});
+
 const PORT = process.env.PORT || 3001;
 
 httpServer.listen(PORT, () => {
@@ -126,4 +150,22 @@ httpServer.listen(PORT, () => {
   console.log(`🌐 CORS enabled for: ${clientUrl}`);
   console.log(`📝 Original CLIENT_URL: ${process.env.CLIENT_URL || 'http://localhost:5173'}`);
 });
+
+// Graceful shutdown
+const gracefulShutdown = (signal: string) => {
+  console.log(`\n${signal} received. Shutting down gracefully...`);
+  gameServer.shutdown();
+  httpServer.close(() => {
+    console.log('HTTP server closed');
+    process.exit(0);
+  });
+  // Forza chiusura dopo 10 secondi se non riesce a chiudere gracefully
+  setTimeout(() => {
+    console.error('Forced shutdown after timeout');
+    process.exit(1);
+  }, 10000);
+};
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 

@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { GameEngine } from '../../game/GameEngine';
-import { GameState, Technology, DilemmaOption, PlayerState, Dilemma, VoteResult } from '../../game/types';
+import { GameState, Technology, DilemmaOption, PlayerState, Dilemma, VoteResult, DilemmaVoteResult } from '../../game/types';
 import { TurnManager } from '../../game/TurnManager';
 import { AIPlayer } from '../../game/AIPlayer';
 import { Objectives } from '../../game/Objectives';
@@ -20,10 +20,340 @@ import { TurnTransitionScreen } from './TurnTransitionScreen';
 import { MilestoneUnlockAnimation } from './MilestoneUnlockAnimation';
 import { OpeningStoryModal } from './OpeningStoryModal';
 import { useGameSocketContext } from '../../contexts/GameSocketContext';
-import { Bot, Landmark, Users, CheckCircle2, XCircle } from 'lucide-react';
+import { Bot, Landmark, Users, CheckCircle2, XCircle, Clock, MessageCircle, Scale, Loader2 } from 'lucide-react';
 import technologiesData from '../../data/technologies.json';
 import dilemmasData from '../../data/dilemmas.json';
 import headerNewsData from '../../data/headerNews.json';
+
+// Componente per la fase di discussione e votazione (master view)
+const DiscussionAndVotingPanel: React.FC<{
+  pendingVote: { technologyId: string; technology: any; proposerId: string };
+  gameState: GameState;
+  currentPlayer: PlayerState | null | undefined;
+  isMaster: boolean;
+  voteStatus: { hasVoted: boolean; myVote: boolean | null; totalVotes: number; requiredVotes: number } | null;
+  discussionPhase: {
+    technologyId: string;
+    technology: any;
+    proposerId: string;
+    discussionEndTime: number;
+    isReady: boolean;
+    readyCount: number;
+    requiredCount: number;
+  } | null;
+  onVote: (vote: boolean) => void;
+  onReadyToVote: (technologyId: string) => void;
+}> = ({ pendingVote, gameState, currentPlayer, isMaster, voteStatus, discussionPhase, onVote, onReadyToVote }) => {
+  const [secondsLeft, setSecondsLeft] = useState(0);
+
+  useEffect(() => {
+    if (!discussionPhase) {
+      setSecondsLeft(0);
+      return;
+    }
+    const updateTimer = () => {
+      const remaining = Math.max(0, Math.ceil((discussionPhase.discussionEndTime - Date.now()) / 1000));
+      setSecondsLeft(remaining);
+    };
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, [discussionPhase]);
+
+  const isInDiscussion = discussionPhase !== null && secondsLeft > 0;
+  const isReady = discussionPhase?.isReady ?? false;
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const timerProgress = Math.max(0, Math.min(100, (secondsLeft / 90) * 100));
+
+  // Barra progresso voti con colore dinamico
+  const voteProgressColor = voteStatus 
+    ? voteStatus.totalVotes >= voteStatus.requiredVotes 
+      ? 'bg-gradient-to-r from-emerald-500 to-emerald-400' 
+      : 'bg-gradient-to-r from-amber-500 to-amber-400'
+    : 'bg-gray-500';
+
+  return (
+    <div className="bg-gradient-to-br from-gray-800 via-gray-750 to-gray-800 rounded-lg shadow-lg p-3 border-2 border-gray-600">
+      {/* Header: Discussion or Voting */}
+      {isInDiscussion ? (
+        <>
+          <div className="flex items-center justify-center gap-2 mb-1">
+            <div className="bg-amber-600/20 rounded-full p-1.5 shadow-md">
+              <MessageCircle className="w-4 h-4 text-amber-400" />
+            </div>
+            <h2 className="text-base font-bold text-gray-100">
+              Discussione in Corso
+            </h2>
+          </div>
+          <p className="text-amber-300/80 text-center text-xs mb-2">
+            I giocatori discutono la proposta prima di votare
+          </p>
+          {/* Countdown - visibile a TUTTI (incluso proponente e master) */}
+          <div className="mb-2">
+            <div className="bg-gray-800 rounded-lg p-2 border border-gray-700">
+              <div className="flex items-center justify-center gap-1.5 mb-1">
+                <Clock className="w-3.5 h-3.5 text-amber-400" />
+                <span className={`text-xl font-mono font-bold ${
+                  secondsLeft <= 10 ? 'text-red-400 animate-pulse' : 'text-amber-300'
+                }`}>
+                  {formatTime(secondsLeft)}
+                </span>
+              </div>
+              <div className="w-full bg-gray-700 rounded-full h-1.5">
+                <div
+                  className={`h-1.5 rounded-full transition-all duration-1000 ${
+                    secondsLeft <= 10 ? 'bg-red-500' : 'bg-amber-500'
+                  }`}
+                  style={{ width: `${timerProgress}%` }}
+                />
+              </div>
+            </div>
+          </div>
+        </>
+      ) : (
+        <div className="flex items-center justify-center gap-2 mb-2">
+          <div className="bg-blue-600/20 rounded-full p-1.5 shadow-md">
+            <Users className="w-4 h-4 text-blue-400" />
+          </div>
+          <h2 className="text-base font-bold text-gray-100">
+            Proposta in Votazione
+          </h2>
+        </div>
+      )}
+
+      {/* Technology Card */}
+      <div className="mb-2 flex justify-center">
+        <div className="bg-gray-800 rounded-lg shadow-md p-2 border border-gray-600 max-w-xs w-full">
+          <TechnologyCard
+            technology={pendingVote.technology}
+            isSelectable={false}
+            isInHand={false}
+            isVotingCard={true}
+            showVotingEffects={false}
+          />
+        </div>
+      </div>
+
+      {/* Proposer name */}
+      <div className="bg-gray-800 rounded-lg p-2 mb-2 shadow-sm border border-gray-600">
+        <p className="text-gray-200 text-center text-xs">
+          <span className="font-bold text-gray-100">
+            {gameState.players.find(p => p.id === pendingVote.proposerId)?.name || 'Un giocatore'}
+          </span>
+          <span className="text-gray-400"> ha proposto questa tecnologia</span>
+        </p>
+      </div>
+
+      {/* Discussion phase: ready button for non-proposer players */}
+      {isInDiscussion && currentPlayer && currentPlayer.id !== pendingVote.proposerId && (
+        <div className="space-y-2">
+          {!isReady ? (
+            <button
+              onClick={() => onReadyToVote(pendingVote.technologyId)}
+              className="w-full font-bold py-2 px-3 rounded-lg transition-all duration-200 shadow-md text-xs bg-amber-600 hover:bg-amber-500 active:bg-amber-400 text-white hover:shadow-lg flex items-center justify-center gap-1"
+            >
+              <CheckCircle2 className="w-3 h-3" />
+              <span>Pronto a Votare</span>
+            </button>
+          ) : (
+            <div className="bg-gray-800 rounded-lg p-2 border border-amber-600/40 text-center">
+              <div className="flex items-center justify-center gap-1">
+                <CheckCircle2 className="w-3 h-3 text-amber-400" />
+                <p className="text-amber-300 font-semibold text-xs">
+                  Sei pronto! In attesa degli altri...
+                </p>
+              </div>
+            </div>
+          )}
+          {discussionPhase && discussionPhase.requiredCount > 0 && (
+            <div className="bg-gray-800 rounded-lg p-1.5 border border-gray-700">
+              <p className="text-center text-xs text-gray-300">
+                Pronti: <span className="font-bold text-amber-300">{discussionPhase.readyCount}</span>
+                <span className="text-gray-500"> / </span>
+                <span className="font-bold text-gray-200">{discussionPhase.requiredCount}</span>
+              </p>
+              <div className="mt-1 w-full bg-gray-700 rounded-full h-1">
+                <div
+                  className="bg-amber-500 h-1 rounded-full transition-all duration-500"
+                  style={{ width: `${(discussionPhase.readyCount / discussionPhase.requiredCount) * 100}%` }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Discussion phase: proposer view - ORA con timer e progresso */}
+      {isInDiscussion && currentPlayer && currentPlayer.id === pendingVote.proposerId && (
+        <div className="bg-gradient-to-r from-amber-900/30 to-gray-800 border border-amber-600/30 rounded-lg p-2 text-center space-y-2">
+          <div className="flex items-center justify-center gap-1">
+            <MessageCircle className="w-3 h-3 text-amber-400" />
+            <p className="text-amber-200 font-bold text-xs">
+              I giocatori discutono la tua proposta...
+            </p>
+          </div>
+          {discussionPhase && discussionPhase.requiredCount > 0 && (
+            <div className="bg-gray-800/60 rounded p-1.5 border border-gray-700">
+              <p className="text-xs text-gray-300">
+                Pronti: <span className="font-bold text-amber-300">{discussionPhase.readyCount}</span>
+                <span className="text-gray-500"> / </span>
+                <span className="font-bold text-gray-200">{discussionPhase.requiredCount}</span>
+              </p>
+              <div className="mt-1 w-full bg-gray-700 rounded-full h-1">
+                <div
+                  className="bg-amber-500 h-1 rounded-full transition-all duration-500"
+                  style={{ width: `${(discussionPhase.readyCount / discussionPhase.requiredCount) * 100}%` }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Discussion phase: master view */}
+      {isInDiscussion && isMaster && !currentPlayer && (
+        <div className="bg-gradient-to-r from-amber-900/30 to-gray-800 border border-amber-600/30 rounded-lg p-2 text-center space-y-2">
+          <div className="flex items-center justify-center gap-1">
+            <MessageCircle className="w-3 h-3 text-amber-400" />
+            <p className="text-amber-200 font-bold text-xs">
+              I giocatori discutono la proposta...
+            </p>
+          </div>
+          {discussionPhase && discussionPhase.requiredCount > 0 && (
+            <div className="bg-gray-800/60 rounded p-1.5 border border-gray-700">
+              <p className="text-xs text-gray-300">
+                Pronti: <span className="font-bold text-amber-300">{discussionPhase.readyCount}</span>
+                <span className="text-gray-500"> / </span>
+                <span className="font-bold text-gray-200">{discussionPhase.requiredCount}</span>
+              </p>
+              <div className="mt-1 w-full bg-gray-700 rounded-full h-1">
+                <div
+                  className="bg-amber-500 h-1 rounded-full transition-all duration-500"
+                  style={{ width: `${(discussionPhase.readyCount / discussionPhase.requiredCount) * 100}%` }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Voting phase: vote buttons for non-proposer players - COLORI SEMANTICI */}
+      {!isInDiscussion && currentPlayer && currentPlayer.id !== pendingVote.proposerId && (
+        <div className="space-y-2">
+          <p className="text-gray-200 text-center font-semibold text-xs">
+            Vuoi votare a favore o contro?
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => onVote(true)}
+              disabled={voteStatus?.hasVoted}
+              className={`flex-1 font-bold py-2 px-3 rounded-lg transition-all duration-200 shadow-md text-xs ${
+                voteStatus?.hasVoted && voteStatus?.myVote === true
+                  ? 'bg-emerald-800/60 text-emerald-300 cursor-not-allowed ring-2 ring-emerald-500/50'
+                  : voteStatus?.hasVoted
+                  ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-emerald-700 to-emerald-600 hover:from-emerald-600 hover:to-emerald-500 text-white hover:shadow-lg'
+              }`}
+            >
+              <div className="flex items-center justify-center gap-1">
+                <CheckCircle2 className="w-3 h-3" />
+                <span>{voteStatus?.hasVoted && voteStatus?.myVote === true ? 'Votato Sì' : 'Vota Sì'}</span>
+              </div>
+            </button>
+            <button
+              onClick={() => onVote(false)}
+              disabled={voteStatus?.hasVoted}
+              className={`flex-1 font-bold py-2 px-3 rounded-lg transition-all duration-200 shadow-md text-xs ${
+                voteStatus?.hasVoted && voteStatus?.myVote === false
+                  ? 'bg-red-800/60 text-red-300 cursor-not-allowed ring-2 ring-red-500/50'
+                  : voteStatus?.hasVoted
+                  ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 text-white hover:shadow-lg'
+              }`}
+            >
+              <div className="flex items-center justify-center gap-1">
+                <XCircle className="w-3 h-3" />
+                <span>{voteStatus?.hasVoted && voteStatus?.myVote === false ? 'Votato No' : 'Vota No'}</span>
+              </div>
+            </button>
+          </div>
+          {voteStatus && (
+            <div className="bg-gray-800 rounded-lg p-2 border border-gray-600">
+              <p className="text-center text-xs font-semibold text-gray-200">
+                <span className="text-gray-100">{voteStatus.totalVotes}</span>
+                <span className="text-gray-500"> / </span>
+                <span className="text-gray-300">{voteStatus.requiredVotes}</span>
+                <span className="text-gray-500 text-xs ml-1">voti</span>
+              </p>
+              <div className="mt-1 w-full bg-gray-700 rounded-full h-1.5">
+                <div
+                  className={`${voteProgressColor} h-1.5 rounded-full transition-all duration-500`}
+                  style={{ width: `${(voteStatus.totalVotes / voteStatus.requiredVotes) * 100}%` }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Voting phase: proposer view - con progress bar colorata */}
+      {!isInDiscussion && currentPlayer && currentPlayer.id === pendingVote.proposerId && (
+        <div className="bg-gradient-to-r from-blue-900/20 to-gray-800 border border-blue-600/30 rounded-lg p-2 text-center">
+          <div className="flex items-center justify-center gap-1 mb-1">
+            <Clock className="w-3 h-3 text-blue-400 animate-pulse" />
+            <p className="text-blue-200 font-bold text-xs">
+              Votazione sulla tua proposta...
+            </p>
+          </div>
+          {voteStatus && (
+            <div className="bg-gray-800 rounded p-1.5 border border-gray-700">
+              <p className="text-gray-200 text-xs font-bold">
+                {voteStatus.totalVotes} / {voteStatus.requiredVotes} voti
+              </p>
+              <div className="mt-1 w-full bg-gray-700 rounded-full h-1.5">
+                <div
+                  className={`${voteProgressColor} h-1.5 rounded-full transition-all duration-500`}
+                  style={{ width: `${(voteStatus.totalVotes / voteStatus.requiredVotes) * 100}%` }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Voting phase: master (non-player) view */}
+      {!isInDiscussion && isMaster && !currentPlayer && (
+        <div className="bg-gradient-to-r from-blue-900/20 to-gray-800 border border-blue-600/30 rounded-lg p-2 text-center">
+          <div className="flex items-center justify-center gap-1 mb-1">
+            <Users className="w-3 h-3 text-blue-400" />
+            <p className="text-blue-200 font-bold text-xs">
+              Votazione in corso
+            </p>
+          </div>
+          {voteStatus && (
+            <div className="bg-gray-800 rounded p-1.5 border border-gray-700">
+              <p className="text-gray-200 text-xs font-bold">
+                {voteStatus.totalVotes} / {voteStatus.requiredVotes} voti
+              </p>
+              <div className="mt-1 w-full bg-gray-700 rounded-full h-1.5">
+                <div
+                  className={`${voteProgressColor} h-1.5 rounded-full transition-all duration-500`}
+                  style={{ width: `${(voteStatus.totalVotes / voteStatus.requiredVotes) * 100}%` }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
 
 interface GameProps {
   mode?: 'single' | 'multiplayer';
@@ -86,8 +416,13 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
     roomInfo,
     sendAction,
     sendVote,
+    sendReadyToVote,
     pendingVote,
     voteStatus,
+    discussionPhase,
+    pendingDilemmaVote,
+    dilemmaVoteStatus,
+    dilemmaDiscussionPhase,
     setGameState: updateServerGameState,
     socket,
   } = (mode === 'multiplayer' && socketContext) ? socketContext : {
@@ -97,8 +432,13 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
     roomInfo: null,
     sendAction: () => {},
     sendVote: () => {},
+    sendReadyToVote: () => {},
     pendingVote: null,
     voteStatus: null,
+    discussionPhase: null,
+    pendingDilemmaVote: null,
+    dilemmaVoteStatus: null,
+    dilemmaDiscussionPhase: null,
     setGameState: undefined,
     socket: null,
   };
@@ -228,24 +568,14 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
             updateServerGameState(initialState);
           }
           
-          // Invia anche direttamente al server via HTTP (per sicurezza)
-          const serverUrl = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001';
-          fetch(`${serverUrl}/api/room/${roomId}/gamestate`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              gameState: initialState,
-              socketId: socket.id,
-            }),
-          })
-            .then(res => {
-              if (!res.ok) {
-                console.error('Failed to send game state to server:', res.status, res.statusText);
-              } else {
-                console.log('✅ Game state successfully sent to server');
-              }
-            })
-            .catch(err => console.error('Failed to send game state to server:', err));
+          // Invia anche direttamente al server via WebSocket con ack (più affidabile di HTTP POST)
+          socket.emit('updateGameState', { roomId, gameState: initialState }, (response: { success: boolean; error?: string }) => {
+            if (response?.success) {
+              console.log('✅ Initial game state sent to server via WebSocket');
+            } else {
+              console.error('❌ Failed to send initial game state:', response?.error);
+            }
+          });
         } catch (error) {
           console.error('❌ Error sending game state to server:', error);
         }
@@ -288,6 +618,9 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
   // Mostra automaticamente la notifica dei punti votanti quando disponibile
   // Usa un ref per tracciare se abbiamo già mostrato questa notifica
   const voterPointsShownRef = useRef<string | null>(null);
+  
+  // Ref per tracciare se abbiamo già avviato la votazione sul dilemma corrente
+  const dilemmaVotingStartedRef = useRef<string | null>(null);
   
   useEffect(() => {
     if (!gameState) return;
@@ -353,6 +686,60 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
   // Il master non può mai avere il turno (non è un giocatore)
   const isHumanTurn = Boolean(!isMaster && currentPlayer && !currentPlayer.isAI && 
     (mode === 'single' || (mode === 'multiplayer' && gameState?.currentPlayerId === currentPlayer.id)));
+
+  // ✅ Auto-skip turno per giocatori disconnessi (solo master in multiplayer)
+  const disconnectSkipTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const DISCONNECT_SKIP_DELAY_MS = 30000; // 30 secondi prima di skippare il turno
+  
+  useEffect(() => {
+    // Solo il master in multiplayer gestisce lo skip
+    if (mode !== 'multiplayer' || !isMaster || !gameState || !roomInfo) {
+      if (disconnectSkipTimerRef.current) {
+        clearTimeout(disconnectSkipTimerRef.current);
+        disconnectSkipTimerRef.current = null;
+      }
+      return;
+    }
+
+    if (gameState.currentPhase === 'gameOver') return;
+
+    const currentPlayerId = gameState.currentPlayerId;
+    const isCurrentPlayerDisconnected = roomInfo.disconnectedPlayers?.some(
+      dp => dp.id === currentPlayerId
+    );
+    const isCurrentPlayerConnected = roomInfo.players?.some(
+      p => p.id === currentPlayerId
+    );
+
+    if (isCurrentPlayerDisconnected && !isCurrentPlayerConnected) {
+      // Il giocatore corrente è disconnesso - avvia timer per skip
+      if (!disconnectSkipTimerRef.current) {
+        const playerName = gameState.players.find(p => p.id === currentPlayerId)?.name || 'Giocatore';
+        console.log(`⏳ Player ${playerName} is disconnected during their turn. Auto-skip in ${DISCONNECT_SKIP_DELAY_MS / 1000}s...`);
+        
+        disconnectSkipTimerRef.current = setTimeout(() => {
+          console.log(`⏭️ Auto-skipping turn for disconnected player ${playerName}`);
+          // Salta al prossimo giocatore
+          setGameState(prev => TurnManager.nextPlayer(prev));
+          disconnectSkipTimerRef.current = null;
+        }, DISCONNECT_SKIP_DELAY_MS);
+      }
+    } else {
+      // Il giocatore è connesso (o si è riconnesso) - cancella il timer
+      if (disconnectSkipTimerRef.current) {
+        console.log(`✅ Current player reconnected, cancelling auto-skip timer`);
+        clearTimeout(disconnectSkipTimerRef.current);
+        disconnectSkipTimerRef.current = null;
+      }
+    }
+
+    return () => {
+      if (disconnectSkipTimerRef.current) {
+        clearTimeout(disconnectSkipTimerRef.current);
+        disconnectSkipTimerRef.current = null;
+      }
+    };
+  }, [mode, isMaster, gameState?.currentPlayerId, gameState?.currentPhase, roomInfo?.disconnectedPlayers, roomInfo?.players, setGameState]);
 
   // Gestisce i turni AI automaticamente (solo single-player)
   useEffect(() => {
@@ -455,6 +842,96 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
     }, 100);
   }, [currentPlayer, mode, sendAction, setGameState]);
 
+  // In multiplayer, quando la fase diventa 'dilemma', avvia la votazione sul dilemma
+  useEffect(() => {
+    if (mode !== 'multiplayer' || !isMaster || !gameState || !socket || !roomId) return;
+    if (gameState.currentPhase !== 'dilemma' || !gameState.currentDilemma) return;
+    
+    const dilemmaId = gameState.currentDilemma.id;
+    
+    // Evita di avviare la votazione più volte per lo stesso dilemma
+    if (dilemmaVotingStartedRef.current === dilemmaId) return;
+    dilemmaVotingStartedRef.current = dilemmaId;
+    
+    console.log('🎯 Master detected dilemma phase, starting dilemma voting:', {
+      dilemmaId,
+      dilemmaTitle: gameState.currentDilemma.title,
+      currentPlayerId: gameState.currentPlayerId,
+    });
+    
+    // Avvia la votazione sul server via WebSocket con ack
+    socket.emit('startDilemmaVoting', {
+      roomId,
+      dilemmaId,
+      dilemma: gameState.currentDilemma,
+      currentPlayerId: gameState.currentPlayerId,
+    }, (response: { success: boolean; error?: string }) => {
+      if (response?.success) {
+        console.log('✅ Dilemma voting started successfully via WebSocket');
+      } else {
+        console.error('❌ Failed to start dilemma voting:', response?.error);
+      }
+    });
+  }, [mode, isMaster, gameState?.currentPhase, gameState?.currentDilemma?.id, socket, roomId]);
+
+  // Reset il ref quando la fase non è più 'dilemma'
+  useEffect(() => {
+    if (gameState?.currentPhase !== 'dilemma') {
+      dilemmaVotingStartedRef.current = null;
+    }
+  }, [gameState?.currentPhase]);
+
+  // Ascolta il risultato della votazione sul dilemma (solo master)
+  useEffect(() => {
+    if (mode !== 'multiplayer' || !isMaster || !socket) return;
+
+    const handleDilemmaVotingComplete = (data: {
+      dilemmaId: string;
+      dilemma: Dilemma;
+      currentPlayerId: string;
+      winningOption: DilemmaOption;
+      winningOptionIndex: number;
+      result: DilemmaVoteResult;
+    }) => {
+      if (!gameState) {
+        console.error('❌ Cannot handle dilemma voting complete: gameState is null');
+        return;
+      }
+
+      console.log('✅ Master received dilemmaVotingComplete:', {
+        dilemmaId: data.dilemmaId,
+        winningOptionIndex: data.winningOptionIndex,
+        winningOptionText: data.winningOption.text,
+        votesPerOption: data.result.votesPerOption,
+      });
+
+      // Mostra transizione prima di risolvere
+      setShowDilemmaTransition(true);
+
+      setTimeout(() => {
+        // Risolvi il dilemma con l'opzione vincente, applicando i punti al giocatore corrente
+        const newState = GameEngine.resolveDilemma(gameState, data.currentPlayerId, data.winningOption);
+        
+        // Salva il risultato della votazione nel gameState
+        setGameState({
+          ...newState,
+          lastDilemmaVoteResult: data.result,
+        });
+
+        // Nascondi transizione dopo il resolve
+        setTimeout(() => {
+          setShowDilemmaTransition(false);
+        }, 2000);
+      }, 100);
+    };
+
+    socket.on('dilemmaVotingComplete', handleDilemmaVotingComplete);
+
+    return () => {
+      socket.off('dilemmaVotingComplete', handleDilemmaVotingComplete);
+    };
+  }, [mode, isMaster, socket, gameState, setGameState]);
+
   const handleCompleteConsequence = useCallback(() => {
     if (mode === 'multiplayer') {
       sendAction('completeConsequence', {});
@@ -540,26 +1017,19 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                 technologyId: data.data.technology.id,
               });
               
-              // Usa sempre l'API HTTP (gameServer non è disponibile nel browser)
-              fetch(`${import.meta.env.VITE_SERVER_URL || 'http://localhost:3001'}/api/room/${roomId}/start-voting`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  technologyId: data.data.technology.id,
-                  technology: data.data.technology,
-                  proposerId: data.playerId,
-                }),
-              })
-                .then(res => {
-                  if (!res.ok) {
-                    console.error('❌ Failed to start voting:', res.status, res.statusText);
-                  } else {
-                    console.log('✅ Voting started successfully');
-                  }
-                })
-                .catch(err => {
-                  console.error('❌ Error starting voting:', err);
-                });
+              // Usa WebSocket con ack (più affidabile di HTTP POST)
+              socket.emit('startVoting', {
+                roomId,
+                technologyId: data.data.technology.id,
+                technology: data.data.technology,
+                proposerId: data.playerId,
+              }, (response: { success: boolean; error?: string }) => {
+                if (response?.success) {
+                  console.log('✅ Voting started successfully via WebSocket');
+                } else {
+                  console.error('❌ Failed to start voting:', response?.error);
+                }
+              });
             } else {
               console.error('❌ Cannot start voting: missing socket, roomId, or gameState', {
                 hasSocket: !!socket,
@@ -665,13 +1135,62 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
         }
       };
 
+      // Gestisce la rimozione permanente di un giocatore (grace period scaduto)
+      const handlePlayerPermanentlyLeft = (data: { playerId: string; playerName: string }) => {
+        if (!gameState) return;
+        
+        console.log(`❌ Player ${data.playerName} permanently left, removing from game state`);
+        
+        // Rimuovi il giocatore dal gameState usando TurnManager
+        const newState = TurnManager.removePlayer(gameState, data.playerId);
+        setGameState(newState);
+      };
+
+      // Gestisce l'aggiunta di un giocatore a partita in corso
+      const handlePlayerJoinedMidGame = (data: { playerId: string; playerName: string; playerColor: string; playerIcon: string }) => {
+        if (!gameState) return;
+        
+        console.log(`🆕 Player ${data.playerName} joined mid-game, adding to game state`);
+        
+        // Crea un nuovo PlayerState per il giocatore che entra a partita in corso
+        // Pesca 2 carte dal mazzo
+        const newHand = gameState.technologyDeck.slice(0, 2);
+        const remainingDeck = gameState.technologyDeck.slice(2);
+        
+        const newPlayer: PlayerState = {
+          id: data.playerId,
+          name: data.playerName,
+          isAI: false,
+          techPoints: 0,
+          ethicsPoints: 0,
+          neuralformingPoints: 0,
+          technologies: [],
+          hand: newHand,
+          unlockedMilestones: [],
+          color: data.playerColor,
+          icon: data.playerIcon,
+        };
+        
+        const newState: GameState = {
+          ...gameState,
+          players: [...gameState.players, newPlayer],
+          technologyDeck: remainingDeck,
+        };
+        
+        setGameState(newState);
+      };
+
       socket.on('playerActionReceived', handlePlayerAction);
       // Ascolta direttamente l'evento dal server invece di un evento intermedio
       socket.on('votingComplete', handleVotingComplete);
+      socket.on('playerPermanentlyLeft', handlePlayerPermanentlyLeft);
+      socket.on('playerJoinedMidGame', handlePlayerJoinedMidGame);
 
       return () => {
         socket.off('playerActionReceived', handlePlayerAction);
         socket.off('votingComplete', handleVotingComplete);
+        socket.off('playerPermanentlyLeft', handlePlayerPermanentlyLeft);
+        socket.off('playerJoinedMidGame', handlePlayerJoinedMidGame);
       };
     }
   }, [mode, isMaster, socket, gameState, roomId, setGameState]);
@@ -1018,146 +1537,16 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
 
             {/* Votazione in corso (multiplayer) - Mostrata a TUTTI i giocatori */}
             {mode === 'multiplayer' && pendingVote && (
-              <div className="bg-gradient-to-br from-gray-800 via-gray-700 to-gray-800 rounded-lg shadow-lg p-3 border-2 border-gray-600">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <div className="bg-gray-600 rounded-full p-1.5 shadow-md">
-                    <Users className="w-4 h-4 text-gray-100" />
-                  </div>
-                  <h2 className="text-base font-bold text-gray-100">
-                    Proposta in Votazione
-                  </h2>
-                </div>
-                
-                <div className="mb-2 flex justify-center">
-                  <div className="bg-gray-800 rounded-lg shadow-md p-2 border border-gray-600 max-w-xs w-full">
-                    <TechnologyCard
-                      technology={pendingVote.technology}
-                      isSelectable={false}
-                      isInHand={false}
-                      isVotingCard={true}
-                      showVotingEffects={true}
-                    />
-                  </div>
-                </div>
-                
-                <div className="bg-gray-800 rounded-lg p-2 mb-2 shadow-sm border border-gray-600">
-                  <p className="text-gray-200 text-center text-xs">
-                    <span className="font-bold text-gray-100">
-                      {gameState.players.find(p => p.id === pendingVote.proposerId)?.name || 'Un giocatore'}
-                    </span>
-                    <span className="text-gray-400"> ha proposto questa tecnologia</span>
-                  </p>
-                </div>
-                
-                {/* Mostra i bottoni di voto solo se non sei il proponente e hai un currentPlayer */}
-                {currentPlayer && currentPlayer.id !== pendingVote.proposerId && (
-                  <div className="space-y-2">
-                    <p className="text-gray-200 text-center font-semibold text-xs">
-                      Vuoi votare a favore o contro?
-                    </p>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => handleVote(true)}
-                        disabled={voteStatus?.hasVoted}
-                        className={`flex-1 font-bold py-2 px-3 rounded-lg transition-all duration-200 shadow-md text-xs ${
-                          voteStatus?.hasVoted && voteStatus?.myVote === true
-                            ? 'bg-gray-600 text-gray-300 cursor-not-allowed'
-                            : voteStatus?.hasVoted
-                            ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
-                            : 'bg-gradient-to-r from-gray-600 to-gray-500 hover:from-gray-500 hover:to-gray-400 text-white hover:shadow-lg'
-                        }`}
-                      >
-                        <div className="flex items-center justify-center gap-1">
-                          <CheckCircle2 className="w-3 h-3" />
-                          <span>{voteStatus?.hasVoted && voteStatus?.myVote === true ? 'Hai votato Sì' : 'Vota Sì'}</span>
-                        </div>
-                      </button>
-                      <button
-                        onClick={() => handleVote(false)}
-                        disabled={voteStatus?.hasVoted}
-                        className={`flex-1 font-bold py-2 px-3 rounded-lg transition-all duration-200 shadow-md text-xs ${
-                          voteStatus?.hasVoted && voteStatus?.myVote === false
-                            ? 'bg-gray-600 text-gray-300 cursor-not-allowed'
-                            : voteStatus?.hasVoted
-                            ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
-                            : 'bg-gradient-to-r from-gray-700 to-gray-600 hover:from-gray-600 hover:to-gray-500 text-white hover:shadow-lg'
-                        }`}
-                      >
-                        <div className="flex items-center justify-center gap-1">
-                          <XCircle className="w-3 h-3" />
-                          <span>{voteStatus?.hasVoted && voteStatus?.myVote === false ? 'Hai votato No' : 'Vota No'}</span>
-                        </div>
-                      </button>
-                    </div>
-                    {voteStatus && (
-                      <div className="bg-gray-800 rounded-lg p-2 border border-gray-600">
-                        <p className="text-center text-xs font-semibold text-gray-200">
-                          <span className="text-gray-100">{voteStatus.totalVotes}</span>
-                          <span className="text-gray-500"> / </span>
-                          <span className="text-gray-300">{voteStatus.requiredVotes}</span>
-                          <span className="text-gray-500 text-[10px] ml-1">voti</span>
-                        </p>
-                        <div className="mt-1 w-full bg-gray-700 rounded-full h-1.5">
-                          <div 
-                            className="bg-gradient-to-r from-gray-500 to-gray-400 h-1.5 rounded-full transition-all duration-500"
-                            style={{ width: `${(voteStatus.totalVotes / voteStatus.requiredVotes) * 100}%` }}
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-                
-                {/* Messaggio per il proponente */}
-                {currentPlayer && currentPlayer.id === pendingVote.proposerId && (
-                  <div className="bg-gradient-to-r from-gray-700 to-gray-800 border border-gray-600 rounded-lg p-2 text-center">
-                    <div className="flex items-center justify-center gap-1 mb-1">
-                      <CheckCircle2 className="w-3 h-3 text-gray-300" />
-                      <p className="text-gray-100 font-bold text-xs">
-                        Hai proposto questa tecnologia
-                      </p>
-                    </div>
-                    {voteStatus && (
-                      <div className="bg-gray-800 rounded p-1.5 border border-gray-600">
-                        <p className="text-gray-200 text-xs font-bold">
-                          {voteStatus.totalVotes} / {voteStatus.requiredVotes} voti
-                        </p>
-                        <div className="mt-1 w-full bg-gray-700 rounded-full h-1.5">
-                          <div 
-                            className="bg-gradient-to-r from-gray-500 to-gray-400 h-1.5 rounded-full transition-all duration-500"
-                            style={{ width: `${(voteStatus.totalVotes / voteStatus.requiredVotes) * 100}%` }}
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-                
-                {/* Messaggio per il master (che non è un giocatore) */}
-                {isMaster && (
-                  <div className="bg-gradient-to-r from-gray-700 to-gray-800 border border-gray-600 rounded-lg p-2 text-center">
-                    <div className="flex items-center justify-center gap-1 mb-1">
-                      <Users className="w-3 h-3 text-gray-300" />
-                      <p className="text-gray-100 font-bold text-xs">
-                        Votazione in corso
-                      </p>
-                    </div>
-                    {voteStatus && (
-                      <div className="bg-gray-800 rounded p-1.5 border border-gray-600">
-                        <p className="text-gray-200 text-xs font-bold">
-                          {voteStatus.totalVotes} / {voteStatus.requiredVotes} voti
-                        </p>
-                        <div className="mt-1 w-full bg-gray-700 rounded-full h-1.5">
-                          <div 
-                            className="bg-gradient-to-r from-gray-500 to-gray-400 h-1.5 rounded-full transition-all duration-500"
-                            style={{ width: `${(voteStatus.totalVotes / voteStatus.requiredVotes) * 100}%` }}
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
+              <DiscussionAndVotingPanel
+                pendingVote={pendingVote}
+                gameState={gameState}
+                currentPlayer={currentPlayer}
+                isMaster={isMaster}
+                voteStatus={voteStatus}
+                discussionPhase={discussionPhase}
+                onVote={handleVote}
+                onReadyToVote={(technologyId) => sendReadyToVote(technologyId)}
+              />
             )}
             
             {/* Loading screen per votazione */}
@@ -1211,12 +1600,12 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
             
             {/* Development Phase - Solo per giocatore umano */}
             {gameState.currentPhase === 'development' && isHumanTurn && currentPlayer && currentPlayer.hand.length === 0 && (
-              <div className="bg-gray-800 rounded-lg shadow-md p-3 border border-gray-700">
+              <div className="bg-gray-800 rounded-lg shadow-md p-3 border border-blue-700/30">
                 <div className="flex items-center justify-between mb-2">
                   <h2 className="text-sm font-bold text-gray-100">Sviluppo Politico</h2>
                   <button
                     onClick={handleDrawTechnology}
-                    className="bg-gray-600 hover:bg-gray-500 text-white font-semibold py-1 px-2 text-xs rounded transition-colors duration-200 shadow-sm"
+                    className="bg-gradient-to-r from-blue-700 to-blue-600 hover:from-blue-600 hover:to-blue-500 text-white font-semibold py-1 px-3 text-xs rounded transition-all duration-200 shadow-sm"
                   >
                     Nuova Proposta
                   </button>
@@ -1239,10 +1628,37 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
               </div>
             )}
 
-            {/* Dilemma Phase - Mostrato a tutti, ma solo il giocatore corrente può interagire */}
+            {/* Dilemma Phase - In multiplayer, votazione collettiva; in single player, solo il giocatore corrente */}
             {gameState.currentPhase === 'dilemma' && gameState.currentDilemma && !showDilemmaTransition && (
               <div className="bg-gradient-to-br from-gray-800 via-gray-700 to-gray-800 rounded-lg shadow-md p-3 border border-gray-600">
-                {!isHumanTurn && (
+                {/* In multiplayer, mostra info sulla votazione in corso */}
+                {mode === 'multiplayer' && (pendingDilemmaVote || dilemmaDiscussionPhase) && (
+                  <div className="mb-2 text-center bg-gray-800 rounded-lg p-2 shadow-sm border border-gray-600">
+                    <div className="flex items-center justify-center gap-1.5 mb-1">
+                      <Scale className="w-4 h-4 text-amber-400" />
+                      <p className="text-xs font-bold text-gray-200">
+                        {dilemmaDiscussionPhase
+                          ? 'I giocatori stanno discutendo il dilemma...'
+                          : 'Votazione sul dilemma in corso...'}
+                      </p>
+                    </div>
+                    {dilemmaVoteStatus && dilemmaVoteStatus.requiredVotes > 0 && !dilemmaDiscussionPhase && (
+                      <div className="mt-1">
+                        <p className="text-[10px] text-gray-400">
+                          Voti: {dilemmaVoteStatus.totalVotes} / {dilemmaVoteStatus.requiredVotes}
+                        </p>
+                        <div className="mt-1 w-full bg-gray-700 rounded-full h-1">
+                          <div
+                            className="bg-amber-500 h-1 rounded-full transition-all duration-500"
+                            style={{ width: `${(dilemmaVoteStatus.totalVotes / dilemmaVoteStatus.requiredVotes) * 100}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+                {/* In single player o quando non c'è votazione attiva */}
+                {mode !== 'multiplayer' && !isHumanTurn && (
                   <div className="mb-2 text-center bg-gray-800 rounded-lg p-2 shadow-sm border border-gray-600">
                     <div className="flex items-center justify-center gap-1.5 mb-1">
                       <Users className="w-4 h-4 text-gray-400" />
@@ -1254,10 +1670,10 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                 )}
                 <DilemmaCard
                   dilemma={gameState.currentDilemma}
-                  onSelectOption={isHumanTurn ? handleResolveDilemma : () => {}}
+                  onSelectOption={isHumanTurn && mode !== 'multiplayer' ? handleResolveDilemma : () => {}}
                   activeJoker={gameState.activeJoker ?? undefined}
-                  isInteractive={isHumanTurn ?? false}
-                  showOptions={!!gameState.resolvedDilemmaOption} // Mostra opzioni solo dopo la risposta
+                  isInteractive={isHumanTurn && mode !== 'multiplayer'}
+                  showOptions={true}
                   selectedOption={gameState.resolvedDilemmaOption ?? undefined}
                 />
               </div>
@@ -1311,17 +1727,27 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
               <div className="bg-gray-800 rounded-lg shadow-md p-4 text-center border border-gray-700">
                 {mode === 'multiplayer' ? (
                   <>
-                    <Users className="w-6 h-6 mx-auto mb-2 text-gray-400" />
-                    <h2 className="text-sm font-bold text-gray-100 mb-1">
-                      {isMaster ? (
-                        <>Turno di {gameState.players.find(p => p.id === gameState.currentPlayerId)?.name || 'Altro Giocatore'}</>
-                      ) : (
-                        <>Turno di {currentPlayer?.name || 'Altro Giocatore'}</>
-                      )}
-                    </h2>
-                    <p className="text-xs text-gray-400">
-                      {isMaster ? 'Osservando il gioco...' : 'Aspetta il tuo turno...'}
-                    </p>
+                    {(() => {
+                      const activePlayer = gameState.players.find(p => p.id === gameState.currentPlayerId);
+                      const activeColor = activePlayer?.color || '#6B7280';
+                      return (
+                        <>
+                          <div className="w-10 h-10 mx-auto mb-2 rounded-full flex items-center justify-center border-2 border-gray-600" style={{ backgroundColor: activeColor + '33', borderColor: activeColor }}>
+                            <Users className="w-5 h-5" style={{ color: activeColor }} />
+                          </div>
+                          <h2 className="text-sm font-bold text-gray-100 mb-1">
+                            Turno di {activePlayer?.name || 'Altro Giocatore'}
+                          </h2>
+                          <p className="text-xs text-gray-400 mb-2">
+                            {isMaster ? 'Osservando il gioco...' : 'Aspetta il tuo turno...'}
+                          </p>
+                          <div className="flex items-center justify-center gap-1">
+                            <Loader2 className="w-3 h-3 animate-spin text-blue-400" />
+                            <span className="text-xs text-gray-500">Turno {gameState.turn}</span>
+                          </div>
+                        </>
+                      );
+                    })()}
                   </>
                 ) : (
                   <>
@@ -1344,17 +1770,17 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
             <div className="flex-shrink-0 bg-gray-900/90 backdrop-blur-sm rounded-xl p-2 border border-gray-700/50 shadow-lg">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-1.5">
-                  <Landmark className="w-3.5 h-3.5 text-gray-300" />
+                  <Landmark className="w-3.5 h-3.5 text-blue-400" />
                   <h3 className="text-xs font-bold text-gray-100">
                     Proposte di Legge
                   </h3>
-                  <span className="bg-gray-600 text-white font-bold px-1.5 py-0.5 rounded text-[10px]">
+                  <span className="bg-blue-600/80 text-white font-bold px-1.5 py-0.5 rounded text-xs">
                     {currentPlayer.hand.length}
                   </span>
                 </div>
                 <button
                   onClick={handleDrawTechnology}
-                  className="bg-gradient-to-r from-gray-600 to-gray-500 hover:from-gray-500 hover:to-gray-400 text-white font-semibold py-1 px-2 text-[10px] rounded transition-all duration-200 shadow-sm"
+                  className="bg-gradient-to-r from-blue-700 to-blue-600 hover:from-blue-600 hover:to-blue-500 text-white font-semibold py-1 px-2 text-xs rounded transition-all duration-200 shadow-sm"
                 >
                   + Nuova
                 </button>
@@ -1382,6 +1808,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
               players={gameState.players}
               currentPlayerId={gameState.currentPlayerId}
               winnerId={gameState.winnerId}
+              disconnectedPlayerIds={roomInfo?.disconnectedPlayers?.map(dp => dp.id) || []}
             />
           </div>
         </div>

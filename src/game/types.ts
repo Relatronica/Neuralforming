@@ -62,6 +62,15 @@ export interface PlayerState {
 
 export type GamePhase = 'development' | 'dilemma' | 'consequence' | 'gameOver' | 'aiTurn';
 
+// Risultato della votazione collettiva sul dilemma etico
+export interface DilemmaVoteResult {
+  optionIndex: number; // Indice dell'opzione vincente
+  optionText: string; // Testo dell'opzione vincente
+  votesPerOption: number[]; // Voti ricevuti per ogni opzione
+  totalVotes: number;
+  voterChoices: Array<{ playerId: string; optionIndex: number }>; // Come ha votato ogni giocatore
+}
+
 // Tipo per il risultato della votazione parlamentare
 // Definito qui per evitare dipendenze circolari
 export interface VoteResult {
@@ -150,6 +159,7 @@ export interface GameState {
   currentNews?: SocietyNews | null; // News corrente dalla società
   lastNewsTurn?: number; // Turno in cui è apparsa l'ultima news
   resolvedDilemmaOption?: DilemmaOption | null; // Opzione scelta per il dilemma corrente (mostra le risposte nel tabellone)
+  lastDilemmaVoteResult?: DilemmaVoteResult | null; // Risultato dell'ultima votazione sul dilemma
   voterPointsInfo?: Array<{
     playerId: string;
     vote: boolean;
