@@ -1509,6 +1509,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
               currentPlayerId={gameState.currentPlayerId}
               voteResult={gameState.lastVoteResult || null}
               isVoting={mode === 'multiplayer' ? !!pendingVote : false}
+              roomId={mode === 'multiplayer' ? roomId : null}
             />
           </div>
         </div>
