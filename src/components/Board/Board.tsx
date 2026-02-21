@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Technology, PlayerState, VoteResult } from '../../game/types';
 import { ParliamentHemicycle } from './ParliamentHemicycle';
-import { Landmark, QrCode, X, Copy, Check } from 'lucide-react';
+import { Landmark, QrCode, X, Copy, Check, BrainCircuit } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { buildPlayerJoinUrl } from '../../utils/deeplink';
 
@@ -46,11 +46,11 @@ export const Board: React.FC<BoardProps> = ({ players, currentPlayerId, voteResu
             className="w-full h-auto rounded-lg object-cover"
           />
         ) : (
-          <img 
-            src="/images/logo/logo_neuralforming.png" 
-            alt="Neuralforming Logo" 
-            className="w-full h-50 mx-auto rounded-lg object-contain"
-          />
+          <div className="flex justify-center py-6">
+            <div className="bg-gray-800/60 border border-primary-500/30 rounded-full p-5">
+              <BrainCircuit className="w-14 h-14 text-primary-400" strokeWidth={1.5} />
+            </div>
+          </div>
         )}
 
         {/* Pulsante QR Code per invitare giocatori */}

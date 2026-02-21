@@ -7,6 +7,7 @@ import {
   Vote,
   Target,
   Brain,
+  BrainCircuit,
   Scale,
   Lightbulb,
   GraduationCap,
@@ -105,11 +106,7 @@ export const LandingPage = ({
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             className="flex items-center gap-2.5 group"
           >
-            <img
-              src="/images/logo/logo_neuralforming.png"
-              alt="Neuralforming"
-              className="h-9 w-9 object-contain"
-            />
+            <BrainCircuit className="w-8 h-8 text-primary-400" />
             <span className="font-bold text-lg tracking-tight text-gray-100 group-hover:text-primary-400 transition-colors hidden sm:inline">
               Neuralforming
             </span>
@@ -192,11 +189,12 @@ export const LandingPage = ({
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-gray-950" />
 
         <div className="relative z-10 text-center px-4 sm:px-6 max-w-3xl mx-auto pt-16">
-          <img
-            src="/images/logo/logo_neuralforming.png"
-            alt="Neuralforming"
-            className="h-40 sm:h-52 w-auto mx-auto mb-6 drop-shadow-2xl"
-          />
+          <div className="relative mx-auto mb-6 w-36 h-36 sm:w-44 sm:h-44 flex items-center justify-center">
+            <div className="absolute inset-0 rounded-full bg-primary-500/15 blur-2xl" />
+            <div className="relative bg-gray-900/60 border border-primary-500/30 rounded-full p-8 sm:p-10 backdrop-blur-sm">
+              <BrainCircuit className="w-20 h-20 sm:w-24 sm:h-24 text-primary-400" strokeWidth={1.5} />
+            </div>
+          </div>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4 bg-gradient-to-r from-gray-100 via-primary-300 to-neural-light bg-clip-text text-transparent">
             Governare l'Intelligenza Artificiale
           </h1>
@@ -595,11 +593,7 @@ export const LandingPage = ({
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3">
-              <img
-                src="/images/logo/logo_neuralforming.png"
-                alt="Neuralforming"
-                className="h-8 w-8 object-contain"
-              />
+              <BrainCircuit className="w-6 h-6 text-primary-400" />
               <span className="font-semibold text-gray-300">Neuralforming</span>
             </div>
 

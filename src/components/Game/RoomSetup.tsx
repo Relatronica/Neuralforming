@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useGameSocketContext } from '../../contexts/GameSocketContext';
 import { RoomInfo } from '../../hooks/useGameSocket';
-import { Users, Play, Copy, Check } from 'lucide-react';
+import { Users, Play, Copy, Check, BrainCircuit } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { buildPlayerJoinUrl } from '../../utils/deeplink';
 
@@ -191,11 +191,12 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
       <div className="bg-gray-900 rounded-xl shadow-2xl p-8 max-w-2xl w-full border border-gray-700">
         <div className="mb-6 flex justify-center">
-          <img 
-            src="/images/logo/logo_neuralforming.png" 
-            alt="Neuralforming Logo" 
-            className="h-52 w-auto object-contain"
-          />
+          <div className="relative w-32 h-32 flex items-center justify-center">
+            <div className="absolute inset-0 rounded-full bg-primary-500/15 blur-xl" />
+            <div className="relative bg-gray-800/60 border border-primary-500/30 rounded-full p-6 backdrop-blur-sm">
+              <BrainCircuit className="w-16 h-16 text-primary-400" strokeWidth={1.5} />
+            </div>
+          </div>
         </div>
         <p className="text-gray-300 mb-4 text-center text-lg">
           Governare l'Intelligenza Artificiale

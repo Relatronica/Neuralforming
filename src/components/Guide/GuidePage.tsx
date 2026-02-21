@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, BookOpen, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
+import { ArrowLeft, BookOpen, BrainCircuit, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import { guideChapters } from './guideChapters';
 
 export const GuidePage = () => {
@@ -55,11 +55,7 @@ export const GuidePage = () => {
             <h1 className="font-bold text-lg">Guida al Gioco</h1>
           </div>
 
-          <img
-            src="/images/logo/logo_neuralforming.png"
-            alt="Neuralforming"
-            className="h-8 w-8 object-contain"
-          />
+          <BrainCircuit className="w-7 h-7 text-primary-400" />
         </div>
       </header>
 
