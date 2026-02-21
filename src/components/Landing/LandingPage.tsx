@@ -18,6 +18,7 @@ import {
   Play,
   User,
   Github,
+  Heart,
 } from 'lucide-react';
 
 interface LandingPageProps {
@@ -71,6 +72,7 @@ const NAV_ITEMS = [
   { id: 'how', label: 'Come Funziona' },
   { id: 'why', label: 'Finalità' },
   { id: 'team', label: 'Chi Siamo' },
+  { id: 'support', label: 'Sostieni' },
 ];
 
 export const LandingPage = ({
@@ -548,8 +550,76 @@ export const LandingPage = ({
         </div>
       </section>
 
+      {/* ── Sostieni il Progetto ── */}
+      <section id="support" className="py-24 sm:py-32">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6">
+          <RevealSection className="text-center mb-16">
+            <p className="text-primary-400 font-semibold text-sm uppercase tracking-wider mb-3">
+              Partecipa
+            </p>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+              Sostieni il Futuro Aperto
+            </h2>
+            <p className="text-gray-400 max-w-2xl mx-auto text-lg">
+              Neuralforming è un progetto indipendente e open source. Non vendiamo dati,
+              non mostriamo pubblicità. Sostenere questo progetto non è una donazione:
+              è un <strong className="text-gray-200">atto di partecipazione civica</strong>.
+            </p>
+          </RevealSection>
+
+          <RevealSection>
+            <div className="grid sm:grid-cols-3 gap-6 mb-10">
+              {[
+                {
+                  tier: 'The Observer',
+                  desc: 'Il tuo nome tra i Civic Heroes del progetto',
+                  color: 'border-gray-700',
+                  accent: 'text-gray-300',
+                },
+                {
+                  tier: 'The Explorer',
+                  desc: 'Accesso anticipato a nuovi dilemmi, carte e meccaniche in sviluppo',
+                  color: 'border-primary-500/40',
+                  accent: 'text-primary-400',
+                },
+                {
+                  tier: 'The Future Architect',
+                  desc: 'Dialogo diretto con il team per proporre scenari etici e meccaniche di gioco',
+                  color: 'border-amber-500/40',
+                  accent: 'text-amber-400',
+                },
+              ].map((item) => (
+                <div
+                  key={item.tier}
+                  className={`bg-gray-900 border ${item.color} rounded-2xl p-6 text-center hover:bg-gray-800/80 transition-colors`}
+                >
+                  <Heart className={`w-8 h-8 ${item.accent} mx-auto mb-4`} />
+                  <h3 className={`text-lg font-bold ${item.accent} mb-2`}>{item.tier}</h3>
+                  <p className="text-sm text-gray-400 leading-relaxed">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="text-center">
+              <a
+                href="https://relatronica.com/about"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-500 text-white font-semibold py-3.5 px-8 rounded-xl transition-all duration-200 shadow-lg shadow-primary-600/25 hover:shadow-primary-500/30 hover:-translate-y-0.5"
+              >
+                <Heart className="w-5 h-5" />
+                Diventa parte del progetto
+              </a>
+              <p className="text-xs text-gray-500 mt-4">
+                Ogni contributo ci permette di sviluppare strumenti aperti, ricerca indipendente e risorse educative.
+              </p>
+            </div>
+          </RevealSection>
+        </div>
+      </section>
+
       {/* ── CTA Finale ── */}
-      <section id="play" className="py-24 sm:py-32">
+      <section id="play" className="py-24 sm:py-32 bg-gray-900/50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <RevealSection>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
@@ -616,6 +686,15 @@ export const LandingPage = ({
                 className="hover:text-gray-300 transition-colors"
               >
                 GitHub
+              </a>
+              <a
+                href="https://relatronica.com/about"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-gray-300 transition-colors flex items-center gap-1"
+              >
+                <Heart className="w-3 h-3" />
+                Sostieni
               </a>
             </div>
 

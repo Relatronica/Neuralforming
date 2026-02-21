@@ -252,6 +252,20 @@ Il progetto e **open source** e accetta contributi! Vedi la [documentazione](doc
 - Migliorare il bilanciamento di gioco
 - Estendere le funzionalita multiplayer
 
+## Sostieni il Progetto
+
+Neuralforming e un progetto open source di [Relatronica](https://relatronica.com), uno studio di progettazione nato al CERN che unisce speculative design, civic tech e knowledge mapping per esplorare scenari futuri e creare strumenti per le comunita.
+
+Non vendiamo dati, non mostriamo pubblicita. Il nostro lavoro esiste grazie a chi crede che gli strumenti per comprendere il futuro debbano restare liberi, accessibili e di tutti. Sostenere Neuralforming non e una donazione: e un **atto di partecipazione civica**.
+
+| Tier | Cosa ricevi |
+|------|-------------|
+| **The Observer** | Il tuo nome tra i Civic Heroes del progetto |
+| **The Explorer** | Accesso anticipato a nuovi dilemmi, carte e meccaniche in sviluppo |
+| **The Future Architect** | Dialogo diretto con il team per proporre scenari etici e meccaniche di gioco |
+
+[Diventa parte del progetto](https://relatronica.com/about)
+
 ## Licenza
 
 Questo progetto e distribuito sotto licenza **GNU General Public License v3.0 (GPL-3.0)**.
@@ -259,4 +273,4 @@ Vedi il file [LICENSE](LICENSE) per i dettagli completi.
 
 ---
 
-*Creato per esplorare i dilemmi etici dell'Intelligenza Artificiale*
+*Un progetto [Relatronica](https://relatronica.com) per esplorare i dilemmi etici dell'Intelligenza Artificiale*
