@@ -66,6 +66,13 @@ interface DisconnectedPlayer {
   timeoutId?: NodeJS.Timeout;
 }
 
+interface OpeningStoryData {
+  id: string;
+  title: string;
+  content: string;
+  mood: string;
+}
+
 interface GameRoom {
   id: string;
   gameState: GameState | null;
@@ -77,6 +84,10 @@ interface GameRoom {
   maxPlayers: number;
   disconnectedPlayers: Map<string, DisconnectedPlayer>; // playerId -> disconnected player info
   playerIdMap: Map<string, string>; // playerName -> playerId persistente
+  // Opening story
+  openingStory: OpeningStoryData | null;
+  openingStoryReadyPlayers: Set<string>;
+  openingStoryTimer?: NodeJS.Timeout;
   // Nuovi campi per cleanup e heartbeat
   createdAt: number;
   lastActivity: number;
@@ -190,6 +201,11 @@ export class GameServer {
         clearTimeout(vote.discussionTimer);
       }
     });
+
+    // Pulisci il timer della opening story
+    if (room.openingStoryTimer) {
+      clearTimeout(room.openingStoryTimer);
+    }
 
     // Pulisci il master heartbeat timer
     if (room.masterHeartbeatTimer) {
@@ -411,6 +427,54 @@ export class GameServer {
         }
       });
 
+      // ===== Opening Story =====
+      socket.on('openingStory', ({ roomId, story }: { roomId: string; story: OpeningStoryData }) => {
+        const room = this.rooms.get(roomId);
+        if (!room || room.masterSocketId !== socket.id) return;
+
+        room.openingStory = story;
+        room.openingStoryReadyPlayers = new Set();
+        this.touchRoom(room);
+
+        // Auto-complete after 60s if not all ready
+        if (room.openingStoryTimer) clearTimeout(room.openingStoryTimer);
+        room.openingStoryTimer = setTimeout(() => {
+          this.completeOpeningStory(roomId);
+        }, 60000);
+
+        // Broadcast to all players (not master, it already has the story)
+        room.players.forEach((player) => {
+          this.io.to(player.socketId).emit('openingStory', { story });
+        });
+
+        console.log(`📖 Opening story broadcast to room ${roomId}: "${story.title}"`);
+      });
+
+      socket.on('openingStoryReady', ({ roomId }: { roomId: string }) => {
+        const room = this.rooms.get(roomId);
+        if (!room || !room.openingStory) return;
+
+        const player = room.players.get(socket.id);
+        if (!player) return;
+
+        room.openingStoryReadyPlayers.add(player.playerId);
+        this.touchRoom(room);
+
+        const readyCount = room.openingStoryReadyPlayers.size;
+        const totalPlayers = room.players.size;
+
+        console.log(`📖 Player ${player.playerName} ready (${readyCount}/${totalPlayers})`);
+
+        this.io.to(roomId).emit('openingStoryUpdate', {
+          readyCount,
+          totalPlayers,
+        });
+
+        if (readyCount >= totalPlayers) {
+          this.completeOpeningStory(roomId);
+        }
+      });
+
       socket.on('playerAction', ({ roomId, action, data }: { roomId: string; action: string; data: any }) => {
         // Rate limiting
         if (!this.checkRateLimit(socket.id)) {
@@ -505,6 +569,8 @@ export class GameServer {
       maxPlayers: validMaxPlayers,
       disconnectedPlayers: new Map(), // Giocatori disconnessi temporaneamente
       playerIdMap: new Map(), // Mappa playerName -> playerId persistente
+      openingStory: null,
+      openingStoryReadyPlayers: new Set(),
       createdAt: now,
       lastActivity: now,
       lastMasterHeartbeat: now,
@@ -1374,6 +1440,21 @@ export class GameServer {
     });
 
     room.pendingDilemmaVotes.delete(dilemmaId);
+  }
+
+  private completeOpeningStory(roomId: string) {
+    const room = this.rooms.get(roomId);
+    if (!room || !room.openingStory) return;
+
+    if (room.openingStoryTimer) {
+      clearTimeout(room.openingStoryTimer);
+      room.openingStoryTimer = undefined;
+    }
+
+    console.log(`📖 Opening story complete for room ${roomId}`);
+    this.io.to(roomId).emit('openingStoryComplete');
+    room.openingStory = null;
+    room.openingStoryReadyPlayers.clear();
   }
 
   public startDilemmaVotingForRoom(roomId: string, dilemmaId: string, dilemma: Dilemma, currentPlayerId: string) {

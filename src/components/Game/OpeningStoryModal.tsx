@@ -1,4 +1,4 @@
-import { X, Sparkles } from 'lucide-react';
+import { X, Sparkles, Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import openingStoriesData from '../../data/openingStories.json';
 
@@ -11,19 +11,23 @@ interface OpeningStory {
 
 interface OpeningStoryModalProps {
   onClose: () => void;
+  story?: OpeningStory | null;
+  readyCount?: number;
+  totalPlayers?: number;
+  onStorySelected?: (story: OpeningStory) => void;
 }
 
-export const OpeningStoryModal = ({ onClose }: OpeningStoryModalProps) => {
-  const [story, setStory] = useState<OpeningStory | null>(null);
+export const OpeningStoryModal = ({ onClose, story: externalStory, readyCount = 0, totalPlayers = 0, onStorySelected }: OpeningStoryModalProps) => {
+  const [story, setStory] = useState<OpeningStory | null>(externalStory || null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    // Seleziona una storia random
-    const stories = openingStoriesData as OpeningStory[];
-    const randomStory = stories[Math.floor(Math.random() * stories.length)];
-    setStory(randomStory);
-    
-    // Animazione di entrata
+    if (!externalStory) {
+      const stories = openingStoriesData as OpeningStory[];
+      const randomStory = stories[Math.floor(Math.random() * stories.length)];
+      setStory(randomStory);
+      onStorySelected?.(randomStory);
+    }
     setTimeout(() => setIsVisible(true), 100);
   }, []);
 
@@ -92,6 +96,32 @@ export const OpeningStoryModal = ({ onClose }: OpeningStoryModalProps) => {
               {story.content}
             </p>
           </div>
+
+          {/* Readiness progress (multiplayer) */}
+          {totalPlayers > 0 && (
+            <div className="mt-5 bg-white/10 backdrop-blur-sm rounded-lg p-4 border border-white/15">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <Users className="w-4 h-4 text-white/70" />
+                  <span className="text-white/80 text-sm">Giocatori pronti</span>
+                </div>
+                <span className="text-white font-bold text-lg">
+                  {readyCount}/{totalPlayers}
+                </span>
+              </div>
+              <div className="w-full bg-white/20 rounded-full h-2">
+                <div
+                  className="bg-white h-2 rounded-full transition-all duration-500"
+                  style={{ width: `${totalPlayers > 0 ? (readyCount / totalPlayers) * 100 : 0}%` }}
+                />
+              </div>
+              {readyCount >= totalPlayers && totalPlayers > 0 && (
+                <p className="text-white/90 text-sm text-center mt-2 font-medium">
+                  Tutti pronti!
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Call to action */}
           <div className="mt-6 flex justify-center">

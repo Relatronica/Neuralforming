@@ -400,6 +400,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
   const [previousPhase, setPreviousPhase] = useState<string | null>(null);
   const [showOpeningStory, setShowOpeningStory] = useState(false);
   const [hasShownOpeningStory, setHasShownOpeningStory] = useState(false);
+  const [selectedOpeningStory, setSelectedOpeningStory] = useState<{ id: string; title: string; content: string; mood: string } | null>(null);
   const [headerNewsIndex, setHeaderNewsIndex] = useState(() => 
     Math.floor(Math.random() * headerNewsData.length)
   );
@@ -423,6 +424,8 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
     pendingDilemmaVote,
     dilemmaVoteStatus,
     dilemmaDiscussionPhase,
+    openingStoryStatus,
+    sendOpeningStory,
     setGameState: updateServerGameState,
     socket,
   } = (mode === 'multiplayer' && socketContext) ? socketContext : {
@@ -439,6 +442,8 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
     pendingDilemmaVote: null,
     dilemmaVoteStatus: null,
     dilemmaDiscussionPhase: null,
+    openingStoryStatus: null,
+    sendOpeningStory: () => {},
     setGameState: undefined,
     socket: null,
   };
@@ -968,7 +973,8 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
     } else {
     setGameState(GameEngine.initializeGame());
     setIsProcessingAI(false);
-    setHasShownOpeningStory(false); // Reset per mostrare la storia nella nuova partita
+    setHasShownOpeningStory(false);
+    setSelectedOpeningStory(null);
     }
   }, [mode, setGameState, onBackToSetup]);
 
@@ -1414,6 +1420,15 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
       {showOpeningStory && (
         <OpeningStoryModal
           onClose={() => setShowOpeningStory(false)}
+          story={selectedOpeningStory}
+          readyCount={openingStoryStatus?.readyCount ?? 0}
+          totalPlayers={openingStoryStatus?.totalPlayers ?? 0}
+          onStorySelected={(story) => {
+            setSelectedOpeningStory(story);
+            if (mode === 'multiplayer' && sendOpeningStory) {
+              sendOpeningStory(story);
+            }
+          }}
         />
       )}
 

@@ -79,6 +79,18 @@ export function useGameSocket(roomId: string | null) {
     requiredCount: number;
   } | null>(null);
 
+  // Opening story state
+  const [openingStory, setOpeningStory] = useState<{
+    id: string;
+    title: string;
+    content: string;
+    mood: string;
+  } | null>(null);
+  const [openingStoryStatus, setOpeningStoryStatus] = useState<{
+    readyCount: number;
+    totalPlayers: number;
+  } | null>(null);
+
   const socketRef = useRef<Socket | null>(null);
   const isMasterRef = useRef<boolean>(false); // Traccia se siamo il master (abbiamo creato la room)
   const reconnectAttemptRef = useRef<number | null>(null); // Traccia il timeout per evitare richieste ripetute
@@ -475,6 +487,24 @@ export function useGameSocket(roomId: string | null) {
       });
     });
 
+    // Opening story events
+    newSocket.on('openingStory', (data: { story: { id: string; title: string; content: string; mood: string } }) => {
+      console.log('📖 Opening story received:', data.story.title);
+      setOpeningStory(data.story);
+      setOpeningStoryStatus({ readyCount: 0, totalPlayers: 0 });
+    });
+
+    newSocket.on('openingStoryUpdate', (data: { readyCount: number; totalPlayers: number }) => {
+      console.log(`📖 Opening story update: ${data.readyCount}/${data.totalPlayers} ready`);
+      setOpeningStoryStatus(data);
+    });
+
+    newSocket.on('openingStoryComplete', () => {
+      console.log('📖 Opening story complete - all players ready');
+      setOpeningStory(null);
+      setOpeningStoryStatus(null);
+    });
+
     // Cleanup: NON chiudere il socket, solo rimuovi i listener se necessario
     // Il socket deve rimanere connesso per tutta la durata dell'app
     return () => {
@@ -615,6 +645,18 @@ export function useGameSocket(roomId: string | null) {
     socket.emit('dilemmaReadyToVote', { roomId, dilemmaId });
   }, [socket, roomId]);
 
+  const sendOpeningStory = useCallback((story: { id: string; title: string; content: string; mood: string }) => {
+    if (!socket || !roomId) return;
+    console.log(`📤 Sending opening story: "${story.title}" to room ${roomId}`);
+    socket.emit('openingStory', { roomId, story });
+  }, [socket, roomId]);
+
+  const sendOpeningStoryReady = useCallback(() => {
+    if (!socket || !roomId) return;
+    console.log(`📤 Sending openingStoryReady to room ${roomId}`);
+    socket.emit('openingStoryReady', { roomId });
+  }, [socket, roomId]);
+
   const updateGameStateOnServer = useCallback((gameState: GameState) => {
     if (!roomId || !socket) {
       console.error('Cannot update game state: roomId or socket missing', { roomId: !!roomId, socket: !!socket });
@@ -689,6 +731,8 @@ export function useGameSocket(roomId: string | null) {
     pendingDilemmaVote,
     dilemmaVoteStatus,
     dilemmaDiscussionPhase,
+    openingStory,
+    openingStoryStatus,
     error,
     createRoom,
     joinRoom,
@@ -698,6 +742,8 @@ export function useGameSocket(roomId: string | null) {
     sendReadyToVote,
     sendDilemmaVote,
     sendDilemmaReadyToVote,
+    sendOpeningStory,
+    sendOpeningStoryReady,
     setGameState: setGameStateWithSync,
   };
 }

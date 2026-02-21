@@ -11,6 +11,7 @@ import { VoterPointsNotification } from '../Game/VoterPointsNotification';
 import { GameTour } from './GameTour';
 import { Users, Loader2, LogOut, Menu, MessageCircle, Clock, CheckCircle2 } from 'lucide-react';
 import { TechnologyCard } from '../Cards/TechnologyCard';
+import { PlayerOpeningStory } from './PlayerOpeningStory';
 
 // Vista dedicata per il proponente durante la votazione
 const PlayerProposerView: React.FC<{
@@ -206,11 +207,14 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
     pendingDilemmaVote,
     dilemmaVoteStatus,
     dilemmaDiscussionPhase,
+    openingStory,
+    openingStoryStatus,
     sendAction,
     sendVote,
     sendReadyToVote,
     sendDilemmaVote,
     sendDilemmaReadyToVote,
+    sendOpeningStoryReady,
     error,
     joinRoom,
   } = socketContext || {
@@ -224,11 +228,14 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
     pendingDilemmaVote: null,
     dilemmaVoteStatus: null,
     dilemmaDiscussionPhase: null,
+    openingStory: null,
+    openingStoryStatus: null,
     sendAction: () => {},
     sendVote: () => {},
     sendReadyToVote: () => {},
     sendDilemmaVote: () => {},
     sendDilemmaReadyToVote: () => {},
+    sendOpeningStoryReady: () => {},
     error: null,
     joinRoom: () => {},
   };
@@ -488,6 +495,18 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
           <p className="text-gray-300">Il master sta sincronizzando lo stato del gioco...</p>
         </div>
       </div>
+    );
+  }
+
+  // Opening story overlay - shown on top of everything when the story is active
+  if (openingStory) {
+    return (
+      <PlayerOpeningStory
+        story={openingStory}
+        readyCount={openingStoryStatus?.readyCount ?? 0}
+        totalPlayers={openingStoryStatus?.totalPlayers ?? 0}
+        onReady={sendOpeningStoryReady}
+      />
     );
   }
 
