@@ -1,5 +1,11 @@
 # Neuralforming
 
+[![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-blue.svg)](LICENSE)
+[![Node.js](https://img.shields.io/badge/node-18%2B-green)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.2-blue)](https://www.typescriptlang.org/)
+[![PWA](https://img.shields.io/badge/PWA-ready-purple)](https://web.dev/progressive-web-apps/)
+[![Multiplayer](https://img.shields.io/badge/Multiplayer-2--8_giocatori-orange)](docs/multiplayer/)
+
 Un gioco educativo **multiplayer** che simula lo sviluppo di un'intelligenza artificiale bilanciando tecnologia avanzata ed etica. Disponibile come **Progressive Web App (PWA)** per un'esperienza nativa su qualsiasi dispositivo.
 
 ## Obiettivo del Gioco
@@ -246,11 +252,12 @@ La configurazione per Render e inclusa nel file `render.yaml`.
 
 ## Contribuire
 
-Il progetto e **open source** e accetta contributi! Vedi la [documentazione](docs/) per linee guida su:
-- Aggiungere nuovi dilemmi etici
-- Implementare nuove tecnologie
-- Migliorare il bilanciamento di gioco
-- Estendere le funzionalita multiplayer
+Il progetto è **open source** e accoglie contributi! Leggi la guida [CONTRIBUTING.md](CONTRIBUTING.md) per:
+- Come configurare l'ambiente di sviluppo
+- Come proporre modifiche e inviare Pull Request
+- Aree di contributo (nuovi dilemmi, tecnologie, UX, traduzioni)
+
+Tutti i partecipanti sono tenuti a rispettare il [Codice di Condotta](CODE_OF_CONDUCT.md).
 
 ## Sostieni il Progetto
 
@@ -268,7 +275,13 @@ Non vendiamo dati, non mostriamo pubblicita. Il nostro lavoro esiste grazie a ch
 
 ## Licenza
 
-Questo progetto e distribuito sotto licenza **GNU General Public License v3.0 (GPL-3.0)**.
+Questo progetto è distribuito sotto licenza **GNU Affero General Public License v3.0 (AGPL-3.0)**.
+
+La AGPL-3.0 è una licenza copyleft che, oltre alle garanzie della GPL-3.0, richiede che chiunque esegua
+una versione modificata del software su un server di rete renda disponibile il codice sorgente modificato
+agli utenti che interagiscono con esso tramite la rete. Questa scelta garantisce che Neuralforming rimanga
+sempre libero e aperto, anche se deployato come servizio web.
+
 Vedi il file [LICENSE](LICENSE) per i dettagli completi.
 
 ---

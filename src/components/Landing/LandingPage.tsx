@@ -530,7 +530,7 @@ export const LandingPage = ({
                 <Github className="w-7 h-7 text-gray-300" />
               </div>
               <div className="text-center sm:text-left">
-                <h4 className="font-bold text-gray-100 mb-1">Open Source &middot; GPL-3.0</h4>
+                <h4 className="font-bold text-gray-100 mb-1">Open Source &middot; AGPL-3.0</h4>
                 <p className="text-sm text-gray-400 leading-relaxed">
                   Neuralforming è un progetto open source: il codice è pubblico, modificabile e riutilizzabile.
                   Contribuisci con nuovi dilemmi, tecnologie o miglioramenti al gameplay.
@@ -699,7 +699,7 @@ export const LandingPage = ({
             </div>
 
             <p className="text-xs text-gray-600">
-              Open Source &middot; GPL-3.0
+              Open Source &middot; AGPL-3.0
             </p>
           </div>
         </div>

@@ -19,9 +19,6 @@ Guide per il deploy dell'applicazione:
 - **[DEPLOY.md](./deployment/DEPLOY.md)** - Guida completa al deploy (Netlify + Render)
 - **[DEPLOY_QUICKSTART.md](./deployment/DEPLOY_QUICKSTART.md)** - Guida rapida al deploy
 
-### 🔧 [implementation/](./implementation/)
-Documenti tecnici di implementazione (cartella attualmente vuota - implementazioni future)
-
 ### 🎮 [multiplayer/](./multiplayer/)
 Documentazione relativa al sistema multiplayer:
 
