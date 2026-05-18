@@ -4,7 +4,7 @@
 [![Node.js](https://img.shields.io/badge/node-18%2B-green)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.2-blue)](https://www.typescriptlang.org/)
 [![PWA](https://img.shields.io/badge/PWA-ready-purple)](https://web.dev/progressive-web-apps/)
-[![Multiplayer](https://img.shields.io/badge/Multiplayer-2--8_giocatori-orange)](docs/multiplayer/)
+[![Multiplayer](https://img.shields.io/badge/Multiplayer-2--8_giocatori-orange)](#come-giocare)
 
 Un gioco educativo **multiplayer** che simula lo sviluppo di un'intelligenza artificiale bilanciando tecnologia avanzata ed etica. Disponibile come **Progressive Web App (PWA)** per un'esperienza nativa su qualsiasi dispositivo.
 
@@ -149,12 +149,8 @@ npm start
 
 ```
 Neuralforming/
-├── docs/                              # Documentazione organizzata
-│   ├── README.md                      # Indice della documentazione
-│   ├── analysis/                      # Analisi tecniche e design
-│   ├── deployment/                    # Guide di deploy
-│   ├── multiplayer/                   # Documentazione multiplayer
-│   └── archived/                      # Documenti implementati
+├── docs/                              # Documentazione e guide
+│   └── DEPLOYMENT.md                  # Guida completa al deploy (Netlify + Render)
 ├── server/                            # Backend Node.js
 │   ├── src/
 │   │   ├── GameServer.ts              # Server WebSocket principale
@@ -237,7 +233,7 @@ Neuralforming/
 ## Deployment
 
 Il progetto supporta deployment su:
-- **Netlify** (Frontend) + **Render** (Backend) - Vedi [docs/deployment/DEPLOY.md](docs/deployment/DEPLOY.md)
+- **Netlify** (Frontend) + **Render** (Backend) - Vedi [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
 - **Vercel** (Frontend + Backend)
 - **Docker** (Full-stack containerizzato)
 
@@ -245,10 +241,7 @@ La configurazione per Render e inclusa nel file `render.yaml`.
 
 ## Documentazione
 
-- [Documentazione Completa](docs/README.md) - Guida alla documentazione organizzata
-- [Analisi Game Design](docs/analysis/) - Documenti tecnici e analisi
-- [Guide Deployment](docs/deployment/) - Come mettere online il gioco
-- [Multiplayer](docs/multiplayer/) - Documentazione sistema multiplayer
+- [Guida al Deploy](docs/DEPLOYMENT.md) - Istruzioni passo-passo per mettere online il frontend (Netlify) e il backend (Render).
 
 ## Contribuire
 
