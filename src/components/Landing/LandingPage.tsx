@@ -112,6 +112,9 @@ export const LandingPage = ({
             <span className="font-bold text-lg tracking-tight text-gray-100 group-hover:text-primary-400 transition-colors hidden sm:inline">
               Neuralforming
             </span>
+            <span className="hidden sm:inline-block text-[10px] tracking-wider font-semibold px-2 py-0.5 bg-amber-500/10 text-amber-400 rounded-full border border-amber-500/30 uppercase ml-1.5">
+              Demo
+            </span>
           </button>
 
           {/* Desktop links */}
@@ -665,6 +668,9 @@ export const LandingPage = ({
             <div className="flex items-center gap-3">
               <Atom className="w-6 h-6 text-primary-400" />
               <span className="font-semibold text-gray-300">Neuralforming</span>
+              <span className="text-[10px] tracking-wider font-semibold px-2 py-0.5 bg-amber-500/10 text-amber-400 rounded-full border border-amber-500/30 uppercase">
+                Demo
+              </span>
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-gray-500">

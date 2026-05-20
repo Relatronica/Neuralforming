@@ -161,9 +161,14 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
       <div className="bg-gray-900 rounded-xl shadow-2xl p-6 max-w-md w-full border border-gray-700">
-        <div className="flex items-center justify-center gap-2 mb-6">
+        <div className="flex items-center justify-center gap-2.5 mb-6">
           <Landmark className="w-8 h-8 text-gray-100" />
-          <h1 className="text-2xl font-bold text-gray-100">Neuralforming</h1>
+          <h1 className="text-2xl font-bold text-gray-100 flex items-center gap-2">
+            Neuralforming
+            <span className="text-xs uppercase tracking-wider font-semibold px-2 py-0.5 bg-amber-500/10 text-amber-400 rounded-full border border-amber-500/30">
+              Demo
+            </span>
+          </h1>
         </div>
         
         <p className="text-gray-300 text-center mb-6">

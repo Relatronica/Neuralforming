@@ -271,6 +271,9 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
           <div className="flex items-center gap-2">
             <Brain className="w-5 h-5 text-amber-400" />
             <h1 className="text-sm font-bold text-gray-200">Neuralforming</h1>
+            <span className="text-[9px] uppercase tracking-wider font-semibold px-1.5 py-0.5 bg-amber-500/10 text-amber-400 rounded border border-amber-500/30">
+              Demo
+            </span>
             <span className="text-[10px] px-2 py-0.5 bg-blue-900/40 text-blue-400 rounded-full">
               Single Player
             </span>
