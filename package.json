@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@types/d3": "^7.4.3",
+    "@types/three": "^0.185.1",
     "d3": "^7.9.0",
     "d3-parliament-chart": "^0.0.8",
     "html5-qrcode": "^2.3.8",
@@ -20,7 +21,8 @@
     "react-dom": "^18.2.0",
     "react-joyride": "^2.9.3",
     "react-router-dom": "^7.9.6",
-    "socket.io-client": "^4.5.4"
+    "socket.io-client": "^4.5.4",
+    "three": "^0.185.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",

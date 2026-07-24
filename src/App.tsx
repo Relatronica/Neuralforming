@@ -18,10 +18,6 @@ function MainApp() {
   // IMPORTANTE: usa sempre roomId (anche se null) per mantenere lo stesso provider
   const effectiveRoomId = gameMode === 'multiplayer' ? (roomId || null) : null;
 
-  const handleStartSinglePlayer = () => {
-    setGameMode('single');
-  };
-
   const handleStartMultiplayer = (roomId: string) => {
     setRoomId(roomId);
     setGameMode('multiplayer');
@@ -35,7 +31,6 @@ function MainApp() {
   if (gameMode === 'setup') {
     return (
       <LandingPage
-        onStartSingle={handleStartSinglePlayer}
         onStartMultiplayer={() => setGameMode('multiplayer')}
       />
     );

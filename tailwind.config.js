@@ -6,23 +6,38 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        heading: ['Space Grotesk', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+        sans: ['Inter', 'sans-serif'],
+      },
       colors: {
-        primary: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9',
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
+        cyber: {
+          950: '#070a11',
+          900: '#0b0f19',
+          800: '#111827',
+          700: '#1f293d',
+          600: '#374151',
+        },
+        tech: {
+          cyan: '#00f2fe',
+          blue: '#38bdf8',
+          glow: 'rgba(0, 242, 254, 0.25)',
+        },
+        ethics: {
+          amber: '#fbbf24',
+          gold: '#f59e0b',
+          glow: 'rgba(251, 191, 36, 0.25)',
+        },
+        crisis: {
+          rose: '#f43f5e',
+          neon: '#ff2a6d',
         },
         neural: {
           light: '#a78bfa',
           medium: '#8b5cf6',
           dark: '#7c3aed',
+          glow: 'rgba(139, 92, 246, 0.25)',
         }
       },
     },
