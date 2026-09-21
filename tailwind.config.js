@@ -11,6 +11,9 @@ export default {
         mono: ['JetBrains Mono', 'monospace'],
         sans: ['Inter', 'sans-serif'],
       },
+      animation: {
+        'spin-slow': 'spin 8s linear infinite',
+      },
       colors: {
         cyber: {
           950: '#070a11',

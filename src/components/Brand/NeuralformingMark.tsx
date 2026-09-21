@@ -1,0 +1,25 @@
+interface NeuralformingMarkProps {
+  className?: string;
+  title?: string;
+}
+
+export function NeuralformingMark({
+  className = 'w-8 h-8',
+  title = 'Neuralforming',
+}: NeuralformingMarkProps) {
+  return (
+    <svg
+      viewBox="0 0 32 32"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      role="img"
+      aria-label={title}
+    >
+      <circle cx="16" cy="16" r="13" fill="#070a11" stroke="#ffffff" strokeWidth="1.6" />
+      <circle cx="11.2" cy="18.6" r="1.7" fill="#00f2fe" />
+      <circle cx="16" cy="13.4" r="1.7" fill="#8b5cf6" />
+      <circle cx="20.8" cy="18.6" r="1.7" fill="#fbbf24" />
+    </svg>
+  );
+}

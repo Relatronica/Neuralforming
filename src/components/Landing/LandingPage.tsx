@@ -7,10 +7,10 @@ import {
   Vote,
   Target,
   Brain,
-  Atom,
   Scale,
-  Lightbulb,
-  GraduationCap,
+  Megaphone,
+  Landmark,
+  Handshake,
   ExternalLink,
   ChevronDown,
   Menu,
@@ -20,11 +20,23 @@ import {
   AlertTriangle,
   Mail,
   Sparkles,
+  Coffee,
+  Smartphone,
+  Monitor,
+  Server,
+  Gamepad2,
+  Map,
+  HelpCircle,
 } from 'lucide-react';
-import { Robot3DCanvas } from './Robot3DCanvas';
+import { HeroBackdrop } from './HeroBackdrop';
+import { NeuralformingMark } from '../Brand/NeuralformingMark';
+
+const BMC_URL = 'https://buymeacoffee.com/relatronica';
+const GITHUB_URL = 'https://github.com/Relatronica/Neuralforming';
 
 interface LandingPageProps {
   onStartMultiplayer: () => void;
+  onStartSinglePlayer: () => void;
 }
 
 function useScrollReveal() {
@@ -41,7 +53,7 @@ function useScrollReveal() {
           observer.unobserve(el);
         }
       },
-      { threshold: 0.15 }
+      { threshold: 0.12 }
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -68,20 +80,66 @@ function RevealSection({
   );
 }
 
+function SectionKicker({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="text-tech-cyan font-mono text-xs tracking-[0.22em] uppercase mb-3">
+      {children}
+    </p>
+  );
+}
+
 const NAV_ITEMS = [
+  { id: 'why', label: 'Perché' },
   { id: 'about', label: 'Il Gioco' },
-  { id: 'how', label: 'Come Funziona' },
-  { id: 'why', label: 'Finalità' },
-  { id: 'team', label: 'Chi Siamo' },
-  { id: 'support', label: 'Sostieni' },
+  { id: 'how', label: 'Funziona' },
+  { id: 'use', label: 'Utilizzo' },
+  { id: 'faq', label: 'FAQ' },
+  { id: 'roadmap', label: 'Roadmap' },
+];
+
+const FAQ_ITEMS = [
+  {
+    q: 'Serve un account o una registrazione?',
+    a: 'No. Apri una stanza, condividi il QR code o il link, e i giocatori entrano dal telefono. Nessun login, nessun dato di profilazione.',
+  },
+  {
+    q: 'Quanti giocatori servono e che dispositivi?',
+    a: 'Il multiplayer è pensato per 2-8 giocatori. Serve un dispositivo master (computer o tablet) che mostra tabellone e parlamento, più lo smartphone di ciascun giocatore. Il playground singolo si gioca da soli su un solo schermo.',
+  },
+  {
+    q: 'Quanto dura una partita?',
+    a: 'Una sessione di classe dura in genere 45-90 minuti, a seconda di quanto tempo dedicate al dibattito. Il playground singolo è più rapido e si chiude al massimo in 15 turni.',
+  },
+  {
+    q: 'Il cloud è stabile per una lezione?',
+    a: 'L’istanza pubblica è una demo sperimentale su risorse condivise: con molte stanze contemporanee possono capitare rallentamenti. Per una lezione o un evento è meglio self-hostare o richiedere un’istanza dedicata dalla pagina Contatti.',
+  },
+  {
+    q: 'Posso usarlo offline o sulla rete della scuola?',
+    a: 'Sì. Il progetto è open source (AGPL-3.0): puoi installarlo in locale o su un server della scuola con Node.js o Docker. Il codice e le istruzioni sono sul repository GitHub.',
+  },
+  {
+    q: 'Perché un gioco, e non un corso sull’IA?',
+    a: 'Perché la governance non si impara ascoltando: si impara decidendo, perdendo un voto, negoziando con chi la pensa diversamente. Il gioco è il dispositivo politico. Il corso può arrivare dopo.',
+  },
+  {
+    q: 'È adatto a quale età o materia?',
+    a: 'Funziona bene in scuole superiori, università e workshop civici su etica dell’IA, educazione civica, informatica e filosofia. Non servono competenze di programmazione: servono dibattito e voto.',
+  },
+  {
+    q: 'Come posso sostenere il progetto?',
+    a: 'Neuralforming è gratuito e senza pubblicità. Puoi donare su Buy Me a Coffee, scrivere dalla pagina Contatti (bug, workshop, contributi) o aprire una issue su GitHub.',
+  },
 ];
 
 export const LandingPage = ({
   onStartMultiplayer,
+  onStartSinglePlayer,
 }: LandingPageProps) => {
   const [navOpen, setNavOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [showCloudModal, setShowCloudModal] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -100,55 +158,50 @@ export const LandingPage = ({
       <nav
         className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
           scrolled
-            ? 'bg-cyber-950/90 backdrop-blur-md border-b border-gray-800/60 shadow-xl shadow-black/40'
+            ? 'bg-cyber-950/90 backdrop-blur-md border-b border-white/10 shadow-xl shadow-black/40'
             : 'bg-transparent'
         }`}
       >
-        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 h-16">
+        <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 h-16 gap-4">
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="flex items-center gap-2.5 group"
+            className="flex items-center gap-2.5 group shrink-0"
           >
-            <div className="p-1.5 rounded-xl bg-tech-cyan/10 border border-tech-cyan/30 text-tech-cyan group-hover:scale-105 transition-transform">
-              <Atom className="w-6 h-6 animate-spin-slow" />
-            </div>
+            <NeuralformingMark className="w-8 h-8 group-hover:scale-105 transition-transform" />
             <span className="font-heading font-bold text-xl tracking-tight text-gray-100 group-hover:text-tech-cyan transition-colors hidden sm:inline">
               Neuralforming
             </span>
-            <span className="hidden sm:inline-block text-[10px] tracking-widest font-mono font-bold px-2 py-0.5 bg-amber-500/10 text-amber-400 rounded-full border border-amber-500/30 uppercase ml-1.5">
-              3D Interactive Demo
-            </span>
           </button>
 
-          {/* Desktop links */}
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden lg:flex items-center gap-3 xl:gap-4 min-w-0 flex-1 justify-end">
             {NAV_ITEMS.map((item) => (
               <button
                 key={item.id}
                 onClick={() => scrollTo(item.id)}
-                className="text-sm font-medium text-gray-300 hover:text-tech-cyan transition-colors"
+                className="text-sm font-medium text-gray-400 hover:text-tech-cyan transition-colors whitespace-nowrap"
               >
                 {item.label}
               </button>
             ))}
-            <Link
-              to="/guida"
-              className="text-sm font-medium text-gray-300 hover:text-tech-cyan transition-colors flex items-center gap-1.5"
+            <a
+              href={BMC_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-sm font-heading font-semibold text-ethics-amber hover:text-amber-300 transition-colors shrink-0"
             >
-              <BookOpen className="w-3.5 h-3.5" />
-              Guida
-            </Link>
+              <Coffee className="w-4 h-4" />
+              Dona
+            </a>
             <button
               onClick={() => scrollTo('play')}
-              className="ml-2 bg-gradient-to-r from-neural-medium to-neural-dark hover:from-neural-light hover:to-neural-medium text-white text-sm font-heading font-semibold px-5 py-2.5 rounded-xl transition-all shadow-md shadow-neural-medium/30 hover:shadow-neural-medium/50 hover:-translate-y-0.5"
+              className="shrink-0 bg-gradient-to-r from-neural-medium to-neural-dark hover:from-neural-light hover:to-neural-medium text-white text-sm font-heading font-semibold px-4 py-2 rounded-xl transition-all shadow-md shadow-neural-medium/30 hover:shadow-neural-medium/50 hover:-translate-y-0.5"
             >
               Gioca Ora
             </button>
           </div>
 
-          {/* Mobile hamburger */}
           <button
-            className="md:hidden text-gray-300 hover:text-gray-100 p-2"
+            className="lg:hidden text-gray-300 hover:text-gray-100 p-2"
             onClick={() => setNavOpen(!navOpen)}
             aria-label="Menu"
           >
@@ -156,9 +209,8 @@ export const LandingPage = ({
           </button>
         </div>
 
-        {/* Mobile dropdown */}
         {navOpen && (
-          <div className="md:hidden glass-panel border-t border-gray-800 px-4 pb-4 space-y-1">
+          <div className="lg:hidden glass-panel border-t border-white/10 px-4 pb-4 space-y-1">
             {NAV_ITEMS.map((item) => (
               <button
                 key={item.id}
@@ -175,6 +227,22 @@ export const LandingPage = ({
               <BookOpen className="w-3.5 h-3.5" />
               Guida al Gioco
             </Link>
+            <Link
+              to="/contatti"
+              className="flex items-center gap-1.5 py-2.5 text-gray-300 hover:text-tech-cyan transition-colors text-sm"
+            >
+              <Mail className="w-3.5 h-3.5" />
+              Contatti
+            </Link>
+            <a
+              href={BMC_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 py-2.5 text-ethics-amber hover:text-amber-300 transition-colors text-sm font-heading font-semibold"
+            >
+              <Coffee className="w-4 h-4" />
+              Dona
+            </a>
             <button
               onClick={() => {
                 scrollTo('play');
@@ -188,78 +256,67 @@ export const LandingPage = ({
         )}
       </nav>
 
-      {/* ── Hero col 3D Robot ── */}
-      <header className="relative min-h-screen flex items-center justify-center pt-20 pb-12 overflow-hidden">
-        {/* Background glow Orbs */}
-        <div className="absolute top-1/4 left-10 w-96 h-96 bg-tech-cyan/10 rounded-full blur-3xl pointer-events-none z-0" />
-        <div className="absolute bottom-1/4 right-10 w-96 h-96 bg-neural-medium/15 rounded-full blur-3xl pointer-events-none z-0" />
+      {/* ── Hero ── */}
+      <header className="relative min-h-screen flex items-center justify-center pt-20 pb-16 overflow-hidden">
+        <HeroBackdrop />
 
-        {/* 3D Canvas - Full Width / Bleed Viewport */}
-        <div className="absolute inset-0 pointer-events-auto z-0">
-          <Robot3DCanvas />
-        </div>
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 w-full text-center space-y-6">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-panel border border-tech-cyan/30 text-tech-cyan text-xs font-mono tracking-wide">
+            <Sparkles className="w-3.5 h-3.5 animate-pulse text-ethics-amber" />
+            <span>ATTIVISMO CIVICO · GOVERNANCE DELL&apos;IA</span>
+          </div>
 
-        {/* Hero Content Overlay */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 w-full grid lg:grid-cols-12 gap-8 lg:gap-12 items-center pointer-events-none">
-          {/* Left Col: Text & CTAs */}
-          <div className="lg:col-span-7 text-center lg:text-left space-y-6 pointer-events-auto">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-panel border border-tech-cyan/30 text-tech-cyan text-xs font-mono tracking-wide">
-              <Sparkles className="w-3.5 h-3.5 animate-pulse text-amber-400" />
-              <span>DECISION-MAKING & ETHICS SIMULATOR</span>
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-extrabold tracking-tight leading-[1.1] text-gray-100">
+            Il futuro dell&apos;IA si decide.{' '}
+            <span className="bg-gradient-to-r from-tech-cyan via-neural-light to-ethics-amber bg-clip-text text-transparent">
+              Non si subisce.
+            </span>
+          </h1>
+
+          <p className="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed font-sans">
+            Neuralforming è un parlamento in miniatura per chi non vuole restare spettatore.
+            Giovani, classi, collettivi: si dibatte, si vota, si sbaglia — e si impara a governare
+            la tecnologia che già sta riscrivendo diritti, lavoro e vita pubblica.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+            <button
+              onClick={() => setShowCloudModal(true)}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-neural-medium to-neural-dark hover:from-neural-light hover:to-neural-medium text-white font-heading font-semibold py-4 px-8 rounded-xl transition-all duration-200 shadow-lg shadow-neural-medium/30 hover:shadow-neural-medium/50 hover:-translate-y-0.5"
+            >
+              <Users className="w-5 h-5 text-tech-cyan" />
+              Gioca in Multiplayer
+            </button>
+
+            <a
+              href={BMC_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 glass-panel hover:bg-cyber-800/80 text-ethics-amber font-heading font-semibold py-4 px-7 rounded-xl border border-ethics-amber/30 hover:border-ethics-amber/60 transition-all duration-200 hover:-translate-y-0.5"
+            >
+              <Coffee className="w-5 h-5" />
+              Dona
+            </a>
+          </div>
+
+          <div className="pt-6 border-t border-white/10 grid grid-cols-3 gap-4 max-w-md mx-auto">
+            <div>
+              <p className="text-xl sm:text-2xl font-mono font-bold text-tech-cyan">2–8</p>
+              <p className="text-xs text-gray-400 font-sans">Giocatori realtime</p>
             </div>
-
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-extrabold tracking-tight leading-[1.1] text-gray-100 drop-shadow-md">
-              Governare l'Intelligenza{' '}
-              <span className="bg-gradient-to-r from-tech-cyan via-neural-light to-amber-400 bg-clip-text text-transparent">
-                Artificiale
-              </span>
-            </h1>
-
-            <p className="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-sans backdrop-blur-[2px] bg-cyber-950/30 p-2 rounded-xl lg:bg-transparent lg:p-0">
-              Un gioco strategico ed educativo dove la tecnologia incontra l'etica.
-              Affronta dilemmi morali realistici, proponi leggi in parlamento e plasma l'evoluzione dell'IA prima che sia troppo tardi.
-            </p>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
-              <button
-                onClick={() => setShowCloudModal(true)}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-neural-medium to-neural-dark hover:from-neural-light hover:to-neural-medium text-white font-heading font-semibold py-4 px-8 rounded-xl transition-all duration-200 shadow-lg shadow-neural-medium/30 hover:shadow-neural-medium/50 hover:-translate-y-0.5"
-              >
-                <Users className="w-5 h-5 text-tech-cyan" />
-                Crea Stanza Multiplayer (Cloud)
-              </button>
-
-              <a
-                href="https://github.com/Relatronica/Neuralforming"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 glass-panel hover:bg-cyber-800/80 text-gray-100 font-heading font-semibold py-4 px-7 rounded-xl border border-gray-700 hover:border-tech-cyan/50 transition-all duration-200 hover:-translate-y-0.5"
-              >
-                <Github className="w-5 h-5 text-gray-300" />
-                GitHub Repository
-              </a>
+            <div>
+              <p className="text-xl sm:text-2xl font-mono font-bold text-ethics-amber">15+</p>
+              <p className="text-xs text-gray-400 font-sans">Dilemmi etici</p>
             </div>
-
-            {/* Quick stats badges */}
-            <div className="pt-6 border-t border-gray-800/80 grid grid-cols-3 gap-4 max-w-md mx-auto lg:mx-0 text-center lg:text-left">
-              <div>
-                <p className="text-xl sm:text-2xl font-mono font-bold text-tech-cyan">2-8</p>
-                <p className="text-xs text-gray-400 font-sans">Giocatori Realtime</p>
-              </div>
-              <div>
-                <p className="text-xl sm:text-2xl font-mono font-bold text-amber-400">15+</p>
-                <p className="text-xs text-gray-400 font-sans">Dilemmi Etici</p>
-              </div>
-              <div>
-                <p className="text-xl sm:text-2xl font-mono font-bold text-neural-light">100%</p>
-                <p className="text-xs text-gray-400 font-sans">Open Source</p>
-              </div>
+            <div>
+              <p className="text-xl sm:text-2xl font-mono font-bold text-neural-light">AGPL</p>
+              <p className="text-xs text-gray-400 font-sans">Open source</p>
             </div>
           </div>
         </div>
 
         <button
-          onClick={() => scrollTo('about')}
+          onClick={() => scrollTo('why')}
           className="absolute bottom-6 left-1/2 -translate-x-1/2 text-gray-400 hover:text-tech-cyan transition-colors animate-bounce p-2"
           aria-label="Scorri verso il basso"
         >
@@ -267,35 +324,118 @@ export const LandingPage = ({
         </button>
       </header>
 
-      {/* ── Cos'è Neuralforming ── */}
-      <section id="about" className="py-24 sm:py-32">
+      {/* ── Perché / Manifesto ── */}
+      <section id="why" className="py-24 sm:py-32 bg-cyber-900/60 border-y border-white/5 scroll-mt-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <RevealSection className="max-w-3xl mx-auto text-center mb-16">
+            <SectionKicker>Il manifesto</SectionKicker>
+            <h2 className="text-3xl sm:text-4xl font-heading font-bold mb-6">
+              Perché un gioco, e perché adesso
+            </h2>
+            <p className="text-gray-300 text-lg leading-relaxed mb-8">
+              L&apos;Intelligenza Artificiale non è un tema da convegno. Sta già decidendo chi viene assunto,
+              cosa vediamo, come si insegna, chi viene sorvegliato. Se chi cresce dentro questa infrastruttura
+              non impara a discuterla, la governerà qualcun altro — in silenzio.
+            </p>
+            <blockquote className="font-heading text-xl sm:text-2xl text-neural-light italic leading-snug">
+              «Il futuro non è uno spettacolo. È un voto.»
+            </blockquote>
+          </RevealSection>
+
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            {[
+              {
+                icon: Megaphone,
+                color: 'text-crisis-rose',
+                border: 'border-crisis-rose/25',
+                title: 'Perché l’IA è politica',
+                desc: 'Ogni algoritmo incorpora valori: efficienza contro equità, sicurezza contro libertà, profitto contro cura. Non sono bug da patchare in seguito. Sono scelte. Neuralforming le rende visibili e votabili.',
+              },
+              {
+                icon: Landmark,
+                color: 'text-ethics-amber',
+                border: 'border-ethics-amber/25',
+                title: 'Perché è un gioco',
+                desc: 'L’attivismo ha bisogno di palestre, non solo di manifesti. Un gioco costringe a prendere posizione, a perdere, a allearsi. È pratica democratica: il contrario di una lezione in cui si ascolta e si dimentica.',
+              },
+              {
+                icon: Handshake,
+                color: 'text-tech-cyan',
+                border: 'border-tech-cyan/25',
+                title: 'Perché i giovani',
+                desc: 'Sono la generazione che vivrà più a lungo con queste macchine. Coinvolgerli non è “didattica innovativa”: è non escluderli dalle decisioni che formeranno il loro spazio pubblico. Chi si allena a decidere oggi non sarà spettatore domani.',
+              },
+            ].map((item) => (
+              <RevealSection key={item.title}>
+                <div className={`glass-card rounded-2xl p-8 h-full ${item.border}`}>
+                  <item.icon className={`w-10 h-10 ${item.color} mb-5`} />
+                  <h3 className="text-xl font-heading font-bold text-gray-100 mb-3">{item.title}</h3>
+                  <p className="text-gray-400 leading-relaxed">{item.desc}</p>
+                </div>
+              </RevealSection>
+            ))}
+          </div>
+
+          <RevealSection>
+            <div className="glass-panel rounded-2xl p-6 sm:p-8 max-w-3xl mx-auto text-center border border-neural-medium/25">
+              <p className="text-gray-300 leading-relaxed text-lg">
+                Neuralforming esiste perché il potere sull&apos;IA non deve restare a chi la costruisce.
+                Una classe che vota una legge sull&apos;automazione, un workshop che dibatte la sorveglianza:
+                sono già atti civici. Il gioco è lo strumento. L&apos;obiettivo è una generazione che sa dire
+                <strong className="text-gray-100"> no</strong>, <strong className="text-gray-100">sì</strong> e{' '}
+                <strong className="text-gray-100">dipende</strong> — con argomenti, non con slogan.
+              </p>
+            </div>
+          </RevealSection>
+        </div>
+      </section>
+
+      {/* ── Obiettivo + Cos'è ── */}
+      <section id="about" className="py-24 sm:py-32 relative scroll-mt-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <RevealSection>
-            <p className="text-primary-400 font-semibold text-sm uppercase tracking-wider mb-3">
-              Il Gioco
-            </p>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-              Cos'è Neuralforming?
+            <SectionKicker>Obiettivo</SectionKicker>
+            <h2 className="text-3xl sm:text-4xl font-heading font-bold mb-6">
+              Cos&apos;è Neuralforming?
             </h2>
           </RevealSection>
 
-          <div className="grid md:grid-cols-2 gap-12 items-start mt-8">
+          <RevealSection className="mb-12">
+            <div className="glass-card rounded-2xl p-6 sm:p-8 border border-neural-medium/30 glow-neural">
+              <div className="flex items-start gap-4">
+                <div className="shrink-0 p-3 rounded-xl bg-neural-medium/15 border border-neural-medium/30">
+                  <Target className="w-6 h-6 text-neural-light" />
+                </div>
+                <div>
+                  <p className="font-heading font-semibold text-neural-light mb-2">L&apos;obiettivo del gioco</p>
+                  <p className="text-gray-300 leading-relaxed text-lg">
+                    Completa il tuo <strong className="text-gray-100">obiettivo segreto di partito</strong> formando
+                    un&apos;IA all&apos;avanguardia <em>e</em> eticamente accettabile. Se la tecnologia galoppa
+                    e l&apos;etica resta indietro, la società perde — anche se i tuoi punteggi tecnici sono alti.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </RevealSection>
+
+          <div className="grid md:grid-cols-2 gap-12 items-start">
             <RevealSection>
               <p className="text-gray-300 leading-relaxed text-lg mb-6">
-                In Neuralforming interpreti un <strong className="text-gray-100">partito politico</strong> che
-                deve guidare lo sviluppo dell'Intelligenza Artificiale.
-                Ad ogni turno dovrai proporre nuove tecnologie, affrontare dilemmi etici
-                e sottoporre le tue scelte al voto parlamentare.
+                Lo strumento è un gioco strategico: ogni giocatore è un{' '}
+                <strong className="text-gray-100">partito politico</strong> che guida lo sviluppo
+                dell&apos;Intelligenza Artificiale. A ogni turno proponi una tecnologia, affronti un dilemma
+                morale e sottoponi le tue scelte al voto parlamentare degli altri.
               </p>
               <p className="text-gray-300 leading-relaxed text-lg mb-6">
-                L'obiettivo è raggiungere il perfetto equilibrio tra{' '}
-                <strong className="text-primary-400">innovazione tecnologica</strong> e{' '}
-                <strong className="text-green-400">responsabilità etica</strong>, completando
-                il tuo obiettivo segreto prima degli avversari.
+                Tre indicatori raccontano la tua IA:{' '}
+                <strong className="text-tech-cyan">Tecnologia</strong>,{' '}
+                <strong className="text-ethics-amber">Etica</strong> e{' '}
+                <strong className="text-neural-light">Neuralforming</strong> — il punteggio che nasce solo
+                quando progresso e responsabilità avanzano insieme.
               </p>
               <Link
                 to="/guida"
-                className="inline-flex items-center gap-2 text-primary-400 hover:text-primary-300 font-medium transition-colors"
+                className="inline-flex items-center gap-2 text-tech-cyan hover:text-tech-blue font-medium transition-colors"
               >
                 <BookOpen className="w-4 h-4" />
                 Leggi la guida completa
@@ -307,41 +447,45 @@ export const LandingPage = ({
                 {[
                   {
                     icon: Zap,
-                    color: 'text-blue-400',
-                    bg: 'bg-blue-400/10',
+                    color: 'text-tech-cyan',
+                    bg: 'bg-tech-cyan/10',
+                    border: 'border-tech-cyan/20',
                     title: 'Punti Tecnologia',
-                    desc: 'Fai avanzare la ricerca con tecnologie all\'avanguardia',
+                    desc: 'Fai avanzare la ricerca con leggi e prototipi all’avanguardia',
                   },
                   {
                     icon: Scale,
-                    color: 'text-green-400',
-                    bg: 'bg-green-400/10',
+                    color: 'text-ethics-amber',
+                    bg: 'bg-ethics-amber/10',
+                    border: 'border-ethics-amber/20',
                     title: 'Punti Etica',
-                    desc: 'Proteggi i valori sociali e la trasparenza',
+                    desc: 'Difendi trasparenza, diritti e impatto sociale delle tue scelte',
                   },
                   {
                     icon: Brain,
-                    color: 'text-purple-400',
-                    bg: 'bg-purple-400/10',
-                    title: 'Neuralforming Score',
-                    desc: 'Il bilanciamento perfetto tra progresso ed etica',
+                    color: 'text-neural-light',
+                    bg: 'bg-neural-medium/15',
+                    border: 'border-neural-medium/25',
+                    title: 'Neuralforming',
+                    desc: 'Il bilanciamento tra progresso ed etica: il vero punteggio del gioco',
                   },
                   {
                     icon: Target,
-                    color: 'text-amber-400',
-                    bg: 'bg-amber-400/10',
-                    title: 'Obiettivi Segreti',
-                    desc: 'Ogni giocatore ha una missione unica da completare',
+                    color: 'text-ethics-gold',
+                    bg: 'bg-ethics-gold/10',
+                    border: 'border-ethics-gold/20',
+                    title: 'Obiettivi segreti',
+                    desc: 'Ogni partito ha una missione unica: chi la completa per primo vince',
                   },
                 ].map((item) => (
                   <div
                     key={item.title}
-                    className="bg-gray-900 border border-gray-800 rounded-xl p-5 hover:border-gray-700 transition-colors"
+                    className={`glass-panel rounded-xl p-5 hover:border-white/20 transition-colors ${item.border}`}
                   >
                     <div className={`${item.bg} w-10 h-10 rounded-lg flex items-center justify-center mb-3`}>
                       <item.icon className={`w-5 h-5 ${item.color}`} />
                     </div>
-                    <h4 className="font-semibold text-sm text-gray-100 mb-1">{item.title}</h4>
+                    <h4 className="font-heading font-semibold text-sm text-gray-100 mb-1">{item.title}</h4>
                     <p className="text-xs text-gray-400 leading-relaxed">{item.desc}</p>
                   </div>
                 ))}
@@ -352,16 +496,14 @@ export const LandingPage = ({
       </section>
 
       {/* ── Come Funziona ── */}
-      <section id="how" className="py-24 sm:py-32 bg-gray-900/50">
+      <section id="how" className="py-24 sm:py-32 bg-cyber-900/60 border-y border-white/5 scroll-mt-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <RevealSection className="text-center mb-16">
-            <p className="text-primary-400 font-semibold text-sm uppercase tracking-wider mb-3">
-              Le Meccaniche
-            </p>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Come Funziona</h2>
+            <SectionKicker>Le meccaniche</SectionKicker>
+            <h2 className="text-3xl sm:text-4xl font-heading font-bold mb-4">Come Funziona</h2>
             <p className="text-gray-400 max-w-2xl mx-auto text-lg">
-              Ogni turno si articola in quattro fasi che ti metteranno alla prova
-              tra strategia, diplomazia e scelte morali.
+              Ogni turno ha quattro fasi: strategia, dilemmi, diplomazia e conseguenze.
+              È lo stesso ciclo che userai in classe o nel playground.
             </p>
           </RevealSection>
 
@@ -370,181 +512,281 @@ export const LandingPage = ({
               {
                 step: '01',
                 icon: Zap,
-                color: 'text-blue-400',
-                border: 'border-blue-500/30',
-                title: 'Sviluppo Tecnologico',
-                desc: 'Gioca una carta tecnologia dalla tua mano e proponila al parlamento per l\'approvazione.',
+                color: 'text-tech-cyan',
+                border: 'border-tech-cyan/25',
+                title: 'Sviluppo tecnologico',
+                desc: 'Gioca una carta tecnologia dalla tua mano e proponila al parlamento per l’approvazione.',
               },
               {
                 step: '02',
                 icon: Scale,
-                color: 'text-green-400',
-                border: 'border-green-500/30',
-                title: 'Dilemma Etico',
-                desc: 'Affronta un dilemma morale complesso e scegli tra opzioni con conseguenze diverse.',
+                color: 'text-ethics-amber',
+                border: 'border-ethics-amber/25',
+                title: 'Dilemma etico',
+                desc: 'Affronta uno scenario ispirato a problemi reali e scegli tra opzioni con effetti diversi.',
               },
               {
                 step: '03',
                 icon: Vote,
-                color: 'text-red-400',
-                border: 'border-red-500/30',
-                title: 'Votazione Parlamentare',
-                desc: 'Le tue proposte vengono sottoposte al voto: ogni voto ha un impatto reale sui punteggi.',
+                color: 'text-crisis-rose',
+                border: 'border-crisis-rose/25',
+                title: 'Voto parlamentare',
+                desc: 'Le proposte vanno al voto: allearsi, bloccare o mediare cambia i punteggi di tutti.',
               },
               {
                 step: '04',
                 icon: Target,
-                color: 'text-amber-400',
-                border: 'border-amber-500/30',
+                color: 'text-neural-light',
+                border: 'border-neural-medium/30',
                 title: 'Conseguenze',
-                desc: 'Scopri gli effetti a lungo termine delle tue decisioni attraverso eventi narrativi.',
+                desc: 'Notizie, eventi globali e milestone rendono visibile l’impatto a lungo termine.',
               },
             ].map((phase) => (
               <RevealSection key={phase.step}>
-                <div
-                  className={`bg-gray-900 border ${phase.border} rounded-xl p-6 h-full hover:bg-gray-800/80 transition-colors`}
-                >
-                  <span className={`text-xs font-bold ${phase.color} uppercase tracking-widest`}>
+                <div className={`glass-panel rounded-xl p-6 h-full hover:bg-cyber-800/80 transition-colors ${phase.border}`}>
+                  <span className={`text-xs font-mono font-bold ${phase.color} uppercase tracking-widest`}>
                     Fase {phase.step}
                   </span>
                   <div className="mt-4 mb-3">
                     <phase.icon className={`w-8 h-8 ${phase.color}`} />
                   </div>
-                  <h3 className="text-lg font-bold text-gray-100 mb-2">{phase.title}</h3>
+                  <h3 className="text-lg font-heading font-bold text-gray-100 mb-2">{phase.title}</h3>
                   <p className="text-sm text-gray-400 leading-relaxed">{phase.desc}</p>
                 </div>
               </RevealSection>
             ))}
           </div>
+        </div>
+      </section>
 
-          {/* Game models badges / Hosted vs Self-Hosted */}
-          <RevealSection className="mt-16">
-            <div className="text-center mb-8">
-              <h3 className="text-2xl font-bold text-gray-100 mb-2">Come vuoi utilizzare Neuralforming?</h3>
-              <p className="text-sm text-gray-400">Scegli l'approccio più adatto alle tue esigenze formative o tecniche.</p>
-            </div>
+      {/* ── Come utilizzare ── */}
+      <section id="use" className="py-24 sm:py-32 scroll-mt-20">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <RevealSection className="text-center mb-16">
+            <SectionKicker>Come usarlo</SectionKicker>
+            <h2 className="text-3xl sm:text-4xl font-heading font-bold mb-4">Come puoi utilizzarlo</h2>
+            <p className="text-gray-400 max-w-2xl mx-auto text-lg">
+              Tre modi, stesso gioco: in classe, da solo per allenarti, o sul tuo server.
+            </p>
+          </RevealSection>
 
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto text-left">
-              {/* Card Self-Hosted */}
-              <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 relative hover:border-gray-700 transition-colors flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="p-3 bg-gray-800 rounded-xl">
-                      <Github className="w-6 h-6 text-gray-300" />
-                    </div>
-                    <span className="text-xs font-semibold px-2.5 py-1 bg-gray-800 text-gray-400 rounded-full border border-gray-700">
-                      100% Gratuito
-                    </span>
+          <div className="grid md:grid-cols-3 gap-6">
+            <RevealSection>
+              <div className="glass-card rounded-2xl p-6 h-full flex flex-col border border-neural-medium/35">
+                <div className="flex items-center justify-between mb-5">
+                  <div className="p-3 rounded-xl bg-neural-medium/15 border border-neural-medium/30">
+                    <Monitor className="w-6 h-6 text-neural-light" />
                   </div>
-                  <h4 className="text-xl font-bold text-gray-100 mb-2">Open Source & Self-Hosted</h4>
-                  <p className="text-sm text-gray-400 mb-6 leading-relaxed">
-                    Esegui l'intera applicazione ed il server WebSocket sul tuo server privato o in locale. Ideale per università, sviluppatori e dipartimenti IT.
-                  </p>
-                  <ul className="space-y-2.5 text-xs text-gray-300 mb-6">
-                    <li className="flex items-center gap-2">
-                      <span className="text-green-400 font-bold">✓</span> Codice sorgente libero (AGPL-3.0)
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span className="text-green-400 font-bold">✓</span> Nessun limite di personalizzazione
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span className="text-green-400 font-bold">✓</span> Installazione tramite Docker / Node.js
-                    </li>
-                  </ul>
+                  <span className="text-[10px] font-mono tracking-wider uppercase px-2.5 py-1 rounded-full bg-neural-medium/15 text-neural-light border border-neural-medium/30">
+                    Consigliato
+                  </span>
                 </div>
-                <a
-                  href="https://github.com/Relatronica/Neuralforming"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full inline-flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-gray-200 font-semibold py-2.5 px-4 rounded-xl border border-gray-700 transition-colors text-sm"
-                >
-                  <Github className="w-4 h-4" />
-                  Vedi Repository GitHub
-                </a>
-              </div>
-
-              {/* Card Cloud Hosted */}
-              <div className="bg-gradient-to-b from-primary-950/40 via-gray-900 to-gray-900 border border-primary-500/40 rounded-2xl p-6 relative hover:border-primary-500/60 transition-colors flex flex-col justify-between">
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="p-3 bg-primary-600/20 rounded-xl">
-                      <Users className="w-6 h-6 text-primary-400" />
-                    </div>
-                    <span className="text-xs font-semibold px-2.5 py-1 bg-primary-500/10 text-primary-400 rounded-full border border-primary-500/30 uppercase tracking-wider">
-                      Raccomandato per Docenti
-                    </span>
-                  </div>
-                  <h4 className="text-xl font-bold text-gray-100 mb-2">Hosted Cloud (Abbonamento)</h4>
-                  <p className="text-sm text-gray-400 mb-6 leading-relaxed">
-                    Zero configurazione e massima affidabilità. Stanze multiplayer pronte con 1 click su server cloud dedicati ad alte prestazioni.
-                  </p>
-                  <ul className="space-y-2.5 text-xs text-gray-300 mb-6">
-                    <li className="flex items-center gap-2">
-                      <span className="text-primary-400 font-bold">✓</span> Connessione real-time garantita & Zero Setup
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span className="text-primary-400 font-bold">✓</span> Report Etico Finale della Sessione per la classe
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span className="text-primary-400 font-bold">✓</span> Accesso ad estensioni e nuovi mazzi di carte
-                    </li>
-                  </ul>
-                </div>
+                <h3 className="font-heading text-xl font-bold mb-2">In classe, multiplayer</h3>
+                <p className="text-sm text-gray-400 leading-relaxed mb-4 flex-1">
+                  Trasforma la classe in un parlamento. Un computer è il tabellone; ogni studente entra
+                  dal telefono, dibatte e vota. Nessuna registrazione: solo pratica civica.
+                </p>
+                <ul className="space-y-2 text-xs text-gray-300 mb-6">
+                  <li className="flex items-center gap-2">
+                    <Smartphone className="w-3.5 h-3.5 text-tech-cyan shrink-0" />
+                    Master + 2–8 smartphone
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Users className="w-3.5 h-3.5 text-tech-cyan shrink-0" />
+                    Dibattito e voto parlamentare
+                  </li>
+                </ul>
                 <button
                   onClick={() => setShowCloudModal(true)}
-                  className="w-full inline-flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-500 text-white font-semibold py-2.5 px-4 rounded-xl transition-all shadow-md shadow-primary-600/20 text-sm"
+                  className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-neural-medium to-neural-dark hover:from-neural-light hover:to-neural-medium text-white font-heading font-semibold py-2.5 px-4 rounded-xl transition-all shadow-md shadow-neural-medium/20 text-sm"
                 >
-                  Avvia Stanza Cloud Ora
+                  Avvia stanza cloud
                 </button>
               </div>
+            </RevealSection>
+
+            <RevealSection>
+              <div className="glass-card rounded-2xl p-6 h-full flex flex-col">
+                <div className="flex items-center justify-between mb-5">
+                  <div className="p-3 rounded-xl bg-tech-cyan/10 border border-tech-cyan/25">
+                    <Gamepad2 className="w-6 h-6 text-tech-cyan" />
+                  </div>
+                  <span className="text-[10px] font-mono tracking-wider uppercase px-2.5 py-1 rounded-full bg-cyber-800 text-gray-400 border border-white/10">
+                    1 giocatore
+                  </span>
+                </div>
+                <h3 className="font-heading text-xl font-bold mb-2">Playground singolo</h3>
+                <p className="text-sm text-gray-400 leading-relaxed mb-4 flex-1">
+                  Allena le meccaniche da solo: l&apos;opinione pubblica sostituisce il parlamento
+                  e reagisce alle tue leggi. Ideale per docenti e per chi arriva in classe già pronto.
+                </p>
+                <ul className="space-y-2 text-xs text-gray-300 mb-6">
+                  <li className="flex items-center gap-2">
+                    <span className="text-tech-cyan font-bold">✓</span> Difficoltà adattiva, max 15 turni
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-tech-cyan font-bold">✓</span> Stesso mazzo di dilemmi e tecnologie
+                  </li>
+                </ul>
+                <button
+                  onClick={onStartSinglePlayer}
+                  className="w-full inline-flex items-center justify-center gap-2 glass-panel hover:bg-cyber-800 text-gray-100 font-heading font-semibold py-2.5 px-4 rounded-xl border border-tech-cyan/30 hover:border-tech-cyan/60 transition-all text-sm"
+                >
+                  Prova il playground
+                </button>
+              </div>
+            </RevealSection>
+
+            <RevealSection>
+              <div className="glass-card rounded-2xl p-6 h-full flex flex-col">
+                <div className="flex items-center justify-between mb-5">
+                  <div className="p-3 rounded-xl bg-cyber-800 border border-white/10">
+                    <Server className="w-6 h-6 text-gray-300" />
+                  </div>
+                  <span className="text-[10px] font-mono tracking-wider uppercase px-2.5 py-1 rounded-full bg-cyber-800 text-gray-400 border border-white/10">
+                    Self-hosted
+                  </span>
+                </div>
+                <h3 className="font-heading text-xl font-bold mb-2">Sul tuo server</h3>
+                <p className="text-sm text-gray-400 leading-relaxed mb-4 flex-1">
+                  Codice libero, Docker o Node.js. Per università, eventi e reti scolastiche
+                  che vogliono controllo, privacy e zero dipendenza dal cloud demo.
+                </p>
+                <ul className="space-y-2 text-xs text-gray-300 mb-6">
+                  <li className="flex items-center gap-2">
+                    <span className="text-ethics-amber font-bold">✓</span> Licenza AGPL-3.0
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-ethics-amber font-bold">✓</span> Personalizzabile (mazzi, testi, regole)
+                  </li>
+                </ul>
+                <a
+                  href={GITHUB_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full inline-flex items-center justify-center gap-2 bg-cyber-800 hover:bg-cyber-700 text-gray-200 font-heading font-semibold py-2.5 px-4 rounded-xl border border-white/10 transition-colors text-sm"
+                >
+                  <Github className="w-4 h-4" />
+                  Repository GitHub
+                </a>
+              </div>
+            </RevealSection>
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQ ── */}
+      <section id="faq" className="py-24 sm:py-32 scroll-mt-20">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6">
+          <RevealSection className="text-center mb-12">
+            <SectionKicker>Domande</SectionKicker>
+            <h2 className="text-3xl sm:text-4xl font-heading font-bold mb-4 flex items-center justify-center gap-3">
+              <HelpCircle className="w-8 h-8 text-tech-cyan" />
+              FAQ
+            </h2>
+            <p className="text-gray-400 text-lg">
+              Quello che di solito chiedono docenti, organizzatori e chi vuole self-hostare.
+            </p>
+          </RevealSection>
+
+          <RevealSection>
+            <div className="space-y-3">
+              {FAQ_ITEMS.map((item, i) => {
+                const open = openFaq === i;
+                return (
+                  <div
+                    key={item.q}
+                    className={`glass-panel rounded-xl overflow-hidden transition-colors ${open ? 'border-tech-cyan/30' : ''}`}
+                  >
+                    <button
+                      onClick={() => setOpenFaq(open ? null : i)}
+                      className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left"
+                      aria-expanded={open}
+                    >
+                      <span className="font-heading font-semibold text-gray-100">{item.q}</span>
+                      <ChevronDown
+                        className={`w-4 h-4 text-tech-cyan shrink-0 transition-transform ${open ? 'rotate-180' : ''}`}
+                      />
+                    </button>
+                    {open && (
+                      <p className="px-5 pb-5 text-sm text-gray-400 leading-relaxed">{item.a}</p>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </RevealSection>
         </div>
       </section>
 
-      {/* ── Finalità Educative ── */}
-      <section id="why" className="py-24 sm:py-32">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+      {/* ── Roadmap ── */}
+      <section id="roadmap" className="py-24 sm:py-32 bg-cyber-900/60 border-y border-white/5 scroll-mt-20">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <RevealSection className="text-center mb-16">
-            <p className="text-primary-400 font-semibold text-sm uppercase tracking-wider mb-3">
-              Perché Giocare
-            </p>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Finalità Educative</h2>
+            <SectionKicker>Dove stiamo andando</SectionKicker>
+            <h2 className="text-3xl sm:text-4xl font-heading font-bold mb-4 flex items-center justify-center gap-3">
+              <Map className="w-8 h-8 text-neural-light" />
+              Roadmap
+            </h2>
             <p className="text-gray-400 max-w-2xl mx-auto text-lg">
-              Neuralforming non è solo un gioco: è uno strumento per comprendere
-              le sfide reali della governance dell'Intelligenza Artificiale.
+              Neuralforming è un progetto vivo. Questa è la direzione, non una promessa di date.
             </p>
           </RevealSection>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-6">
             {[
               {
-                icon: Brain,
-                color: 'text-purple-400',
-                bg: 'from-purple-500/10 to-purple-500/5',
-                title: 'Etica dell\'IA',
-                desc: 'Affronta dilemmi ispirati a problemi reali: bias algoritmici, sorveglianza, automazione del lavoro, privacy dei dati. Ogni scelta ha conseguenze concrete.',
+                label: 'Ora',
+                accent: 'text-tech-cyan',
+                dot: 'bg-tech-cyan',
+                border: 'border-tech-cyan/30',
+                items: [
+                  'Multiplayer 2–8 con tabellone master e player su smartphone',
+                  'Playground singolo con opinione pubblica',
+                  'Dilemmi, tecnologie, parlamento e PWA',
+                  'Guida in-app e codice AGPL-3.0',
+                  'Demo cloud sperimentale',
+                ],
               },
               {
-                icon: Lightbulb,
-                color: 'text-amber-400',
-                bg: 'from-amber-500/10 to-amber-500/5',
-                title: 'Pensiero Critico',
-                desc: 'Non esistono risposte giuste o sbagliate. Impara a valutare trade-off complessi, a negoziare con altri giocatori e a costruire un punto di vista informato.',
+                label: 'Prossimo',
+                accent: 'text-neural-light',
+                dot: 'bg-neural-light',
+                border: 'border-neural-medium/35',
+                items: [
+                  'Nuovi mazzi di dilemmi e tecnologie',
+                  'Report di sessione per docenti',
+                  'Traduzione inglese',
+                  'Istanza cloud più stabile per le classi',
+                  'UX player più chiara su mobile',
+                ],
               },
               {
-                icon: GraduationCap,
-                color: 'text-primary-400',
-                bg: 'from-primary-500/10 to-primary-500/5',
-                title: 'Governance Tecnologica',
-                desc: 'Sperimenta in prima persona il processo decisionale politico: proponi leggi, affronta l\'opinione pubblica e bilancia progresso e responsabilità.',
+                label: 'Oltre',
+                accent: 'text-ethics-amber',
+                dot: 'bg-ethics-amber',
+                border: 'border-ethics-amber/30',
+                items: [
+                  'Dashboard docente e scenari per materia',
+                  'Versione ibrida da tavolo (carte stampabili)',
+                  'Contributi della community sui mazzi',
+                  'Workshop e kit per eventi civici',
+                ],
               },
-            ].map((item) => (
-              <RevealSection key={item.title}>
-                <div className={`bg-gradient-to-b ${item.bg} border border-gray-800 rounded-2xl p-8 h-full`}>
-                  <item.icon className={`w-10 h-10 ${item.color} mb-5`} />
-                  <h3 className="text-xl font-bold text-gray-100 mb-3">{item.title}</h3>
-                  <p className="text-gray-400 leading-relaxed">{item.desc}</p>
+            ].map((col) => (
+              <RevealSection key={col.label}>
+                <div className={`glass-card rounded-2xl p-6 h-full ${col.border}`}>
+                  <p className={`font-mono text-xs tracking-[0.2em] uppercase mb-4 ${col.accent}`}>
+                    {col.label}
+                  </p>
+                  <ul className="space-y-3">
+                    {col.items.map((item) => (
+                      <li key={item} className="flex items-start gap-2.5 text-sm text-gray-300 leading-relaxed">
+                        <span className={`mt-1.5 h-1.5 w-1.5 rounded-full shrink-0 ${col.dot}`} />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </RevealSection>
             ))}
@@ -552,265 +794,104 @@ export const LandingPage = ({
         </div>
       </section>
 
-      {/* ── Chi Siamo / Relatronica ── */}
-      <section id="team" className="py-24 sm:py-32 bg-gray-900/50">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6">
-          <RevealSection>
-            <div className="text-center mb-12">
-              <p className="text-primary-400 font-semibold text-sm uppercase tracking-wider mb-3">
-                Chi Siamo
-              </p>
-              <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-                Un progetto di Relatronica
-              </h2>
-              <p className="text-gray-400 max-w-2xl mx-auto text-lg italic">
-                &ldquo;Il futuro è un progetto collettivo&rdquo;
-              </p>
-            </div>
-
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-8 sm:p-10 mb-8">
-              <div className="flex flex-col sm:flex-row items-start gap-6">
-                <div className="shrink-0 bg-primary-600/10 rounded-xl p-4">
-                  <Lightbulb className="w-10 h-10 text-primary-400" />
-                </div>
-                <div>
-                  <h3 className="text-2xl font-bold text-gray-100 mb-3">Relatronica</h3>
-                  <p className="text-gray-300 leading-relaxed mb-4">
-                    <strong className="text-gray-100">Relatronica</strong> è un progetto indipendente
-                    e open source che opera all'intersezione tra{' '}
-                    <strong className="text-gray-100">Design Speculativo</strong>,{' '}
-                    <strong className="text-gray-100">Civic Tech</strong> e{' '}
-                    <strong className="text-gray-100">Knowledge Mapping</strong>.
-                    Immagina futuri possibili e crea strumenti che aiutano le comunità
-                    a comprenderli, discuterli e plasmarli.
-                  </p>
-                  <p className="text-gray-300 leading-relaxed mb-6">
-                    Neuralforming nasce come gioco ibrido da tavolo pensato per le scuole:
-                    trasforma la classe in un parlamento democratico dove gli studenti propongono leggi,
-                    dibattono implicazioni etiche e votano decisioni che plasmeranno il futuro
-                    dell'Intelligenza Artificiale. Un'esperienza educativa che unisce gioco,
-                    democrazia e consapevolezza tecnologica.
-                  </p>
-                  <div className="flex flex-wrap gap-4">
-                    <a
-                      href="https://relatronica.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-primary-400 hover:text-primary-300 font-semibold transition-colors"
-                    >
-                      Scopri tutti i progetti su relatronica.com
-                      <ExternalLink className="w-4 h-4" />
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-              {[
-                { label: 'Design Speculativo', desc: 'Scenari futuri per stimolare il pensiero critico' },
-                { label: 'Civic Tech', desc: 'Tecnologie che potenziano le comunità' },
-                { label: 'Knowledge Mapping', desc: 'Relazioni tra concetti rese accessibili' },
-                { label: 'Tecnologie Responsabili', desc: 'Approccio etico orientato al bene collettivo' },
-              ].map((pillar) => (
-                <div
-                  key={pillar.label}
-                  className="bg-gray-900/80 border border-gray-800 rounded-xl px-5 py-4 text-center"
-                >
-                  <p className="font-semibold text-sm text-gray-200 mb-1">{pillar.label}</p>
-                  <p className="text-xs text-gray-500 leading-relaxed">{pillar.desc}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-5">
-              <div className="shrink-0 bg-gray-800 rounded-full p-3">
-                <Github className="w-7 h-7 text-gray-300" />
-              </div>
-              <div className="text-center sm:text-left">
-                <h4 className="font-bold text-gray-100 mb-1">Open Source &middot; AGPL-3.0</h4>
-                <p className="text-sm text-gray-400 leading-relaxed">
-                  Neuralforming è un progetto open source: il codice è pubblico, modificabile e riutilizzabile.
-                  Contribuisci con nuovi dilemmi, tecnologie o miglioramenti al gameplay.
-                </p>
-              </div>
-              <a
-                href="https://github.com/Relatronica/Neuralforming"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="shrink-0 inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-gray-100 font-semibold py-2.5 px-5 rounded-lg border border-gray-700 hover:border-gray-600 transition-all text-sm"
-              >
-                <Github className="w-4 h-4" />
-                Vedi su GitHub
-              </a>
-            </div>
-          </RevealSection>
-        </div>
-      </section>
-
-      {/* ── Sostieni il Progetto ── */}
-      <section id="support" className="py-24 sm:py-32">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6">
-          <RevealSection className="text-center mb-16">
-            <p className="text-primary-400 font-semibold text-sm uppercase tracking-wider mb-3">
-              Partecipa
-            </p>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-              Sostieni il Futuro Aperto
-            </h2>
-            <p className="text-gray-400 max-w-2xl mx-auto text-lg">
-              Neuralforming è un progetto indipendente e open source. Non vendiamo dati,
-              non mostriamo pubblicità. Sostenere questo progetto non è una donazione:
-              è un <strong className="text-gray-200">atto di partecipazione civica</strong>.
-            </p>
-          </RevealSection>
-
-          <RevealSection>
-            <div className="grid sm:grid-cols-3 gap-6 mb-10">
-              {[
-                {
-                  tier: 'The Observer',
-                  desc: 'Il tuo nome tra i Civic Heroes del progetto',
-                  color: 'border-gray-700',
-                  accent: 'text-gray-300',
-                },
-                {
-                  tier: 'The Explorer',
-                  desc: 'Accesso anticipato a nuovi dilemmi, carte e meccaniche in sviluppo',
-                  color: 'border-primary-500/40',
-                  accent: 'text-primary-400',
-                },
-                {
-                  tier: 'The Future Architect',
-                  desc: 'Dialogo diretto con il team per proporre scenari etici e meccaniche di gioco',
-                  color: 'border-amber-500/40',
-                  accent: 'text-amber-400',
-                },
-              ].map((item) => (
-                <div
-                  key={item.tier}
-                  className={`bg-gray-900 border ${item.color} rounded-2xl p-6 text-center hover:bg-gray-800/80 transition-colors`}
-                >
-                  <Heart className={`w-8 h-8 ${item.accent} mx-auto mb-4`} />
-                  <h3 className={`text-lg font-bold ${item.accent} mb-2`}>{item.tier}</h3>
-                  <p className="text-sm text-gray-400 leading-relaxed">{item.desc}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="text-center">
-              <a
-                href="https://relatronica.com/about"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-primary-600 hover:bg-primary-500 text-white font-semibold py-3.5 px-8 rounded-xl transition-all duration-200 shadow-lg shadow-primary-600/25 hover:shadow-primary-500/30 hover:-translate-y-0.5"
-              >
-                <Heart className="w-5 h-5" />
-                Diventa parte del progetto
-              </a>
-              <p className="text-xs text-gray-500 mt-4">
-                Ogni contributo ci permette di sviluppare strumenti aperti, ricerca indipendente e risorse educative.
-              </p>
-            </div>
-          </RevealSection>
-        </div>
-      </section>
-
       {/* ── CTA Finale ── */}
-      <section id="play" className="py-24 sm:py-32 bg-gray-900/50">
+      <section id="play" className="py-24 sm:py-32 scroll-mt-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <RevealSection>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-              Porta Neuralforming nella tua classe
+            <h2 className="text-3xl sm:text-4xl font-heading font-bold mb-4">
+              Apri un parlamento. Oggi.
             </h2>
             <p className="text-gray-400 text-lg mb-10 max-w-xl mx-auto">
-              Crea una stanza multiplayer e coinvolgi i tuoi studenti.
-              Nessuna registrazione necessaria.
+              Una classe, un workshop, un collettivo: il primo atto è votare.
+              Se credi che questo strumento debba restare libero e senza pubblicità, sostienilo.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
               <button
                 onClick={() => setShowCloudModal(true)}
-                className="inline-flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-500 text-white font-semibold py-3.5 px-8 rounded-xl transition-all duration-200 shadow-lg shadow-primary-600/25 hover:shadow-primary-500/30 hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-neural-medium to-neural-dark hover:from-neural-light hover:to-neural-medium text-white font-heading font-semibold py-3.5 px-8 rounded-xl transition-all duration-200 shadow-lg shadow-neural-medium/25 hover:-translate-y-0.5"
               >
-                <Users className="w-5 h-5" />
-                Crea Stanza Multiplayer Ora
+                <Users className="w-5 h-5 text-tech-cyan" />
+                Crea stanza multiplayer
               </button>
               <a
-                href="https://github.com/Relatronica/Neuralforming"
+                href={BMC_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-gray-100 font-semibold py-3.5 px-8 rounded-xl border border-gray-700 hover:border-gray-600 transition-all duration-200 hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center gap-2 glass-panel text-ethics-amber font-heading font-semibold py-3.5 px-8 rounded-xl border border-ethics-amber/30 hover:border-ethics-amber/60 transition-all duration-200 hover:-translate-y-0.5"
               >
-                <Github className="w-5 h-5 text-gray-300" />
-                Vedi Repository GitHub
+                <Coffee className="w-5 h-5" />
+                Dona su Buy Me a Coffee
               </a>
             </div>
 
-            <Link
-              to="/guida"
-              className="inline-flex items-center gap-2 text-gray-400 hover:text-gray-200 transition-colors text-sm"
-            >
-              <BookOpen className="w-4 h-4" />
-              Leggi la Guida al Gioco
-            </Link>
+            <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm">
+              <Link
+                to="/guida"
+                className="inline-flex items-center gap-2 text-gray-400 hover:text-tech-cyan transition-colors"
+              >
+                <BookOpen className="w-4 h-4" />
+                Guida al gioco
+              </Link>
+              <Link
+                to="/contatti"
+                className="inline-flex items-center gap-2 text-gray-400 hover:text-tech-cyan transition-colors"
+              >
+                <Mail className="w-4 h-4" />
+                Contatti
+              </Link>
+              <a
+                href={GITHUB_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-gray-400 hover:text-tech-cyan transition-colors"
+              >
+                <Github className="w-4 h-4" />
+                GitHub
+              </a>
+            </div>
           </RevealSection>
         </div>
       </section>
 
       {/* ── Footer ── */}
-      <footer className="border-t border-gray-800 py-10">
+      <footer className="border-t border-white/10 py-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3">
-              <Atom className="w-6 h-6 text-primary-400" />
-              <span className="font-semibold text-gray-300">Neuralforming</span>
-              <span className="text-[10px] tracking-wider font-semibold px-2 py-0.5 bg-amber-500/10 text-amber-400 rounded-full border border-amber-500/30 uppercase">
-                Demo
-              </span>
+              <NeuralformingMark className="w-7 h-7" />
+              <span className="font-heading font-semibold text-gray-300">Neuralforming</span>
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-gray-500">
               <Link to="/guida" className="hover:text-gray-300 transition-colors">
-                Guida al Gioco
+                Guida
               </Link>
-              <a
-                href="https://relatronica.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-gray-300 transition-colors"
-              >
-                relatronica.com
-              </a>
-              <a
-                href="https://github.com/Relatronica/Neuralforming"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-gray-300 transition-colors"
-              >
+              <Link to="/contatti" className="hover:text-gray-300 transition-colors">
+                Contatti
+              </Link>
+              <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="hover:text-gray-300 transition-colors">
                 GitHub
               </a>
               <a
-                href="https://relatronica.com/about"
+                href={BMC_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-gray-300 transition-colors flex items-center gap-1"
+                className="hover:text-ethics-amber transition-colors flex items-center gap-1"
               >
                 <Heart className="w-3 h-3" />
-                Sostieni
+                Dona
               </a>
             </div>
 
-            <p className="text-xs text-gray-600">
-              Open Source &middot; AGPL-3.0
-            </p>
+            <p className="text-xs text-gray-600">Open Source · AGPL-3.0</p>
           </div>
         </div>
       </footer>
-      {/* ── Modale Avviso Istanza Cloud & Opzioni ── */}
+
       {showCloudModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-          <div className="bg-gray-900 border border-gray-700 rounded-2xl max-w-lg w-full p-6 sm:p-8 relative shadow-2xl space-y-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+          <div className="bg-cyber-900 border border-white/10 rounded-2xl max-w-lg w-full p-6 sm:p-8 relative shadow-2xl space-y-6">
             <button
               onClick={() => setShowCloudModal(false)}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-200 transition-colors p-1"
@@ -819,69 +900,65 @@ export const LandingPage = ({
               <X className="w-5 h-5" />
             </button>
 
-            <div className="flex items-center gap-3 text-amber-400">
-              <div className="p-2.5 bg-amber-500/10 rounded-xl border border-amber-500/30">
+            <div className="flex items-center gap-3 text-ethics-amber">
+              <div className="p-2.5 bg-ethics-amber/10 rounded-xl border border-ethics-amber/30">
                 <AlertTriangle className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-gray-100">Stato del Server Cloud</h3>
-                <span className="text-xs font-semibold px-2 py-0.5 bg-amber-500/20 text-amber-300 rounded-full border border-amber-500/40 uppercase">
-                  Istanza Beta / Condivisa
+                <h3 className="text-xl font-heading font-bold text-gray-100">Stato del server cloud</h3>
+                <span className="text-xs font-mono font-semibold px-2 py-0.5 bg-ethics-amber/20 text-amber-300 rounded-full border border-ethics-amber/40 uppercase">
+                  Demo / condivisa
                 </span>
               </div>
             </div>
 
             <p className="text-sm text-gray-300 leading-relaxed">
-              Il server Cloud gratuito è attualmente in <strong>fase Sperimentale (Alpha/Beta)</strong> ed è ospitato su risorse condivise. Durante sessioni di gruppo con molti giocatori potrebbero verificarsi rallentamenti o temporanee disconnessioni.
+              Il server cloud gratuito è in <strong>fase sperimentale</strong> e gira su risorse condivise.
+              Con molte sessioni contemporanee possono esserci rallentamenti o disconnessioni.
             </p>
 
             <div className="space-y-3 pt-2">
-              {/* Opzione 1: Prova comunque la demo */}
               <button
                 onClick={() => {
                   setShowCloudModal(false);
                   onStartMultiplayer();
                 }}
-                className="w-full flex items-center justify-between bg-primary-600 hover:bg-primary-500 text-white font-semibold py-3 px-4 rounded-xl transition-all shadow-md text-sm group"
+                className="w-full flex items-center justify-between bg-gradient-to-r from-neural-medium to-neural-dark hover:from-neural-light hover:to-neural-medium text-white font-heading font-semibold py-3 px-4 rounded-xl transition-all shadow-md text-sm group"
               >
                 <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4" />
-                  <span>Prova la Demo Cloud Sperimentale</span>
+                  <Users className="w-4 h-4 text-tech-cyan" />
+                  <span>Prova la demo cloud</span>
                 </div>
-                <span className="text-xs text-primary-200 group-hover:translate-x-0.5 transition-transform">→</span>
+                <span className="text-xs text-neural-light group-hover:translate-x-0.5 transition-transform">→</span>
               </button>
 
-              {/* Opzione 2: Richiedi istanza dedicata/stabile */}
-              <a
-                href="mailto:info@relatronica.com?subject=Richiesta%20Istanza%20Stabile%20Neuralforming%20per%20Evento/Classe&body=Ciao%20team%20Relatronica,%0A%0ASono%20interessato/a%20ad%20utilizzare%20Neuralforming%20per%20un%20evento/lezione%20in%20data%20[inserisci%20data].%20Vorrei%20maggiori%20informazioni%20per%20un'istanza%20dedicata%20stabile.%0A%0AGrazie!"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full flex items-center justify-between bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 font-semibold py-3 px-4 rounded-xl border border-amber-500/30 transition-all text-sm group"
+              <Link
+                to="/contatti?motivo=instance"
+                className="w-full flex items-center justify-between bg-ethics-amber/10 hover:bg-ethics-amber/20 text-amber-300 font-heading font-semibold py-3 px-4 rounded-xl border border-ethics-amber/30 transition-all text-sm"
               >
                 <div className="flex items-center gap-2">
-                  <Mail className="w-4 h-4 text-amber-400" />
-                  <span>Richiedi un'Istanza Stabile per il tuo Evento</span>
+                  <Mail className="w-4 h-4 text-ethics-amber" />
+                  <span>Richiedi un&apos;istanza stabile</span>
                 </div>
-                <ExternalLink className="w-3.5 h-3.5 text-amber-400" />
-              </a>
+                <span className="text-xs text-ethics-amber">→</span>
+              </Link>
 
-              {/* Opzione 3: Self-Hosting su GitHub */}
               <a
-                href="https://github.com/Relatronica/Neuralforming"
+                href={GITHUB_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full flex items-center justify-between bg-gray-800 hover:bg-gray-700 text-gray-200 font-medium py-3 px-4 rounded-xl border border-gray-700 transition-all text-sm"
+                className="w-full flex items-center justify-between bg-cyber-800 hover:bg-cyber-700 text-gray-200 font-medium py-3 px-4 rounded-xl border border-white/10 transition-all text-sm"
               >
                 <div className="flex items-center gap-2">
                   <Github className="w-4 h-4 text-gray-400" />
-                  <span>Usa l'Istanza Self-Hosted su GitHub (Locale)</span>
+                  <span>Self-host da GitHub</span>
                 </div>
                 <ExternalLink className="w-3.5 h-3.5 text-gray-400" />
               </a>
             </div>
 
             <p className="text-[11px] text-gray-500 text-center">
-              Per eventi accademici o istituzionali è raccomandato il Self-Hosting o una stanza privata dedicata.
+              Per eventi accademici o istituzionali è meglio il self-hosting o una stanza dedicata.
             </p>
           </div>
         </div>

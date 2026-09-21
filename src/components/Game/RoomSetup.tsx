@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useGameSocketContext } from '../../contexts/GameSocketContext';
 import { RoomInfo } from '../../hooks/useGameSocket';
-import { Users, Play, Copy, Check, Atom } from 'lucide-react';
+import { Users, Play, Copy, Check } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { buildPlayerJoinUrl } from '../../utils/deeplink';
+import { NeuralformingMark } from '../Brand/NeuralformingMark';
 
 interface RoomSetupProps {
   onGameStart: (roomId: string) => void;
@@ -193,8 +194,8 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
         <div className="mb-6 flex justify-center">
           <div className="relative w-32 h-32 flex items-center justify-center">
             <div className="absolute inset-0 rounded-full bg-primary-500/15 blur-xl" />
-            <div className="relative bg-gray-800/60 border border-primary-500/30 rounded-full p-6 backdrop-blur-sm">
-              <Atom className="w-16 h-16 text-primary-400" strokeWidth={1.5} />
+            <div className="relative bg-gray-800/60 border border-tech-cyan/30 rounded-2xl p-3 backdrop-blur-sm">
+              <NeuralformingMark className="w-20 h-20" />
             </div>
           </div>
         </div>

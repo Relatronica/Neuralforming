@@ -60,6 +60,25 @@ code, .font-mono {
   border-color: rgba(139, 92, 246, 0.5);
 }
 
+.hero-seat-dim {
+  opacity: 0.55;
+}
+
+.hero-seat-lit {
+  opacity: 0.9;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-seat-lit {
+    animation: hero-seat-pulse 5.5s ease-in-out infinite;
+  }
+}
+
+@keyframes hero-seat-pulse {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 1; }
+}
+
 /* Custom Cyber Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

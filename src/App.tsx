@@ -7,6 +7,7 @@ import { GameSocketProvider } from './contexts/GameSocketContext';
 import { PlayerApp } from './components/PlayerApp/PlayerApp';
 import { LandingPage } from './components/Landing/LandingPage';
 import { GuidePage } from './components/Guide/GuidePage';
+import { ContactPage } from './components/Contact/ContactPage';
 
 type GameMode = 'setup' | 'single' | 'multiplayer';
 
@@ -32,6 +33,7 @@ function MainApp() {
     return (
       <LandingPage
         onStartMultiplayer={() => setGameMode('multiplayer')}
+        onStartSinglePlayer={() => setGameMode('single')}
       />
     );
   }
@@ -66,6 +68,7 @@ function App() {
       <Routes>
         <Route path="/player" element={<PlayerApp />} />
         <Route path="/guida" element={<GuidePage />} />
+        <Route path="/contatti" element={<ContactPage />} />
         <Route path="*" element={<MainApp />} />
       </Routes>
     </BrowserRouter>

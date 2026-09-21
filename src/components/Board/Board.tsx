@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { Technology, PlayerState, VoteResult } from '../../game/types';
 import { ParliamentHemicycle } from './ParliamentHemicycle';
-import { Landmark, QrCode, X, Copy, Check, Atom } from 'lucide-react';
+import { Landmark, QrCode, X, Copy, Check } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { buildPlayerJoinUrl } from '../../utils/deeplink';
+import { NeuralformingMark } from '../Brand/NeuralformingMark';
 
 interface BoardProps {
   technologies: Technology[];
@@ -47,8 +48,8 @@ export const Board: React.FC<BoardProps> = ({ players, currentPlayerId, voteResu
           />
         ) : (
           <div className="flex justify-center py-6">
-            <div className="bg-gray-800/60 border border-primary-500/30 rounded-full p-5">
-              <Atom className="w-14 h-14 text-primary-400" strokeWidth={1.5} />
+            <div className="bg-gray-800/60 border border-tech-cyan/30 rounded-2xl p-3">
+              <NeuralformingMark className="w-16 h-16" />
             </div>
           </div>
         )}

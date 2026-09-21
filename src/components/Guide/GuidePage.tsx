@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, BookOpen, Atom, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
+import { ArrowLeft, BookOpen, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import { guideChapters } from './guideChapters';
+import { NeuralformingMark } from '../Brand/NeuralformingMark';
 
 export const GuidePage = () => {
   const [activeId, setActiveId] = useState(guideChapters[0].id);
@@ -55,7 +56,7 @@ export const GuidePage = () => {
             <h1 className="font-bold text-lg">Guida al Gioco</h1>
           </div>
 
-          <Atom className="w-7 h-7 text-primary-400" />
+          <NeuralformingMark className="w-7 h-7" />
         </div>
       </header>
 
