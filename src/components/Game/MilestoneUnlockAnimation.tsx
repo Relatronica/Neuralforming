@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Trophy, Sparkles } from 'lucide-react';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 
 interface MilestoneUnlockAnimationProps {
   milestoneName: string;
@@ -12,6 +13,7 @@ export const MilestoneUnlockAnimation: React.FC<MilestoneUnlockAnimationProps> =
   onComplete,
   duration = 1800 
 }) => {
+  const { t } = useGameCopy();
   const [scale, setScale] = useState(0);
   const [opacity, setOpacity] = useState(0);
   const [sparkles, setSparkles] = useState(false);
@@ -89,7 +91,7 @@ export const MilestoneUnlockAnimation: React.FC<MilestoneUnlockAnimationProps> =
 
           {/* Testo */}
           <h2 className="text-2xl sm:text-3xl font-bold text-yellow-100 mb-3 text-center">
-            Milestone Raggiunto!
+            {t.status.milestoneReached}
           </h2>
           <p className="text-lg sm:text-xl text-yellow-200 text-center font-semibold">
             {milestoneName}

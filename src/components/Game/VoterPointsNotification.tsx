@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { PlayerState } from '../../game/types';
 import { Vote, X, TrendingUp, TrendingDown } from 'lucide-react';
 import { getPartyColor } from '../../game/partyColors';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 
 export interface VoterPointsInfo {
   playerId: string;
@@ -27,6 +28,8 @@ export const VoterPointsNotification: React.FC<VoterPointsNotificationProps> = (
   onDismiss,
   autoCloseDelay = 5000 // 5 secondi di default
 }) => {
+  const { locale, t } = useGameCopy();
+
   // Chiusura automatica dopo il delay
   useEffect(() => {
     if (voterPoints.length === 0) return;
@@ -72,13 +75,13 @@ export const VoterPointsNotification: React.FC<VoterPointsNotificationProps> = (
               <Vote className="w-5 h-5 text-white" />
             </div>
             <h3 className="text-lg sm:text-xl font-bold text-gray-100">
-              Punti da Votazione
+              {t.voting.pointsTitle}
             </h3>
           </div>
           <button
             onClick={onDismiss}
             className="text-gray-400 hover:text-gray-100 transition-colors p-1.5 hover:bg-gray-700 rounded-lg"
-            title="Chiudi"
+            title={t.common.close}
           >
             <X className="w-5 h-5" />
           </button>
@@ -88,7 +91,7 @@ export const VoterPointsNotification: React.FC<VoterPointsNotificationProps> = (
         {Object.values(pointsByPlayer).map(({ player, info }) => {
           const total = getTotalPoints(info.points);
           const positive = isPositive(info.points);
-          const voteLabel = info.vote ? 'SÌ' : 'NO';
+          const voteLabel = info.vote ? (locale === 'en' ? 'YES' : 'SÌ') : 'NO';
           const voteColor = info.vote 
             ? (info.isApproved ? 'text-green-400' : 'text-red-400')
             : (info.isApproved ? 'text-yellow-400' : 'text-red-400');
@@ -113,17 +116,17 @@ export const VoterPointsNotification: React.FC<VoterPointsNotificationProps> = (
                       {player.name}
                     </span>
                     <span className={`text-xs font-semibold px-2 py-0.5 rounded ${voteColor} bg-gray-700/50`}>
-                      Voto: {voteLabel}
+                      {t.voting.voteLabel} {voteLabel}
                     </span>
                   </div>
                   <p className="text-xs text-gray-400 mt-0.5">
                     {info.isApproved 
                       ? (info.vote 
-                          ? 'Hai sostenuto una legge popolare' 
-                          : 'Hai sbagliato previsione, ma la legge è passata')
+                          ? t.voting.supportedPopular
+                          : t.voting.missedPrediction)
                       : (info.vote 
-                          ? 'Hai sostenuto una legge impopolare' 
-                          : 'Hai bloccato il progresso')}
+                          ? t.voting.supportedUnpopular
+                          : t.voting.blockedProgress)}
                   </p>
                 </div>
                 <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold ${
@@ -146,7 +149,7 @@ export const VoterPointsNotification: React.FC<VoterPointsNotificationProps> = (
               <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-gray-700">
                 {info.points.techPoints !== 0 && (
                   <div className="text-center">
-                    <p className="text-xs text-gray-400 mb-0.5">Tech</p>
+                    <p className="text-xs text-gray-400 mb-0.5">{t.scores.tech}</p>
                     <p className={`text-sm font-bold ${
                       info.points.techPoints > 0 ? 'text-tech-cyan' : 'text-red-400'
                     }`}>
@@ -156,7 +159,7 @@ export const VoterPointsNotification: React.FC<VoterPointsNotificationProps> = (
                 )}
                 {info.points.ethicsPoints !== 0 && (
                   <div className="text-center">
-                    <p className="text-xs text-gray-400 mb-0.5">Etica</p>
+                    <p className="text-xs text-gray-400 mb-0.5">{t.scores.ethics}</p>
                     <p className={`text-sm font-bold ${
                       info.points.ethicsPoints > 0 ? 'text-ethics-amber' : 'text-red-400'
                     }`}>
@@ -166,7 +169,7 @@ export const VoterPointsNotification: React.FC<VoterPointsNotificationProps> = (
                 )}
                 {info.points.neuralformingPoints !== 0 && (
                   <div className="text-center">
-                    <p className="text-xs text-gray-400 mb-0.5">Neural</p>
+                    <p className="text-xs text-gray-400 mb-0.5">{t.scores.neural}</p>
                     <p className={`text-sm font-bold ${
                       info.points.neuralformingPoints > 0 ? 'text-neural-light' : 'text-red-400'
                     }`}>

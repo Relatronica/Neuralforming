@@ -4,7 +4,7 @@ import { SinglePlayerState } from '../../game/singlePlayerTypes';
 import { Technology, DilemmaOption } from '../../game/types';
 import { Objectives } from '../../game/Objectives';
 import { Scoring } from '../../game/Scoring';
-import { milestones } from '../../game/Milestones';
+import { milestones, localizeMilestone } from '../../game/Milestones';
 import { DifficultyManager } from '../../game/DifficultyManager';
 import { TechnologyCard } from '../Cards/TechnologyCard';
 import { DilemmaCard } from '../Cards/DilemmaCard';
@@ -71,7 +71,7 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
         m => m.id === gameState.newlyUnlockedMilestones![0].milestoneId
       );
       if (milestone) {
-        setMilestoneAnimationName(milestone.name);
+        setMilestoneAnimationName(localizeMilestone(milestone).name);
         setShowMilestoneAnimation(true);
       }
     }
@@ -223,7 +223,7 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
               <div className="bg-gray-800/60 rounded-lg p-3">
                 <Brain className="w-5 h-5 text-neural-light mx-auto mb-1" />
                 <p className="text-lg font-bold text-white">{player.neuralformingPoints}</p>
-                <p className="text-[10px] text-gray-500">Neuralforming</p>
+                <p className="text-[10px] text-gray-500">{t.scores.neural}</p>
               </div>
             </div>
 
@@ -235,16 +235,16 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
                   <span className="text-sm text-gray-300">{objective.title}</span>
                 </div>
                 <p className="text-xs text-gray-500">
-                  Turni giocati: {gameState.turn} | Opinione finale: {publicOpinion.value}%
+                  {t.sp.turnsPlayed} {gameState.turn} | {t.sp.finalOpinion} {publicOpinion.value}%
                 </p>
               </div>
             )}
 
             {/* Extra stats */}
             <div className="flex justify-center gap-4 mb-6 text-xs text-gray-500">
-              <span>Bilanciamento: {Math.round(Scoring.calculateBalance(player) * 100)}%</span>
-              <span>Tecnologie: {player.technologies.length}</span>
-              <span>Milestone: {player.unlockedMilestones.length}</span>
+              <span>{t.scores.balance}: {Math.round(Scoring.calculateBalance(player) * 100)}%</span>
+              <span>{t.sp.technologies} {player.technologies.length}</span>
+              <span>{t.hand.milestones}: {player.unlockedMilestones.length}</span>
             </div>
 
             {/* Actions */}
@@ -262,7 +262,7 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
                   className="px-6 py-3 bg-gray-700 text-gray-300 rounded-lg font-medium hover:bg-gray-600 transition-all flex items-center gap-2"
                 >
                   <ArrowLeft className="w-4 h-4" />
-                  Menu
+                  {t.sp.menu}
                 </button>
               )}
             </div>
@@ -360,7 +360,7 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
             <h2 className="text-xl font-bold text-gray-100">{t.sp.developmentPhase}</h2>
           </div>
           <p className="text-sm text-gray-400">
-            Scegli una tecnologia dalla tua mano per proporla al parlamento.
+            {t.sp.chooseTech}
           </p>
         </div>
 
@@ -375,7 +375,7 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
                 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 mx-auto"
             >
               <Plus className="w-5 h-5" />
-              {isDrawing ? 'Pescando...' : `Pesca ${DifficultyManager.getCardsToDrawCount(gameState.difficulty)} Carte`}
+              {isDrawing ? t.sp.drawing : t.sp.drawN(DifficultyManager.getCardsToDrawCount(gameState.difficulty))}
             </button>
           </div>
         )}
@@ -386,7 +386,7 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
             <div className="flex items-center gap-2 mb-3">
               <BookOpen className="w-4 h-4 text-gray-500" />
               <h3 className="text-sm font-medium text-gray-400">
-                La tua mano ({player.hand.length} carte)
+                {t.sp.yourHand(player.hand.length)}
               </h3>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -401,7 +401,7 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
               ))}
             </div>
             <p className="text-xs text-gray-600 mt-3 text-center">
-              Clicca su una carta per proporla. L'opinione pubblica reagira alla tua scelta.
+              {t.sp.clickToPropose}
             </p>
           </div>
         )}
@@ -410,7 +410,7 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
         {player.technologies.length > 0 && (
           <div className="mt-8 pt-6 border-t border-gray-800">
             <h3 className="text-sm font-medium text-gray-500 mb-3">
-              Tecnologie implementate ({player.technologies.length})
+              {t.sp.implementedTech(player.technologies.length)}
             </h3>
             <div className="flex flex-wrap gap-2">
               {player.technologies.map(tech => (
@@ -440,12 +440,12 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
           {/* Opinion reaction display */}
           <div className="text-center mb-6">
             <h2 className="text-xl font-bold text-gray-100 mb-2">
-              Reazione dell'Opinione Pubblica
+              {t.sp.opinionReaction}
             </h2>
             <p className="text-sm text-gray-400">
               {lastOpinionReaction?.isRejected 
-                ? 'La proposta e stata respinta dall\'opinione pubblica!'
-                : 'Ecco come il pubblico ha reagito alla tua proposta...'
+                ? t.sp.proposalRejected
+                : t.sp.publicReacted
               }
             </p>
           </div>
@@ -469,7 +469,7 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
                     ? 'bg-red-900/30 text-red-400 border border-red-800'
                     : 'bg-gray-800 text-gray-400 border border-gray-700'
               }`}>
-                Efficacia punti: {Math.round(lastOpinionReaction.effectivenessMultiplier * 100)}%
+                {t.sp.effectiveness} {Math.round(lastOpinionReaction.effectivenessMultiplier * 100)}%
               </span>
             </div>
           )}
@@ -485,9 +485,9 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
               }`}
             >
               {lastOpinionReaction?.isRejected ? (
-                <>Continua <ChevronRight className="w-4 h-4" /></>
+                <>{t.common.continue} <ChevronRight className="w-4 h-4" /></>
               ) : (
-                <>Affronta il Dilemma <ChevronRight className="w-4 h-4" /></>
+                <>{t.sp.faceDilemma} <ChevronRight className="w-4 h-4" /></>
               )}
             </button>
           </div>
@@ -531,7 +531,7 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
     return (
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-4">
-          <h2 className="text-xl font-bold text-gray-100 mb-1">Conseguenza</h2>
+          <h2 className="text-xl font-bold text-gray-100 mb-1">{t.phases.consequence}</h2>
           <p className="text-sm text-gray-400">
             La tua scelta ha generato delle conseguenze...
           </p>
@@ -540,7 +540,7 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
         {/* Show resolved dilemma option */}
         {gameState.resolvedDilemmaOption && (
           <div className="mb-4 p-3 bg-gray-800/60 border border-gray-700 rounded-lg">
-            <p className="text-xs text-gray-500 mb-1">La tua scelta:</p>
+            <p className="text-xs text-gray-500 mb-1">{t.sp.yourChoice}</p>
             <p className="text-sm text-gray-300">{gameState.resolvedDilemmaOption.text}</p>
           </div>
         )}
@@ -553,13 +553,13 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
           />
         ) : (
           <div className="text-center">
-            <p className="text-gray-400 mb-4">Nessuna conseguenza aggiuntiva.</p>
+            <p className="text-gray-400 mb-4">{t.sp.noExtraConsequence}</p>
             <button
               onClick={handleCompleteConsequence}
               className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-medium 
                 hover:from-blue-500 hover:to-blue-600 transition-all flex items-center gap-2 mx-auto"
             >
-              Continua <ChevronRight className="w-4 h-4" />
+              {t.common.continue} <ChevronRight className="w-4 h-4" />
             </button>
           </div>
         )}
@@ -599,7 +599,7 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
               onClick={handleDismissEvent}
               className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-medium"
             >
-              Continua <ChevronRight className="w-4 h-4 inline ml-1" />
+              {t.common.continue} <ChevronRight className="w-4 h-4 inline ml-1" />
             </button>
           </div>
         )}

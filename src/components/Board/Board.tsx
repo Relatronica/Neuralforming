@@ -5,6 +5,7 @@ import { Landmark, QrCode, X, Copy, Check } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { buildPlayerJoinUrl } from '../../utils/deeplink';
 import { NeuralformingMark } from '../Brand/NeuralformingMark';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 
 interface BoardProps {
   technologies: Technology[];
@@ -16,6 +17,7 @@ interface BoardProps {
 }
 
 export const Board: React.FC<BoardProps> = ({ players, currentPlayerId, voteResult = null, isVoting = false, roomId = null }) => {
+  const { t } = useGameCopy();
   const [showQRModal, setShowQRModal] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
 
@@ -59,7 +61,7 @@ export const Board: React.FC<BoardProps> = ({ players, currentPlayerId, voteResu
           <button
             onClick={() => setShowQRModal(true)}
             className="absolute top-2.5 right-2.5 bg-gray-700/80 hover:bg-gray-600 text-gray-200 hover:text-white p-1.5 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg backdrop-blur-sm border border-gray-600/50"
-            title="Mostra QR Code per invitare giocatori"
+            title={t.board.showQr}
           >
             <QrCode className="w-4 h-4" />
           </button>
@@ -70,7 +72,7 @@ export const Board: React.FC<BoardProps> = ({ players, currentPlayerId, voteResu
       <div className="bg-cyber-800 rounded-lg p-1.5 shadow-sm border border-white/10">
         <div className="flex items-center justify-center gap-2 mb-1.5">
           <Landmark className="w-4 h-4 text-tech-cyan" />
-          <h3 className="text-sm font-heading font-bold text-gray-100">Parlamento</h3>
+          <h3 className="text-sm font-heading font-bold text-gray-100">{t.board.parliament}</h3>
         </div>
         <ParliamentHemicycle
           players={players}
@@ -102,10 +104,10 @@ export const Board: React.FC<BoardProps> = ({ players, currentPlayerId, voteResu
             <div className="text-center mb-4">
               <div className="flex items-center justify-center gap-2 mb-1">
                 <QrCode className="w-5 h-5 text-tech-cyan" />
-                <h3 className="text-lg font-bold text-gray-100">Invita Giocatori</h3>
+                <h3 className="text-lg font-bold text-gray-100">{t.board.invitePlayers}</h3>
               </div>
               <p className="text-xs text-gray-400">
-                Inquadra il QR code per unirti alla partita in corso
+                {t.invite.hint}
               </p>
             </div>
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { MilestoneUnlocked } from '../../game/types';
-import { milestones } from '../../game/Milestones';
+import { milestones, localizeMilestone } from '../../game/Milestones';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 import { PlayerState } from '../../game/types';
 import { Trophy, Sparkles, X, User } from 'lucide-react';
 
@@ -15,6 +16,8 @@ export const MilestoneNotification: React.FC<MilestoneNotificationProps> = ({
   players,
   onDismiss 
 }) => {
+  const { t } = useGameCopy();
+
   if (unlocked.length === 0) return null;
 
   // Raggruppa i milestone per giocatore
@@ -42,12 +45,12 @@ export const MilestoneNotification: React.FC<MilestoneNotificationProps> = ({
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-1.5">
           <Trophy className="w-3.5 h-3.5 text-gray-400" />
-          <h2 className="text-xs font-bold text-gray-100">Milestone Raggiunti</h2>
+          <h2 className="text-xs font-bold text-gray-100">{t.status.milestonesReached}</h2>
         </div>
         <button
           onClick={onDismiss}
           className="text-gray-400 hover:text-gray-300 rounded p-0.5 transition-colors duration-200"
-          title="Chiudi"
+          title={t.common.close}
         >
           <X className="w-3 h-3" />
         </button>
@@ -61,7 +64,9 @@ export const MilestoneNotification: React.FC<MilestoneNotificationProps> = ({
               <span className="text-[10px] font-semibold text-gray-200">{player.name}</span>
             </div>
             <div className="space-y-1">
-              {playerMilestones.map((milestone) => (
+              {playerMilestones.map((milestone) => {
+                const localized = localizeMilestone(milestone);
+                return (
                 <div
                   key={milestone.id}
                   className="bg-gray-800 rounded p-1.5 border-l-2 border-gray-500"
@@ -70,15 +75,16 @@ export const MilestoneNotification: React.FC<MilestoneNotificationProps> = ({
                     <Sparkles className="w-2.5 h-2.5 text-gray-400 flex-shrink-0 mt-0.5" />
                     <div className="flex-1 min-w-0">
                       <h3 className="text-[10px] font-bold text-gray-100 mb-0.5">
-                        {milestone.name}
+                        {localized.name}
                       </h3>
                       <p className="text-[9px] text-gray-300 leading-tight">
-                        <span className="font-semibold text-gray-200">{milestone.ability.name}:</span> {milestone.ability.description}
+                        <span className="font-semibold text-gray-200">{localized.ability.name}:</span> {localized.ability.description}
                       </p>
                     </div>
                   </div>
                 </div>
-              ))}
+              );
+              })}
             </div>
           </div>
         ))}

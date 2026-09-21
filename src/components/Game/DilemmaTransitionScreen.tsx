@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Scale, Loader2 } from 'lucide-react';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 
 interface DilemmaTransitionScreenProps {
   onComplete: () => void;
@@ -10,15 +11,12 @@ export const DilemmaTransitionScreen: React.FC<DilemmaTransitionScreenProps> = (
   onComplete, 
   duration = 2000 
 }) => {
+  const { t } = useGameCopy();
   const [progress, setProgress] = useState(0);
   const [currentText, setCurrentText] = useState(0);
   const [fadeOut, setFadeOut] = useState(false);
   
-  const loadingTexts = [
-    'Valutazione conseguenze...',
-    'Analisi impatto decisione...',
-    'Calcolo effetti etici...',
-  ];
+  const loadingTexts = [t.dilemma.transition1, t.dilemma.transition2, t.dilemma.transition3];
 
   useEffect(() => {
     // Aggiorna il progresso

@@ -3,6 +3,7 @@ import { Dilemma, DilemmaOption, Technology } from '../../game/types';
 import { DilemmaCard } from '../Cards/DilemmaCard';
 import { Scale } from 'lucide-react';
 import { HeaderNewsTicker } from '../Game/HeaderNewsTicker';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 
 interface PlayerDilemmaProps {
   dilemma: Dilemma;
@@ -15,6 +16,7 @@ export const PlayerDilemma: React.FC<PlayerDilemmaProps> = ({
   activeJoker,
   onResolve,
 }) => {
+  const { t } = useGameCopy();
   return (
     <div className="min-h-screen bg-cyber-950 p-3 sm:p-4 pb-6 sm:pb-8">
       <div className="max-w-2xl mx-auto">
@@ -23,7 +25,7 @@ export const PlayerDilemma: React.FC<PlayerDilemmaProps> = ({
           <div className="flex items-center gap-2 mb-2">
             <Scale className="w-5 h-5 sm:w-6 sm:h-6 text-gray-100 flex-shrink-0" />
             <h1 className="text-xl sm:text-2xl font-bold text-gray-100">
-              Dilemma Etico
+              {t.dilemma.title}
             </h1>
           </div>
         </div>

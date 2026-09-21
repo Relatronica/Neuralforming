@@ -4,7 +4,7 @@ import { GameState, Technology, DilemmaOption, PlayerState, Dilemma, VoteResult,
 import { TurnManager } from '../../game/TurnManager';
 import { AIPlayer } from '../../game/AIPlayer';
 import { Objectives } from '../../game/Objectives';
-import { milestones } from '../../game/Milestones';
+import { milestones, localizeMilestone } from '../../game/Milestones';
 import { Board } from '../Board/Board';
 import { TechnologyCard } from '../Cards/TechnologyCard';
 import { DilemmaCard } from '../Cards/DilemmaCard';
@@ -124,7 +124,7 @@ const DiscussionAndVotingPanel: React.FC<{
             <Users className="w-5 h-5 text-tech-cyan" />
           </div>
           <h2 className="text-xl font-heading font-bold text-gray-100">
-            Proposta in votazione
+            {t.voting.proposalInVote}
           </h2>
         </div>
       )}
@@ -146,9 +146,9 @@ const DiscussionAndVotingPanel: React.FC<{
       <div className="bg-cyber-800 rounded-xl p-3 mb-3 border border-white/10">
         <p className="text-gray-200 text-center text-base">
           <span className="font-heading font-bold text-gray-100">
-            {gameState.players.find(p => p.id === pendingVote.proposerId)?.name || 'Un giocatore'}
+            {gameState.players.find(p => p.id === pendingVote.proposerId)?.name || t.voting.aPlayer}
           </span>
-          <span className="text-gray-400"> ha proposto questa tecnologia</span>
+          <span className="text-gray-400"> {t.voting.proposedTech}</span>
         </p>
       </div>
 
@@ -161,14 +161,14 @@ const DiscussionAndVotingPanel: React.FC<{
               className="w-full font-bold py-2 px-3 rounded-lg transition-all duration-200 shadow-md text-xs bg-amber-600 hover:bg-amber-500 active:bg-amber-400 text-white hover:shadow-lg flex items-center justify-center gap-1"
             >
               <CheckCircle2 className="w-3 h-3" />
-              <span>Pronto a Votare</span>
+              <span>{t.voting.ready}</span>
             </button>
           ) : (
             <div className="bg-gray-800 rounded-lg p-2 border border-amber-600/40 text-center">
               <div className="flex items-center justify-center gap-1">
                 <CheckCircle2 className="w-3 h-3 text-amber-400" />
                 <p className="text-amber-300 font-semibold text-xs">
-                  Sei pronto! In attesa degli altri...
+                  {t.voting.youAreReady}
                 </p>
               </div>
             </div>
@@ -176,7 +176,7 @@ const DiscussionAndVotingPanel: React.FC<{
           {discussionPhase && discussionPhase.requiredCount > 0 && (
             <div className="bg-cyber-800 rounded-xl p-2 border border-white/10">
               <p className="text-center text-base text-gray-200">
-                Pronti: <span className="font-heading font-bold text-ethics-amber text-xl">{discussionPhase.readyCount}</span>
+                {t.voting.readyCount} <span className="font-heading font-bold text-ethics-amber text-xl">{discussionPhase.readyCount}</span>
                 <span className="text-gray-500"> / </span>
                 <span className="font-bold text-gray-100 text-xl">{discussionPhase.requiredCount}</span>
               </p>
@@ -197,13 +197,13 @@ const DiscussionAndVotingPanel: React.FC<{
           <div className="flex items-center justify-center gap-1">
             <MessageCircle className="w-3 h-3 text-amber-400" />
             <p className="text-amber-200 font-bold text-xs">
-              I giocatori discutono la tua proposta...
+              {t.voting.playersDiscussYours}
             </p>
           </div>
           {discussionPhase && discussionPhase.requiredCount > 0 && (
             <div className="bg-cyber-800/60 rounded-lg p-2 border border-white/10">
               <p className="text-sm text-gray-200">
-                Pronti: <span className="font-heading font-bold text-ethics-amber text-lg">{discussionPhase.readyCount}</span>
+                {t.voting.readyCount} <span className="font-heading font-bold text-ethics-amber text-lg">{discussionPhase.readyCount}</span>
                 <span className="text-gray-500"> / </span>
                 <span className="font-bold text-gray-100 text-lg">{discussionPhase.requiredCount}</span>
               </p>
@@ -224,13 +224,13 @@ const DiscussionAndVotingPanel: React.FC<{
           <div className="flex items-center justify-center gap-1">
             <MessageCircle className="w-3 h-3 text-amber-400" />
             <p className="text-amber-200 font-bold text-xs">
-              I giocatori discutono la proposta...
+              {t.voting.playersDiscuss}
             </p>
           </div>
           {discussionPhase && discussionPhase.requiredCount > 0 && (
             <div className="bg-cyber-800/60 rounded-lg p-2 border border-white/10">
               <p className="text-sm text-gray-200">
-                Pronti: <span className="font-heading font-bold text-ethics-amber text-lg">{discussionPhase.readyCount}</span>
+                {t.voting.readyCount} <span className="font-heading font-bold text-ethics-amber text-lg">{discussionPhase.readyCount}</span>
                 <span className="text-gray-500"> / </span>
                 <span className="font-bold text-gray-100 text-lg">{discussionPhase.requiredCount}</span>
               </p>
@@ -249,7 +249,7 @@ const DiscussionAndVotingPanel: React.FC<{
       {!isInDiscussion && currentPlayer && currentPlayer.id !== pendingVote.proposerId && (
         <div className="space-y-2">
           <p className="text-gray-200 text-center font-semibold text-xs">
-            Vuoi votare a favore o contro?
+            {t.voting.votePrompt}
           </p>
           <div className="flex gap-2">
             <button
@@ -291,7 +291,7 @@ const DiscussionAndVotingPanel: React.FC<{
                 {voteStatus.totalVotes}
                 <span className="text-gray-500"> / </span>
                 {voteStatus.requiredVotes}
-                <span className="text-gray-500 text-sm font-sans font-medium ml-1">voti</span>
+                <span className="text-gray-500 text-sm font-sans font-medium ml-1">{t.voting.votesUnit}</span>
               </p>
               <div className="mt-2 w-full bg-cyber-700 rounded-full h-2">
                 <div
@@ -309,14 +309,14 @@ const DiscussionAndVotingPanel: React.FC<{
           <div className="flex items-center justify-center gap-2 mb-2">
             <Clock className="w-4 h-4 text-tech-cyan animate-pulse" />
             <p className="text-tech-cyan font-heading font-bold text-sm">
-              Votazione sulla tua proposta...
+              {t.voting.votingOnYours}
             </p>
           </div>
           {voteStatus && (
             <div className="bg-cyber-800 rounded-lg p-2 border border-white/10">
               <p className="text-gray-100 font-heading font-bold text-2xl">
                 {voteStatus.totalVotes}<span className="text-gray-500 text-lg"> / {voteStatus.requiredVotes}</span>
-                <span className="text-gray-400 text-sm font-sans font-medium ml-2">voti</span>
+                <span className="text-gray-400 text-sm font-sans font-medium ml-2">{t.voting.votesUnit}</span>
               </p>
               <div className="mt-2 w-full bg-cyber-700 rounded-full h-2">
                 <div
@@ -334,14 +334,14 @@ const DiscussionAndVotingPanel: React.FC<{
           <div className="flex items-center justify-center gap-2 mb-2">
             <Users className="w-4 h-4 text-tech-cyan" />
             <p className="text-tech-cyan font-heading font-bold text-sm">
-              Votazione in corso
+              {t.voting.inProgress}
             </p>
           </div>
           {voteStatus && (
             <div className="bg-cyber-800 rounded-lg p-2 border border-white/10">
               <p className="text-gray-100 font-heading font-bold text-3xl">
                 {voteStatus.totalVotes}<span className="text-gray-500 text-xl"> / {voteStatus.requiredVotes}</span>
-                <span className="text-gray-400 text-sm font-sans font-medium ml-2">voti</span>
+                <span className="text-gray-400 text-sm font-sans font-medium ml-2">{t.voting.votesUnit}</span>
               </p>
               <div className="mt-2 w-full bg-cyber-700 rounded-full h-2.5">
                 <div
@@ -1246,7 +1246,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
       // Trova il nome del milestone
       const milestone = milestones.find((m) => m.id === firstMilestone.milestoneId);
       if (milestone) {
-        setMilestoneAnimation({ name: milestone.name });
+        setMilestoneAnimation({ name: localizeMilestone(milestone).name });
         setShowMilestoneAnimation(true);
       }
     }
@@ -1262,9 +1262,9 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
           <div className="glass-card rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
             <div className="game-spinner"></div>
             <h2 className="text-2xl font-bold text-gray-100 mb-2">{t.game.init}</h2>
-            <p className="text-gray-300">Il gioco sta per iniziare...</p>
+            <p className="text-gray-300">{t.game.aboutToStart}</p>
             {isMaster && (
-              <p className="text-xs text-gray-400 mt-2">(Sei il master - inizializzazione in corso...)</p>
+              <p className="text-xs text-gray-400 mt-2">{t.game.masterInit}</p>
             )}
           </div>
         </div>
@@ -1276,8 +1276,8 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
         <div className="min-h-screen bg-cyber-950 flex items-center justify-center p-4">
           <div className="glass-card rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
             <div className="game-spinner"></div>
-            <h2 className="text-2xl font-bold text-gray-100 mb-2">Attesa...</h2>
-            <p className="text-gray-300">Preparazione della partita...</p>
+            <h2 className="text-2xl font-bold text-gray-100 mb-2">{t.game.waiting}</h2>
+            <p className="text-gray-300">{t.game.preparing}</p>
           </div>
         </div>
       );
@@ -1302,20 +1302,20 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
               <h1 className="text-3xl font-bold text-gray-100 mb-4">{t.game.victory}</h1>
               {winnerObjective && (
                 <div className="bg-gray-800 border border-gray-600 rounded-lg p-4 mb-4">
-                  <p className="text-xs text-gray-400 mb-1">Obiettivo Completato</p>
+                  <p className="text-xs text-gray-400 mb-1">{t.game.objectiveComplete}</p>
                   <p className="text-lg font-bold text-gray-100 mb-2">{winnerObjective.title}</p>
                   <p className="text-sm text-gray-300">{winnerObjective.description}</p>
                 </div>
               )}
               <p className="text-gray-300 mb-6">
                 {winnerObjective 
-                  ? `Hai raggiunto per primo il tuo obiettivo! ${winnerObjective.title}`
-                  : 'Hai guidato con successo la creazione di un\'IA sostenibile! Le tue decisioni politiche hanno bilanciato innovazione tecnologica e responsabilità etica, creando un futuro migliore per tutti i cittadini.'}
+                  ? t.game.winWithObjective(winnerObjective.title)
+                  : t.game.winDefault}
               </p>
               {humanPlayer && (
                 <div className="bg-gray-800 border border-gray-600 rounded-lg p-4 mb-6">
                   <p className="text-sm text-gray-200 mb-2">
-                    <strong className="text-gray-100">Punti Neuralforming:</strong> {humanPlayer.neuralformingPoints}
+                    <strong className="text-gray-100">{t.game.neuralformingPoints}</strong> {humanPlayer.neuralformingPoints}
                   </p>
                   <p className="text-sm text-gray-200 mb-2">
                     <strong className="text-gray-100">{t.scores.ethicsPoints}:</strong> {humanPlayer.ethicsPoints}
@@ -1334,7 +1334,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
               </h1>
               {winner && winnerObjective && (
                 <div className="bg-gray-800 border border-gray-600 rounded-lg p-4 mb-4">
-                  <p className="text-xs text-gray-400 mb-1">Obiettivo Raggiunto</p>
+                  <p className="text-xs text-gray-400 mb-1">{t.game.objectiveReached}</p>
                   <p className="text-lg font-bold text-gray-100 mb-2">{winnerObjective.title}</p>
                   <p className="text-sm text-gray-300">{winnerObjective.description}</p>
                 </div>
@@ -1342,14 +1342,14 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
               <p className="text-gray-300 mb-6">
                 {winner 
                   ? winnerObjective
-                    ? `${winner.name} ha raggiunto per primo il suo obiettivo: ${winnerObjective.title}. Le sue politiche hanno prevalso.`
-                    : `${winner.name} ha completato per primo il programma di IA sostenibile. Le sue politiche hanno prevalso.`
-                  : 'Le tue politiche non hanno raggiunto gli obiettivi richiesti. L\'IA creata non è sostenibile.'}
+                    ? t.game.loseWithWinnerObjective(winner.name, winnerObjective.title)
+                    : t.game.loseWithWinner(winner.name)
+                  : t.game.loseDefault}
               </p>
               {winner && (
                 <div className="bg-gray-800 border border-gray-600 rounded-lg p-4 mb-6">
                   <p className="text-sm text-gray-200 mb-2">
-                    <strong className="text-gray-100">Punti Neuralforming:</strong> {winner.neuralformingPoints}
+                    <strong className="text-gray-100">{t.game.neuralformingPoints}</strong> {winner.neuralformingPoints}
                   </p>
                   <p className="text-sm text-gray-200 mb-2">
                     <strong className="text-gray-100">{t.scores.ethicsPoints}:</strong> {winner.ethicsPoints}
@@ -1365,7 +1365,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
             onClick={handleNewGame}
             className="w-full btn-game-primary"
           >
-            Nuova Partita
+            {t.game.newGame}
           </button>
         </div>
       </div>
@@ -1384,10 +1384,10 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
         <div className="min-h-screen bg-cyber-950 flex items-center justify-center p-4">
           <div className="glass-card rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
             <div className="game-spinner"></div>
-            <h2 className="text-2xl font-bold text-gray-100 mb-2">Caricamento partita...</h2>
-            <p className="text-gray-300">Attendere l'inizializzazione del gioco...</p>
+            <h2 className="text-2xl font-bold text-gray-100 mb-2">{t.game.loadingMatch}</h2>
+            <p className="text-gray-300">{t.game.waitInit}</p>
             {isMaster && (
-              <p className="text-xs text-gray-400 mt-2">(Sei il master - inizializzazione in corso...)</p>
+              <p className="text-xs text-gray-400 mt-2">{t.game.masterInit}</p>
             )}
           </div>
         </div>
@@ -1474,7 +1474,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
               <div className="bg-gray-800 border border-gray-600 rounded px-2 py-0.5 flex items-center gap-1.5">
                 <Bot className="w-3 h-3 text-gray-300" />
                 <p className="text-xs text-gray-300 font-semibold">
-                  {currentPlayer?.name} sta giocando...
+                  {t.game.aiPlaying(currentPlayer?.name || '')}
                 </p>
               </div>
             )}
@@ -1652,7 +1652,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                     <div className="flex items-center justify-center gap-1.5 mb-1">
                       <Users className="w-4 h-4 text-gray-400" />
                       <p className="text-xs font-bold text-gray-200">
-                        {gameState.players.find(p => p.id === gameState.currentPlayerId)?.name || 'Un giocatore'} sta risolvendo un dilemma etico
+                        {t.dilemma.resolving(gameState.players.find(p => p.id === gameState.currentPlayerId)?.name || t.voting.aPlayer)}
                       </p>
                     </div>
                   </div>
@@ -1675,7 +1675,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                   <div className="flex items-center justify-center gap-1.5 mb-1">
                     <Users className="w-4 h-4 text-gray-400" />
                     <p className="text-xs font-bold text-gray-200">
-                      Decisione presa da {gameState.players.find(p => p.id === gameState.currentPlayerId)?.name || 'il giocatore corrente'}
+                      {t.game.decisionBy(gameState.players.find(p => p.id === gameState.currentPlayerId)?.name || t.game.currentPlayer)}
                     </p>
                   </div>
                 </div>
@@ -1698,7 +1698,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                     <div className="flex items-center justify-center gap-1.5 mb-1">
                       <Users className="w-4 h-4 text-gray-400" />
                       <p className="text-xs font-bold text-gray-200">
-                        Conseguenza per {gameState.players.find(p => p.id === gameState.currentPlayerId)?.name || 'il giocatore corrente'}
+                        {t.game.consequenceFor(gameState.players.find(p => p.id === gameState.currentPlayerId)?.name || t.game.currentPlayer)}
                       </p>
                     </div>
                   </div>
@@ -1732,7 +1732,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                           </p>
                           <div className="flex items-center justify-center gap-1">
                             <Loader2 className="w-3 h-3 animate-spin text-tech-cyan" />
-                            <span className="text-xs text-gray-500">Turno {gameState.turn}</span>
+                            <span className="text-xs text-gray-500">{t.game.turnN(gameState.turn)}</span>
                           </div>
                         </>
                       );
@@ -1742,10 +1742,10 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                   <>
                     <Bot className="w-6 h-6 mx-auto mb-2 text-gray-400" />
                     <h2 className="text-sm font-bold text-gray-100 mb-1">
-                      Turno di {currentPlayer?.name}
+                      {t.game.turnOf(currentPlayer?.name || '')}
                     </h2>
                     <p className="text-xs text-gray-400">
-                      {currentPlayer?.name} sta valutando le proprie strategie politiche...
+                      {t.game.aiEvaluating(currentPlayer?.name || '')}
                     </p>
                   </>
                 )}
@@ -1761,7 +1761,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                 <div className="flex items-center gap-1.5">
                   <Landmark className="w-3.5 h-3.5 text-tech-cyan" />
                   <h3 className="text-xs font-bold text-gray-100">
-                    Proposte di Legge
+                    {t.game.lawProposals}
                   </h3>
                   <span className="bg-neural-medium/80 text-white font-bold px-1.5 py-0.5 rounded text-xs">
                     {currentPlayer.hand.length}
@@ -1771,7 +1771,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                   onClick={handleDrawTechnology}
                   className="bg-gradient-to-r from-neural-medium to-neural-dark hover:from-neural-light hover:to-neural-medium text-white font-heading font-semibold py-1 px-2 text-xs rounded-lg transition-all duration-200 shadow-sm"
                 >
-                  + Nuova
+                  {t.game.plusNew}
                 </button>
               </div>
               <div className="flex flex-wrap gap-1.5 justify-center">

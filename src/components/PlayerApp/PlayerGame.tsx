@@ -30,6 +30,7 @@ const PlayerProposerView: React.FC<{
   } | null;
   turn?: number;
 }> = ({ pendingVote, voteStatus, discussionPhase, turn }) => {
+  const { t } = useGameCopy();
   const [secondsLeft, setSecondsLeft] = useState(0);
 
   useEffect(() => {
@@ -110,11 +111,11 @@ const PlayerProposerView: React.FC<{
                   <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 text-blue-400" />
                 </div>
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-100">
-                  Votazione in Corso
+                  {t.voting.inProgress}
                 </h1>
               </div>
               <p className="text-blue-300/80 text-center mb-3 text-xs sm:text-sm">
-                I giocatori stanno votando sulla tua proposta
+                {t.voting.playersVotingYours}
               </p>
             </>
           )}
@@ -135,7 +136,7 @@ const PlayerProposerView: React.FC<{
           {isInDiscussion && discussionPhase && discussionPhase.requiredCount > 0 && (
             <div className="bg-gray-800 rounded-lg p-3 border border-amber-600/30 mb-4">
               <p className="text-center text-sm text-gray-300 mb-2">
-                Giocatori pronti a votare
+                {t.voting.playersReadyToVote}
               </p>
               <div className="flex items-center justify-center gap-2 mb-2">
                 <span className="text-2xl font-bold text-amber-300">{discussionPhase.readyCount}</span>
@@ -155,7 +156,7 @@ const PlayerProposerView: React.FC<{
           {!isInDiscussion && requiredVotes > 0 && (
             <div className="bg-gray-800 rounded-lg p-3 border border-blue-600/30">
               <p className="text-center text-sm text-gray-300 mb-2">
-                Voti ricevuti
+                {t.voting.votesReceived}
               </p>
               <div className="flex items-center justify-center gap-2 mb-2">
                 <span className="text-2xl font-bold text-blue-300">{totalVotes}</span>
@@ -179,7 +180,7 @@ const PlayerProposerView: React.FC<{
           <div className="mt-4 flex items-center justify-center gap-2">
             <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
             <p className="text-gray-500 text-xs sm:text-sm">
-              {isInDiscussion ? 'La votazione inizierà quando tutti saranno pronti...' : 'In attesa che tutti votino...'}
+              {isInDiscussion ? t.voting.voteStartsWhenReady : t.voting.waitingEveryoneVotes}
             </p>
           </div>
         </div>
@@ -474,7 +475,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
       <div className="min-h-screen bg-cyber-950 flex items-center justify-center p-4">
         <div className="bg-gray-900 rounded-xl shadow-2xl p-6 max-w-md w-full text-center border border-gray-700">
           <Users className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-          <h2 className="text-xl font-bold text-gray-100 mb-2">In attesa...</h2>
+          <h2 className="text-xl font-bold text-gray-100 mb-2">{t.status.waiting}</h2>
           <p className="text-gray-300 mb-2">Connesso alla partita come <span className="font-semibold text-gray-100">{playerId}</span></p>
           <p className="text-gray-400 text-sm">Il master sta avviando la partita...</p>
         </div>
@@ -502,7 +503,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
       <div className="min-h-screen bg-cyber-950 flex items-center justify-center p-4">
         <div className="bg-gray-900 rounded-xl shadow-2xl p-6 max-w-md w-full text-center border border-gray-700">
           <Loader2 className="w-12 h-12 mx-auto mb-4 text-gray-400 animate-spin" />
-          <h2 className="text-xl font-bold text-gray-100 mb-2">Caricamento partita...</h2>
+          <h2 className="text-xl font-bold text-gray-100 mb-2">{t.game.loadingMatch}</h2>
           <p className="text-gray-300">Il master sta sincronizzando lo stato del gioco...</p>
         </div>
       </div>
@@ -619,7 +620,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
                   className="w-full text-left px-3 py-2 text-sm text-gray-300 hover:bg-gray-700 rounded flex items-center gap-2"
                 >
                   <LogOut className="w-4 h-4" />
-                  Nuova Partita
+                  {t.game.newGame}
                 </button>
               </div>
             </div>
@@ -651,7 +652,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
             <div className="fixed top-0 left-0 right-0 z-50 bg-yellow-600 text-white p-3 text-center shadow-lg">
               <div className="flex items-center justify-center gap-2">
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span className="font-semibold">Riconnessione in corso...</span>
+                <span className="font-semibold">{t.status.reconnecting}</span>
               </div>
             </div>
           )}
@@ -660,7 +661,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
             <div className="fixed top-0 left-0 right-0 z-50 bg-red-600 text-white p-3 text-center shadow-lg animate-pulse">
               <div className="flex items-center justify-center gap-2">
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span className="font-semibold">Il tabellone di gioco si è disconnesso. In attesa di riconnessione...</span>
+                <span className="font-semibold">{t.status.boardDisconnected}</span>
               </div>
             </div>
           )}
@@ -707,7 +708,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
           <div className="fixed top-0 left-0 right-0 z-50 bg-yellow-600 text-white p-3 text-center shadow-lg">
             <div className="flex items-center justify-center gap-2">
               <Loader2 className="w-4 h-4 animate-spin" />
-              <span className="font-semibold">Riconnessione in corso...</span>
+              <span className="font-semibold">{t.status.reconnecting}</span>
             </div>
           </div>
         )}
@@ -716,7 +717,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
           <div className="fixed top-0 left-0 right-0 z-50 bg-red-600 text-white p-3 text-center shadow-lg animate-pulse">
             <div className="flex items-center justify-center gap-2">
               <Loader2 className="w-4 h-4 animate-spin" />
-              <span className="font-semibold">Il tabellone di gioco si è disconnesso. In attesa di riconnessione...</span>
+              <span className="font-semibold">{t.status.boardDisconnected}</span>
             </div>
           </div>
         )}

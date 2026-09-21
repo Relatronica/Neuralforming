@@ -119,7 +119,7 @@ export const OpeningStoryModal = ({ onClose, story: externalStory, readyCount = 
               </div>
               {readyCount >= totalPlayers && totalPlayers > 0 && (
                 <p className="text-white/90 text-sm text-center mt-2 font-medium">
-                  Tutti pronti!
+                  {t.opening.allReady}
                 </p>
               )}
             </div>

@@ -3,6 +3,7 @@ import { GameSocketProvider } from '../../contexts/GameSocketContext';
 import { PlayerLogin } from './PlayerLogin';
 import { PlayerGame } from './PlayerGame';
 import { useDocumentMeta } from '../../hooks/useDocumentMeta';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 
 /**
  * PWA per i giocatori mobile
@@ -23,6 +24,7 @@ interface SavedSession {
 }
 
 export const PlayerApp: React.FC = () => {
+  const { t } = useGameCopy();
   const [roomId, setRoomId] = useState<string | null>(null);
   const [playerId, setPlayerId] = useState<string | null>(null);
   const [playerColor, setPlayerColor] = useState<string | null>(null);
@@ -30,7 +32,7 @@ export const PlayerApp: React.FC = () => {
   const [isLoadingSession, setIsLoadingSession] = useState(true);
 
   useDocumentMeta({
-    title: 'Gioca — Neuralforming',
+    title: t.game.playTitle,
     description: 'Entra in una stanza Neuralforming dal telefono.',
     path: '/player',
     robots: 'noindex,nofollow',
@@ -174,8 +176,8 @@ export const PlayerApp: React.FC = () => {
       <div className="min-h-screen bg-cyber-950 flex items-center justify-center p-4">
         <div className="bg-gray-900 rounded-xl shadow-2xl p-8 max-w-md w-full text-center border border-gray-700">
           <div className="game-spinner"></div>
-          <h2 className="text-xl font-bold text-gray-100 mb-2">Caricamento...</h2>
-          <p className="text-gray-300">Ripristino sessione...</p>
+          <h2 className="text-xl font-bold text-gray-100 mb-2">{t.status.loading}</h2>
+          <p className="text-gray-300">{t.status.restoringSession}</p>
         </div>
       </div>
     );

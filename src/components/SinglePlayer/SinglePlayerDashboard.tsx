@@ -2,7 +2,8 @@ import React from 'react';
 import { SinglePlayerState, DecisionHistoryEntry } from '../../game/singlePlayerTypes';
 import { Scoring } from '../../game/Scoring';
 import { Objectives } from '../../game/Objectives';
-import { milestones } from '../../game/Milestones';
+import { milestones, localizeMilestone } from '../../game/Milestones';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 import { DifficultyManager } from '../../game/DifficultyManager';
 import { PublicOpinionMeter } from './PublicOpinionMeter';
 import { 
@@ -25,6 +26,7 @@ interface SinglePlayerDashboardProps {
 }
 
 export const SinglePlayerDashboard: React.FC<SinglePlayerDashboardProps> = ({ state }) => {
+  const { t } = useGameCopy();
   const { player, publicOpinion, lastOpinionReaction, difficulty, turn, decisionHistory } = state;
   
   const balance = Scoring.calculateBalance(player);
@@ -51,7 +53,7 @@ export const SinglePlayerDashboard: React.FC<SinglePlayerDashboardProps> = ({ st
         <div className="flex items-center gap-2">
           <Gauge className="w-4 h-4 text-gray-400" />
           <span className="text-sm text-gray-300">
-            Turno <span className="font-bold text-white">{turn}</span>
+            {t.dashboard.turn} <span className="font-bold text-white">{turn}</span>
             <span className="text-gray-500"> / 15</span>
           </span>
         </div>
@@ -72,14 +74,14 @@ export const SinglePlayerDashboard: React.FC<SinglePlayerDashboardProps> = ({ st
       {/* Stats del giocatore */}
       <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
         <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2.5">
-          Punteggi
+          {t.sp.scores}
         </h3>
         
         <div className="space-y-2">
           {/* Tech Points */}
           <StatBar 
             icon={<Microscope className="w-3.5 h-3.5 text-tech-cyan" />}
-            label="Tecnologia"
+            label={t.dashboard.techPct.replace(' %', '')}
             value={player.techPoints}
             color="bg-tech-cyan"
           />
@@ -87,7 +89,7 @@ export const SinglePlayerDashboard: React.FC<SinglePlayerDashboardProps> = ({ st
           {/* Ethics Points */}
           <StatBar 
             icon={<Scale className="w-3.5 h-3.5 text-ethics-amber" />}
-            label="Etica"
+            label={t.scores.ethics}
             value={player.ethicsPoints}
             color="bg-ethics-amber"
           />
@@ -95,7 +97,7 @@ export const SinglePlayerDashboard: React.FC<SinglePlayerDashboardProps> = ({ st
           {/* Neuralforming Points */}
           <StatBar 
             icon={<Brain className="w-3.5 h-3.5 text-neural-light" />}
-            label="Neuralforming"
+            label={t.scores.neural}
             value={player.neuralformingPoints}
             color="bg-neural-medium"
           />
@@ -103,7 +105,7 @@ export const SinglePlayerDashboard: React.FC<SinglePlayerDashboardProps> = ({ st
           {/* Balance */}
           <div className="flex items-center gap-2 pt-1 border-t border-gray-700">
             <Scale className="w-3 h-3 text-gray-500" />
-            <span className="text-[10px] text-gray-500">Bilanciamento</span>
+            <span className="text-[10px] text-gray-500">{t.scores.balance}</span>
             <div className="flex-1 h-1.5 bg-gray-700 rounded-full overflow-hidden">
               <div 
                 className={`h-full rounded-full transition-all ${
@@ -122,7 +124,7 @@ export const SinglePlayerDashboard: React.FC<SinglePlayerDashboardProps> = ({ st
           {/* Tecnologie implementate */}
           <div className="flex items-center gap-2 text-[10px] text-gray-500">
             <Zap className="w-3 h-3" />
-            <span>Tecnologie implementate: <span className="text-gray-300 font-medium">{player.technologies.length}</span></span>
+            <span>{t.sp.implementedTech(player.technologies.length)}</span>
           </div>
         </div>
       </div>
@@ -133,7 +135,7 @@ export const SinglePlayerDashboard: React.FC<SinglePlayerDashboardProps> = ({ st
           <div className="flex items-center gap-1.5 mb-2">
             <Target className="w-4 h-4 text-amber-400" />
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
-              Obiettivo
+              {t.hand.objective}
             </h3>
           </div>
           
@@ -171,7 +173,7 @@ export const SinglePlayerDashboard: React.FC<SinglePlayerDashboardProps> = ({ st
           {/* Nota opinione pubblica */}
           {objectiveProgress.completed && publicOpinion.value < 40 && (
             <div className="mt-2 p-1.5 bg-amber-900/20 border border-amber-800 rounded text-[10px] text-amber-300">
-              Obiettivo raggiunto! Ma l'opinione pubblica deve essere ≥40% per vincere.
+              {t.sp.opinionWinWarn}
             </div>
           )}
         </div>
@@ -183,7 +185,7 @@ export const SinglePlayerDashboard: React.FC<SinglePlayerDashboardProps> = ({ st
           <div className="flex items-center gap-1.5 mb-2">
             <Award className="w-4 h-4 text-purple-400" />
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
-              Milestones
+              {t.hand.milestones}
             </h3>
             <span className="text-[10px] text-gray-600 ml-auto">
               {unlockedMilestones.length}/{milestones.length}
@@ -191,15 +193,18 @@ export const SinglePlayerDashboard: React.FC<SinglePlayerDashboardProps> = ({ st
           </div>
           
           <div className="space-y-1.5">
-            {unlockedMilestones.map(milestone => (
+            {unlockedMilestones.map(milestone => {
+              const localized = localizeMilestone(milestone);
+              return (
               <div key={milestone.id} className="flex items-start gap-2 p-1.5 bg-gray-700/50 rounded">
                 <Trophy className="w-3 h-3 text-amber-400 mt-0.5 shrink-0" />
                 <div>
-                  <p className="text-[11px] font-medium text-gray-200">{milestone.name}</p>
-                  <p className="text-[9px] text-gray-500">{milestone.ability.description}</p>
+                  <p className="text-[11px] font-medium text-gray-200">{localized.name}</p>
+                  <p className="text-[9px] text-gray-500">{localized.ability.description}</p>
                 </div>
               </div>
-            ))}
+            );
+            })}
           </div>
         </div>
       )}
@@ -210,7 +215,7 @@ export const SinglePlayerDashboard: React.FC<SinglePlayerDashboardProps> = ({ st
           <div className="flex items-center gap-1.5 mb-2">
             <History className="w-4 h-4 text-gray-400" />
             <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
-              Ultime Decisioni
+              {t.sp.lastDecisions}
             </h3>
           </div>
           

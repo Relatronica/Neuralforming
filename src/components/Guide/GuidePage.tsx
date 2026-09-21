@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, BookOpen, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import { guideChapters } from './guideChapters';
 import { NeuralformingMark } from '../Brand/NeuralformingMark';
+import { SiteCredit } from '../Brand/SiteCredit';
 import { useDocumentMeta } from '../../hooks/useDocumentMeta';
 
 export const GuidePage = () => {
@@ -48,7 +49,7 @@ export const GuidePage = () => {
   const nextChapter = activeIndex < guideChapters.length - 1 ? guideChapters[activeIndex + 1] : null;
 
   return (
-    <div className="min-h-screen bg-cyber-950 text-gray-100">
+    <div className="min-h-screen bg-cyber-950 text-gray-100 flex flex-col">
       {/* ── Header ── */}
       <header className="sticky top-0 z-40 bg-cyber-950/90 backdrop-blur-md border-b border-white/10">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 h-14">
@@ -207,6 +208,13 @@ export const GuidePage = () => {
           </div>
         </main>
       </div>
+
+      <footer className="mt-auto border-t border-white/10 py-8">
+        <p className="text-center text-xs text-gray-600">
+          <SiteCredit prefix="Un progetto di" />
+          {' · '}Open Source · AGPL-3.0
+        </p>
+      </footer>
     </div>
   );
 };

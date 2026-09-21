@@ -3,6 +3,7 @@ import { VoteResult } from '../../game/types';
 import { PlayerState } from '../../game/types';
 import { CheckCircle2, XCircle, Users, AlertTriangle } from 'lucide-react';
 import { getPartyColor } from '../../game/partyColors';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 
 interface VotingResultProps {
   voteResult: VoteResult;
@@ -15,6 +16,7 @@ export const VotingResult: React.FC<VotingResultProps> = ({
   players,
   message 
 }) => {
+  const { t } = useGameCopy();
   const approvalRate = Math.round(voteResult.approvalRate * 100);
   const isApproved = approvalRate >= 50;
   
@@ -30,7 +32,7 @@ export const VotingResult: React.FC<VotingResultProps> = ({
             <Users className="w-6 h-6 text-white" />
           </div>
           <h3 className="text-2xl sm:text-3xl font-heading font-bold text-gray-100">
-            Risultato Votazione Parlamentare
+            {t.voting.parliamentResult}
           </h3>
         </div>
         <div className={`flex items-center gap-2 px-5 py-3 rounded-xl shadow-lg transform transition-all duration-300 ${
@@ -46,7 +48,7 @@ export const VotingResult: React.FC<VotingResultProps> = ({
             <XCircle className="w-6 h-6" />
           )}
           <span className="font-bold text-lg">
-            {isApproved ? `${approvalRate}% Approvazione` : `${approvalRate}% - Bocciata`}
+            {isApproved ? `${approvalRate}% ${t.voting.approvalPct}` : `${approvalRate}% - ${t.voting.rejectedPct}`}
           </span>
         </div>
       </div>
@@ -63,7 +65,7 @@ export const VotingResult: React.FC<VotingResultProps> = ({
           {!isApproved && (
             <p className="text-sm text-center mt-2 opacity-90 inline-flex items-center justify-center gap-1.5 w-full">
               <AlertTriangle className="w-4 h-4 shrink-0" />
-              La legge non è stata approvata. Verranno applicate penalità.
+              {t.voting.lawNotPassed}
             </p>
           )}
         </div>
@@ -77,7 +79,7 @@ export const VotingResult: React.FC<VotingResultProps> = ({
               <CheckCircle2 className="w-5 h-5 text-white" />
             </div>
             <h4 className="font-bold text-gray-100 text-lg">
-              A Favore
+              {t.voting.inFavor}
             </h4>
             <span className="ml-auto bg-gray-700 text-gray-200 font-bold px-3 py-1 rounded-full text-sm">
               {voteResult.votesFor}
@@ -100,7 +102,7 @@ export const VotingResult: React.FC<VotingResultProps> = ({
                 </div>
               ))
             ) : (
-              <p className="text-sm text-gray-400 italic text-center py-2">Nessun sostenitore</p>
+              <p className="text-sm text-gray-400 italic text-center py-2">{t.voting.noSupporters}</p>
             )}
           </div>
         </div>
@@ -112,7 +114,7 @@ export const VotingResult: React.FC<VotingResultProps> = ({
               <XCircle className="w-5 h-5 text-white" />
             </div>
             <h4 className="font-bold text-gray-100 text-lg">
-              Contro
+              {t.voting.against}
             </h4>
             <span className="ml-auto bg-gray-700 text-gray-200 font-bold px-3 py-1 rounded-full text-sm">
               {voteResult.votesAgainst}
@@ -135,7 +137,7 @@ export const VotingResult: React.FC<VotingResultProps> = ({
                 </div>
               ))
             ) : (
-              <p className="text-sm text-gray-400 italic text-center py-2">Nessun oppositore</p>
+              <p className="text-sm text-gray-400 italic text-center py-2">{t.voting.noOpponents}</p>
             )}
           </div>
         </div>

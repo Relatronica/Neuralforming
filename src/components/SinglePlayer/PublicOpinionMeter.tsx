@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { PublicOpinionState, OpinionReactionResult } from '../../game/singlePlayerTypes';
 import { PublicOpinion } from '../../game/PublicOpinion';
 import { TrendingUp, TrendingDown, Minus, Users, AlertTriangle, Clock } from 'lucide-react';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 
 interface PublicOpinionMeterProps {
   opinion: PublicOpinionState;
@@ -14,6 +15,7 @@ export const PublicOpinionMeter: React.FC<PublicOpinionMeterProps> = ({
   reaction,
   showDetails = true,
 }) => {
+  const { t } = useGameCopy();
   const [displayValue, setDisplayValue] = useState(opinion.value);
   const [isAnimating, setIsAnimating] = useState(false);
 
@@ -51,10 +53,10 @@ export const PublicOpinionMeter: React.FC<PublicOpinionMeterProps> = ({
 
   const getBandLabel = () => {
     switch (band) {
-      case 'high':    return 'Consenso Alto';
-      case 'neutral': return 'Stabile';
-      case 'low':     return 'Consenso Basso';
-      case 'crisis':  return 'CRISI';
+      case 'high':    return t.sp.highConsensus;
+      case 'neutral': return t.sp.stable;
+      case 'low':     return t.sp.lowSupport;
+      case 'crisis':  return t.difficulty.crisis;
     }
   };
 
@@ -75,7 +77,7 @@ export const PublicOpinionMeter: React.FC<PublicOpinionMeterProps> = ({
         <div className="flex items-center gap-1.5">
           <Users className={`w-4 h-4 ${colors.text}`} />
           <span className="text-xs font-semibold text-gray-300 uppercase tracking-wide">
-            Opinione Pubblica
+            {t.sp.publicOpinion}
           </span>
         </div>
         <div className="flex items-center gap-1">
@@ -117,10 +119,10 @@ export const PublicOpinionMeter: React.FC<PublicOpinionMeterProps> = ({
 
       {/* Legenda fasce */}
       <div className="flex justify-between text-[9px] text-gray-500 mb-2">
-        <span>Crisi</span>
-        <span>Basso</span>
-        <span>Stabile</span>
-        <span>Alto</span>
+        <span>{t.sp.crisisTick}</span>
+        <span>{t.sp.lowTick}</span>
+        <span>{t.sp.stable}</span>
+        <span>{t.sp.highTick}</span>
       </div>
 
       {/* Reazione corrente */}
@@ -147,7 +149,7 @@ export const PublicOpinionMeter: React.FC<PublicOpinionMeterProps> = ({
                   ? 'bg-emerald-900/40 text-emerald-400' 
                   : 'bg-red-900/40 text-red-400'
               }`}>
-                Efficacia: {Math.round(reaction.effectivenessMultiplier * 100)}%
+                {t.sp.effectiveness} {Math.round(reaction.effectivenessMultiplier * 100)}%
               </span>
             )}
           </div>
@@ -158,7 +160,7 @@ export const PublicOpinionMeter: React.FC<PublicOpinionMeterProps> = ({
       {showDetails && opinion.modifiers.length > 0 && (
         <div className="mt-2 space-y-1">
           <span className="text-[10px] text-gray-500 uppercase tracking-wide font-medium">
-            Effetti attivi
+            {t.sp.activeEffects}
           </span>
           {opinion.modifiers.map((mod, idx) => (
             <div key={idx} className="flex items-center justify-between text-[10px] px-2 py-1 bg-gray-800/60 rounded">
@@ -183,8 +185,8 @@ export const PublicOpinionMeter: React.FC<PublicOpinionMeterProps> = ({
           <AlertTriangle className="w-3.5 h-3.5 text-red-400 shrink-0" />
           <span className="text-[10px] text-red-300">
             {opinion.consecutiveLowTurns >= 2 
-              ? `PERICOLO: Il governo cadrà tra ${3 - opinion.consecutiveLowTurns} turno/i!`
-              : 'Attenzione: opinione pubblica in crisi. Rischi il game over!'
+              ? t.sp.crisisWarning(3 - opinion.consecutiveLowTurns)
+              : t.sp.crisisAttention
             }
           </span>
         </div>

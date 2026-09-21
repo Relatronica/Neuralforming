@@ -1,6 +1,7 @@
 import React from 'react';
 import { Dilemma, DilemmaOption, Technology } from '../../game/types';
 import { Scale, Sparkles, Check } from 'lucide-react';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 
 interface DilemmaCardProps {
   dilemma: Dilemma;
@@ -19,6 +20,8 @@ export const DilemmaCard: React.FC<DilemmaCardProps> = ({
   showOptions = true, // Di default mostra sempre le opzioni (per retrocompatibilità)
   selectedOption = null,
 }) => {
+  const { t } = useGameCopy();
+
   return (
     <div 
       className="bg-gradient-to-br from-gray-800 to-gray-700 rounded-xl shadow-2xl p-4 sm:p-6 border-2 border-gray-600 transform-gpu w-full max-w-full"
@@ -38,16 +41,16 @@ export const DilemmaCard: React.FC<DilemmaCardProps> = ({
             <div className="mb-3 p-2 sm:p-3 bg-gray-700 rounded border border-gray-600">
               <div className="flex items-center gap-1 mb-1">
                 <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 text-gray-300 flex-shrink-0" />
-                <p className="text-xs sm:text-sm font-semibold text-gray-200 break-words">Jolly Attivo: {activeJoker.name}</p>
+                <p className="text-xs sm:text-sm font-semibold text-gray-200 break-words">{t.dilemma.jokerActive}: {activeJoker.name}</p>
               </div>
               {activeJoker.jokerEffect?.multiplier && (
                 <p className="text-[10px] sm:text-xs text-gray-300">
-                  I punti del dilemma verranno moltiplicati
+                  {t.dilemma.pointsMultiplied}
                 </p>
               )}
               {activeJoker.jokerEffect?.bonus && (
                 <p className="text-[10px] sm:text-xs text-gray-300">
-                  Bonus aggiuntivi applicati
+                  {t.dilemma.extraBonus}
                 </p>
               )}
             </div>
@@ -60,7 +63,7 @@ export const DilemmaCard: React.FC<DilemmaCardProps> = ({
         {showOptions && (
           <div className="flex flex-col min-w-0 flex-shrink-0">
             <h3 className="font-semibold text-xs sm:text-sm text-gray-100 mb-3">
-              {selectedOption ? 'Decisione presa:' : 'Scegli la tua decisione:'}
+              {selectedOption ? t.dilemma.decisionMade : `${t.dilemma.choose}:`}
             </h3>
             <div className="space-y-2 sm:space-y-3 flex-grow min-h-0">
               {dilemma.options.map((option, index) => {

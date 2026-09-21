@@ -2,6 +2,7 @@ import React from 'react';
 import { Technology } from '../../game/types';
 import { Sparkles, Microscope, Scale, Brain, TrendingUp, TrendingDown } from 'lucide-react';
 import { calculateVotingEffects } from '../../game/ParliamentVoting';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 
 interface TechnologyCardProps {
   technology: Technology;
@@ -20,6 +21,8 @@ export const TechnologyCard: React.FC<TechnologyCardProps> = ({
   isVotingCard = false,
   showVotingEffects = false,
 }) => {
+  const { t } = useGameCopy();
+
   const handleClick = () => {
     if (isSelectable && onSelect) {
       onSelect(technology);
@@ -96,7 +99,7 @@ export const TechnologyCard: React.FC<TechnologyCardProps> = ({
           )}
           {!isJoker && (
             <span className="inline-block mb-1 px-2 py-0.5 bg-tech-cyan/20 text-tech-cyan text-[9px] sm:text-[10px] font-bold rounded border border-tech-cyan/40">
-              LEGGE
+              {t.cards.law}
             </span>
           )}
           <h3 className={`font-bold text-gray-100 break-words mt-1 ${
@@ -126,20 +129,20 @@ export const TechnologyCard: React.FC<TechnologyCardProps> = ({
         <div className={`mb-3 sm:mb-4 p-2 sm:p-3 bg-gradient-to-r from-purple-900/40 to-yellow-900/30 rounded border border-purple-600/50`}>
           <div className="flex items-center gap-2 mb-1">
             <Sparkles className={`w-3 h-3 ${isLargeFormat ? 'sm:w-4 sm:h-4' : ''} text-purple-300`} />
-            <p className={`font-semibold text-purple-200 ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[9px]'}`}>Effetto Bonus:</p>
+            <p className={`font-semibold text-purple-200 ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[9px]'}`}>{t.cards.bonusEffect}:</p>
           </div>
           {technology.jokerEffect.multiplier && (
             <p className={`text-gray-300 ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[9px]'}`}>
-              {technology.jokerEffect.multiplier.techPoints && `Tech ×${technology.jokerEffect.multiplier.techPoints} `}
-              {technology.jokerEffect.multiplier.ethicsPoints && `Etica ×${technology.jokerEffect.multiplier.ethicsPoints} `}
-              {technology.jokerEffect.multiplier.neuralformingPoints && `Neural ×${technology.jokerEffect.multiplier.neuralformingPoints}`}
+              {technology.jokerEffect.multiplier.techPoints && `${t.scores.tech} ×${technology.jokerEffect.multiplier.techPoints} `}
+              {technology.jokerEffect.multiplier.ethicsPoints && `${t.cards.ethicsTimes}${technology.jokerEffect.multiplier.ethicsPoints} `}
+              {technology.jokerEffect.multiplier.neuralformingPoints && `${t.scores.neural} ×${technology.jokerEffect.multiplier.neuralformingPoints}`}
             </p>
           )}
           {technology.jokerEffect.bonus && (
             <p className={`text-gray-300 ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[9px]'}`}>
-              {technology.jokerEffect.bonus.techPoints && `Tech +${technology.jokerEffect.bonus.techPoints} `}
-              {technology.jokerEffect.bonus.ethicsPoints && `Etica +${technology.jokerEffect.bonus.ethicsPoints} `}
-              {technology.jokerEffect.bonus.neuralformingPoints && `Neural +${technology.jokerEffect.bonus.neuralformingPoints}`}
+              {technology.jokerEffect.bonus.techPoints && `${t.scores.tech} +${technology.jokerEffect.bonus.techPoints} `}
+              {technology.jokerEffect.bonus.ethicsPoints && `${t.cards.ethics} +${technology.jokerEffect.bonus.ethicsPoints} `}
+              {technology.jokerEffect.bonus.neuralformingPoints && `${t.scores.neural} +${technology.jokerEffect.bonus.neuralformingPoints}`}
             </p>
           )}
         </div>
@@ -152,7 +155,7 @@ export const TechnologyCard: React.FC<TechnologyCardProps> = ({
           {/* Tech - Icona con intensità colore basata sul valore */}
           <div 
             className="flex items-center gap-1.5 group relative"
-            title={`Tech: +${technology.techPoints}`}
+            title={`${t.scores.tech}: +${technology.techPoints}`}
           >
             <Microscope 
               className={`${isLargeFormat ? 'w-5 h-5 sm:w-6 sm:h-6' : 'w-4 h-4'}`}
@@ -170,7 +173,7 @@ export const TechnologyCard: React.FC<TechnologyCardProps> = ({
           {technology.ethicsPoints && (
             <div 
               className="flex items-center gap-1.5 group relative"
-              title={`Etica: +${technology.ethicsPoints}`}
+              title={`${t.cards.ethics}: +${technology.ethicsPoints}`}
             >
               <Scale 
                 className={`${isLargeFormat ? 'w-5 h-5 sm:w-6 sm:h-6' : 'w-4 h-4'}`}
@@ -188,7 +191,7 @@ export const TechnologyCard: React.FC<TechnologyCardProps> = ({
           {/* Neural - Icona con intensità colore basata sul valore */}
           <div 
             className="flex items-center gap-1.5 group relative"
-            title={`Neural: +${technology.neuralformingPoints}`}
+            title={`${t.scores.neural}: +${technology.neuralformingPoints}`}
           >
             <Brain 
               className={`${isLargeFormat ? 'w-5 h-5 sm:w-6 sm:h-6' : 'w-4 h-4'}`}
@@ -206,27 +209,27 @@ export const TechnologyCard: React.FC<TechnologyCardProps> = ({
         {/* Effetti della votazione (se mostrati) */}
         {showVotingEffects && votingEffects && (
           <div className={`mt-2 p-2 bg-gray-700/50 rounded border border-gray-600 ${isLargeFormat ? 'text-xs' : 'text-[10px]'}`}>
-            <p className="text-gray-300 mb-1.5 font-semibold">Effetti Votazione:</p>
+            <p className="text-gray-300 mb-1.5 font-semibold">{t.cards.votingEffects}</p>
             <div className="space-y-1">
               <div className="flex items-center gap-1.5">
                 <TrendingUp className="w-3 h-3 text-green-400" />
-                <span className="text-gray-300">Alta approvazione (&gt;70%):</span>
+                <span className="text-gray-300">{t.cards.highApproval}</span>
                 <span className="text-green-400 font-semibold">
-                  +{votingEffects.high.techPoints} Tech, +{votingEffects.high.ethicsPoints} Etica, +{votingEffects.high.neuralformingPoints} Neural
+                  +{votingEffects.high.techPoints} {t.scores.tech}, +{votingEffects.high.ethicsPoints} {t.cards.ethics}, +{votingEffects.high.neuralformingPoints} {t.scores.neural}
                 </span>
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="text-gray-300 ml-4">Media (&gt;50%):</span>
+                <span className="text-gray-300 ml-4">{t.cards.mediumApproval}</span>
                 <span className="text-yellow-400 font-semibold">
-                  +{votingEffects.medium.techPoints} Tech, +{votingEffects.medium.ethicsPoints} Etica, +{votingEffects.medium.neuralformingPoints} Neural
+                  +{votingEffects.medium.techPoints} {t.scores.tech}, +{votingEffects.medium.ethicsPoints} {t.cards.ethics}, +{votingEffects.medium.neuralformingPoints} {t.scores.neural}
                 </span>
               </div>
               <div className="flex items-center gap-1.5">
                 <TrendingDown className="w-3 h-3 text-red-400" />
-                <span className="text-gray-300">Bocciata (&lt;50%):</span>
+                <span className="text-gray-300">{t.cards.rejected}</span>
                 <span className="text-red-400 font-semibold">
-                  {votingEffects.low.techPoints} Tech, {votingEffects.low.ethicsPoints} Etica, {votingEffects.low.neuralformingPoints} Neural
-                  <span className="ml-1 text-xs">(legge non passa)</span>
+                  {votingEffects.low.techPoints} {t.scores.tech}, {votingEffects.low.ethicsPoints} {t.cards.ethics}, {votingEffects.low.neuralformingPoints} {t.scores.neural}
+                  <span className="ml-1 text-xs">{t.cards.lawDoesNotPass}</span>
                 </span>
               </div>
             </div>

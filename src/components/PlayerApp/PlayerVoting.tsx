@@ -95,11 +95,11 @@ export const PlayerVoting: React.FC<PlayerVotingProps> = ({
                   <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-amber-400" />
                 </div>
                 <h1 className="text-xl sm:text-2xl font-bold text-gray-100">
-                  Discutete la Proposta
+                  {t.voting.discuss}
                 </h1>
               </div>
               <p className="text-amber-300/80 text-center mb-3 text-xs sm:text-sm">
-                Parlate tra voi prima di votare!
+                {t.voting.discussHint}
               </p>
 
               {/* Countdown Timer */}
@@ -127,13 +127,13 @@ export const PlayerVoting: React.FC<PlayerVotingProps> = ({
           ) : (
             <>
               <h1 className="text-xl sm:text-2xl font-bold text-gray-100 mb-2 text-center">
-                Vota sulla Proposta
+                {t.voting.voteOnProposal}
               </h1>
             </>
           )}
 
           <p className="text-gray-300 text-center mb-4 sm:mb-5 text-sm sm:text-base">
-            <span className="font-bold text-gray-100">{proposerName}</span> ha proposto questa tecnologia
+            <span className="font-bold text-gray-100">{proposerName}</span> {t.voting.proposedTech}
           </p>
 
           {/* Technology Card */}
@@ -157,14 +157,14 @@ export const PlayerVoting: React.FC<PlayerVotingProps> = ({
                   className="w-full font-semibold py-3 sm:py-4 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg active:shadow-md flex items-center justify-center gap-2 text-sm sm:text-base bg-amber-600 hover:bg-amber-500 active:bg-amber-400 text-white"
                 >
                   <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />
-                  Pronto a Votare
+                  {t.voting.ready}
                 </button>
               ) : (
                 <div className="p-3 sm:p-4 bg-gray-800 rounded-lg border-2 border-amber-600/40">
                   <div className="flex items-center justify-center gap-2">
                     <CheckCircle2 className="w-5 h-5 text-amber-400" />
                     <p className="text-center text-amber-300 font-semibold text-sm sm:text-base">
-                      Sei pronto! In attesa degli altri...
+                      {t.voting.youAreReady}
                     </p>
                   </div>
                 </div>
@@ -174,7 +174,7 @@ export const PlayerVoting: React.FC<PlayerVotingProps> = ({
               {discussionPhase && discussionPhase.requiredCount > 0 && (
                 <div className="bg-gray-800 rounded-lg p-2.5 border border-gray-700">
                   <p className="text-center text-xs sm:text-sm text-gray-300">
-                    Pronti: <span className="font-bold text-amber-300">{discussionPhase.readyCount}</span>
+                    {t.voting.readyCount} <span className="font-bold text-amber-300">{discussionPhase.readyCount}</span>
                     <span className="text-gray-500"> / </span>
                     <span className="font-bold text-gray-200">{discussionPhase.requiredCount}</span>
                   </p>
@@ -200,10 +200,10 @@ export const PlayerVoting: React.FC<PlayerVotingProps> = ({
                     myVote ? 'text-emerald-200' : 'text-red-200'
                   }`}>
                     {myVote ? <CheckCircle2 className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
-                    {myVote ? 'Hai votato: Sì' : 'Hai votato: No'}
+                    {myVote ? t.voting.votedYesShort : t.voting.votedNoShort}
                   </p>
                   <p className="text-center text-gray-400 text-xs sm:text-sm mt-2">
-                    In attesa degli altri voti... ({totalVotes}/{requiredVotes})
+                    {t.voting.waitingOtherVotes} ({totalVotes}/{requiredVotes})
                   </p>
                   <div className="mt-2 w-full bg-gray-700 rounded-full h-2">
                     <div
@@ -221,10 +221,10 @@ export const PlayerVoting: React.FC<PlayerVotingProps> = ({
               {!hasVoted && requiredVotes > 0 && (
                 <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-gray-800 rounded-lg border-2 border-blue-600/30">
                   <p className="text-center text-blue-200 text-xs sm:text-sm font-semibold">
-                    Esprimi il tuo voto!
+                    {t.voting.expressVote}
                   </p>
                   <p className="text-center text-gray-400 text-xs mt-1">
-                    Voti ricevuti: {totalVotes}/{requiredVotes}
+                    {t.voting.votesReceived} {totalVotes}/{requiredVotes}
                   </p>
                 </div>
               )}

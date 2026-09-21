@@ -125,7 +125,6 @@ export type LandingCopy = {
     title: string;
     lead: string;
     createRoom: string;
-    donateBmc: string;
     guide: string;
     contact: string;
   };
@@ -133,6 +132,7 @@ export type LandingCopy = {
     guide: string;
     contact: string;
     donate: string;
+    by: string;
   };
   modal: {
     close: string;
@@ -147,9 +147,9 @@ export type LandingCopy = {
 };
 
 const it: LandingCopy = {
-  metaTitle: "Neuralforming — Il futuro dell'IA si decide. Non si subisce.",
+  metaTitle: 'Neuralforming — Un gioco per governare l’IA',
   metaDescription:
-    "Neuralforming: un parlamento in miniatura per governare l'IA. Attivismo civico, dibattito e voto — soprattutto con i giovani.",
+    'Neuralforming è un gioco: un parlamento in miniatura per dibattere e votare la governance dell’IA. Per classi, workshop e collettivi.',
   nav: {
     why: 'Perché',
     about: 'Il Gioco',
@@ -164,10 +164,10 @@ const it: LandingCopy = {
     menu: 'Menu',
   },
   hero: {
-    badge: "ATTIVISMO CIVICO · GOVERNANCE DELL'IA",
-    titleLead: "Il futuro dell'IA si decide.",
-    titleAccent: 'Non si subisce.',
-    lead: 'Neuralforming è un parlamento in miniatura per chi non vuole restare spettatore. Giovani, classi, collettivi: si dibatte, si vota, si sbaglia — e si impara a governare la tecnologia che già sta riscrivendo diritti, lavoro e vita pubblica.',
+    badge: 'GIOCO · GOVERNANCE DELL’IA',
+    titleLead: 'Un gioco per governare l’IA.',
+    titleAccent: 'Si dibatte. Si vota.',
+    lead: 'Neuralforming è un parlamento in miniatura. Ogni giocatore è un partito: propone tecnologie, affronta dilemmi etici e porta le proprie leggi al voto. Classi, workshop, collettivi: si impara a governare una tecnologia che già riscrive diritti, lavoro e vita pubblica.',
     playMulti: 'Gioca in Multiplayer',
     donate: 'Dona',
     players: 'Giocatori realtime',
@@ -178,24 +178,24 @@ const it: LandingCopy = {
   why: {
     kicker: 'Il manifesto',
     title: 'Perché un gioco, e perché adesso',
-    lead: "L'Intelligenza Artificiale non è un tema da convegno. Sta già decidendo chi viene assunto, cosa vediamo, come si insegna, chi viene sorvegliato. Se chi cresce dentro questa infrastruttura non impara a discuterla, la governerà qualcun altro — in silenzio.",
-    quote: '«Il futuro non è uno spettacolo. È un voto.»',
+    lead: 'L’intelligenza artificiale decide già chi viene assunto, cosa vediamo, come si insegna, chi viene sorvegliato. Chi cresce dentro questa infrastruttura deve imparare a discuterla, altrimenti la governerà qualcun altro — in silenzio.',
+    quote: '«Il futuro è un voto.»',
     politicalTitle: 'Perché l’IA è politica',
     politicalDesc:
-      'Ogni algoritmo incorpora valori: efficienza contro equità, sicurezza contro libertà, profitto contro cura. Non sono bug da patchare in seguito. Sono scelte. Neuralforming le rende visibili e votabili.',
+      'Ogni algoritmo incorpora valori: efficienza o equità, sicurezza o libertà, profitto o cura. Sono scelte. Neuralforming le rende visibili e votabili.',
     gameTitle: 'Perché è un gioco',
     gameDesc:
-      'L’attivismo ha bisogno di palestre, non solo di manifesti. Un gioco costringe a prendere posizione, a perdere, a allearsi. È pratica democratica: il contrario di una lezione in cui si ascolta e si dimentica.',
+      'L’attivismo ha bisogno di palestre. Un gioco costringe a prendere posizione, a perdere, a allearsi. È pratica democratica: si impara al tavolo di un voto.',
     youthTitle: 'Perché i giovani',
     youthDesc:
-      'Sono la generazione che vivrà più a lungo con queste macchine. Coinvolgerli non è “didattica innovativa”: è non escluderli dalle decisioni che formeranno il loro spazio pubblico. Chi si allena a decidere oggi non sarà spettatore domani.',
+      'Sono la generazione che vivrà più a lungo con queste macchine. Coinvolgerli è farli entrare nelle decisioni che formeranno il loro spazio pubblico. Chi si allena a decidere oggi sarà pronto a governare.',
     closerBefore:
-      'Neuralforming esiste perché il potere sull’IA non deve restare a chi la costruisce. Una classe che vota una legge sull’automazione, un workshop che dibatte la sorveglianza: sono già atti civici. Il gioco è lo strumento. L’obiettivo è una generazione che sa dire',
+      'Neuralforming esiste perché il potere sull’IA va esercitato in pubblico. Una classe che vota una legge sull’automazione, un workshop che dibatte la sorveglianza: sono già atti civici. Il gioco è lo strumento. L’obiettivo è una generazione che sa dire',
     closerNo: 'no',
     closerYes: 'sì',
     closerAnd: 'e',
     closerDepends: 'dipende',
-    closerAfter: '— con argomenti, non con slogan.',
+    closerAfter: '— con argomenti.',
   },
   about: {
     kicker: 'Obiettivo',
@@ -241,7 +241,7 @@ const it: LandingCopy = {
     recommended: 'Consigliato',
     classTitle: 'In classe, multiplayer',
     classDesc:
-      'Trasforma la classe in un parlamento. Un computer è il tabellone; ogni studente entra dal telefono, dibatte e vota. Nessuna registrazione: solo pratica civica.',
+      'Trasforma la classe in un parlamento. Un computer è il tabellone; ogni studente entra dal telefono, dibatte e vota.',
     classBullet1: 'Master + 2–5 smartphone',
     classBullet2: 'Dibattito e voto parlamentare',
     classCta: 'Avvia stanza cloud',
@@ -268,7 +268,7 @@ const it: LandingCopy = {
   roadmap: {
     kicker: 'Dove stiamo andando',
     title: 'Roadmap',
-    lead: 'Neuralforming è un progetto vivo. Questa è la direzione, non una promessa di date.',
+    lead: 'Neuralforming è un progetto vivo. Questa è la direzione di lavoro.',
     now: 'Ora',
     next: 'Prossimo',
     later: 'Oltre',
@@ -297,7 +297,6 @@ const it: LandingCopy = {
     title: 'Apri un parlamento. Oggi.',
     lead: 'Una classe, un workshop, un collettivo: il primo atto è votare. Se credi che questo strumento debba restare libero e senza pubblicità, sostienilo.',
     createRoom: 'Crea stanza multiplayer',
-    donateBmc: 'Dona su Buy Me a Coffee',
     guide: 'Guida al gioco',
     contact: 'Contatti',
   },
@@ -305,6 +304,7 @@ const it: LandingCopy = {
     guide: 'Guida',
     contact: 'Contatti',
     donate: 'Dona',
+    by: 'Un progetto di',
   },
   modal: {
     close: 'Chiudi',
@@ -319,9 +319,9 @@ const it: LandingCopy = {
 };
 
 const en: LandingCopy = {
-  metaTitle: 'Neuralforming — The future of AI is decided. Not endured.',
+  metaTitle: 'Neuralforming — A game for governing AI',
   metaDescription:
-    'Neuralforming: a miniature parliament for governing AI. Civic activism, debate and voting — especially with young people.',
+    'Neuralforming is a game: a miniature parliament for debating and voting on AI governance. For classrooms, workshops and collectives.',
   nav: {
     why: 'Why',
     about: 'The Game',
@@ -336,10 +336,10 @@ const en: LandingCopy = {
     menu: 'Menu',
   },
   hero: {
-    badge: 'CIVIC ACTIVISM · AI GOVERNANCE',
-    titleLead: 'The future of AI is decided.',
-    titleAccent: 'Not endured.',
-    lead: 'Neuralforming is a miniature parliament for people who refuse to stay spectators. Young people, classrooms, collectives: you debate, you vote, you get it wrong — and you learn to govern the technology already rewriting rights, work and public life.',
+    badge: 'GAME · AI GOVERNANCE',
+    titleLead: 'A game for governing AI.',
+    titleAccent: 'You debate. You vote.',
+    lead: 'Neuralforming is a miniature parliament. Each player is a party: you propose technologies, face ethical dilemmas and take your bills to a vote. Classrooms, workshops, collectives: you learn to govern a technology that is already rewriting rights, work and public life.',
     playMulti: 'Play multiplayer',
     donate: 'Donate',
     players: 'Realtime players',
@@ -350,24 +350,24 @@ const en: LandingCopy = {
   why: {
     kicker: 'The manifesto',
     title: 'Why a game, and why now',
-    lead: 'Artificial intelligence is not a conference topic. It already decides who gets hired, what we see, how we teach, who is watched. If the generation growing up inside this infrastructure never learns to argue with it, someone else will govern it — quietly.',
-    quote: '“The future is not a spectacle. It is a vote.”',
+    lead: 'Artificial intelligence already decides who gets hired, what we see, how we teach, who is watched. The generation growing up inside this infrastructure needs to learn to argue with it, or someone else will govern it — quietly.',
+    quote: '“The future is a vote.”',
     politicalTitle: 'Why AI is political',
     politicalDesc:
-      'Every algorithm encodes values: efficiency against equity, security against freedom, profit against care. These are not bugs to patch later. They are choices. Neuralforming makes them visible — and votable.',
+      'Every algorithm encodes values: efficiency or equity, security or freedom, profit or care. These are choices. Neuralforming makes them visible — and votable.',
     gameTitle: 'Why a game',
     gameDesc:
-      'Activism needs training grounds, not only manifestos. A game forces you to take a side, to lose, to form alliances. It is democratic practice: the opposite of a lecture you hear and forget.',
+      'Activism needs training grounds. A game forces you to take a side, to lose, to form alliances. It is democratic practice: you learn at the table of a vote.',
     youthTitle: 'Why young people',
     youthDesc:
-      'They are the generation that will live longest with these machines. Involving them is not “innovative teaching”: it is not excluding them from the decisions that will shape their public space. Whoever trains in deciding today will not be a spectator tomorrow.',
+      'They are the generation that will live longest with these machines. Involving them means bringing them into the decisions that will shape their public space. Whoever trains in deciding today will be ready to govern.',
     closerBefore:
-      'Neuralforming exists because power over AI must not stay with those who build it. A class voting on an automation bill, a workshop debating surveillance: those are already civic acts. The game is the tool. The aim is a generation that can say',
+      'Neuralforming exists because power over AI belongs in public. A class voting on an automation bill, a workshop debating surveillance: those are already civic acts. The game is the tool. The aim is a generation that can say',
     closerNo: 'no',
     closerYes: 'yes',
     closerAnd: 'and',
     closerDepends: 'it depends',
-    closerAfter: '— with arguments, not slogans.',
+    closerAfter: '— with arguments.',
   },
   about: {
     kicker: 'Objective',
@@ -413,7 +413,7 @@ const en: LandingCopy = {
     recommended: 'Recommended',
     classTitle: 'In class, multiplayer',
     classDesc:
-      'Turn the classroom into a parliament. One computer is the board; each student joins from their phone, debates and votes. No sign-up: civic practice only.',
+      'Turn the classroom into a parliament. One computer is the board; each student joins from their phone, debates and votes.',
     classBullet1: 'Master + 2–5 phones',
     classBullet2: 'Debate and parliamentary vote',
     classCta: 'Start a cloud room',
@@ -457,12 +457,12 @@ const en: LandingCopy = {
         a: 'Yes. The project is open source (AGPL-3.0): you can install it locally or on a school server with Node.js or Docker. The code and instructions are on the GitHub repository.',
       },
       {
-        q: 'Why a game, and not a course on AI?',
-        a: 'Because governance is not learned by listening: it is learned by deciding, losing a vote, negotiating with people who disagree. The game is the political device. The course can come after.',
+        q: 'Why a game on AI?',
+        a: 'Governance is learned by deciding, losing a vote, negotiating with people who disagree. The game is the political device. A course can come after.',
       },
       {
         q: 'What age or subject is it for?',
-        a: 'It works well in high schools, universities and civic workshops on AI ethics, civic education, computer science and philosophy. No programming skills are required: debate and voting are.',
+        a: 'It works well in high schools, universities and civic workshops on AI ethics, civic education, computer science and philosophy. You play through debate and voting, including if you cannot code.',
       },
       {
         q: 'How can I support the project?',
@@ -473,7 +473,7 @@ const en: LandingCopy = {
   roadmap: {
     kicker: 'Where we are going',
     title: 'Roadmap',
-    lead: 'Neuralforming is a living project. This is the direction, not a promise of dates.',
+    lead: 'Neuralforming is a living project. This is the working direction.',
     now: 'Now',
     next: 'Next',
     later: 'Beyond',
@@ -502,7 +502,6 @@ const en: LandingCopy = {
     title: 'Open a parliament. Today.',
     lead: 'A class, a workshop, a collective: the first act is to vote. If you believe this tool should stay free and without ads, support it.',
     createRoom: 'Create a multiplayer room',
-    donateBmc: 'Donate on Buy Me a Coffee',
     guide: 'Game guide',
     contact: 'Contact',
   },
@@ -510,6 +509,7 @@ const en: LandingCopy = {
     guide: 'Guide',
     contact: 'Contact',
     donate: 'Donate',
+    by: 'A project by',
   },
   modal: {
     close: 'Close',

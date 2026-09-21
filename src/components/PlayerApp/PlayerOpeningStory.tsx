@@ -1,5 +1,6 @@
 import { Sparkles, Check, Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 
 interface OpeningStory {
   id: string;
@@ -43,6 +44,7 @@ const getMoodGradient = (mood: string) => {
 };
 
 export const PlayerOpeningStory = ({ story, readyCount, totalPlayers, onReady }: PlayerOpeningStoryProps) => {
+  const { t } = useGameCopy();
   const [isVisible, setIsVisible] = useState(false);
   const [isReady, setIsReady] = useState(false);
 
@@ -91,7 +93,7 @@ export const PlayerOpeningStory = ({ story, readyCount, totalPlayers, onReady }:
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-1.5">
                   <Users className="w-3.5 h-3.5 text-white/70" />
-                  <span className="text-white/70 text-xs">Giocatori pronti</span>
+                  <span className="text-white/70 text-xs">{t.opening.playersReady}</span>
                 </div>
                 <span className="text-white font-semibold text-sm">
                   {readyCount}/{totalPlayers}
@@ -120,10 +122,10 @@ export const PlayerOpeningStory = ({ story, readyCount, totalPlayers, onReady }:
               {isReady ? (
                 <>
                   <Check className="w-5 h-5" />
-                  Pronto!
+                  {t.opening.readyDone}
                 </>
               ) : (
-                'Sono Pronto'
+                t.opening.imReady
               )}
             </button>
           </div>

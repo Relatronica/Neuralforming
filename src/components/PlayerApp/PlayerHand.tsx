@@ -217,10 +217,10 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
                     </div>
                     <div>
                       <h2 className="text-base sm:text-lg font-bold text-gray-100">
-                        Turno di {currentPlayerName}
+                        {t.game.turnOf(currentPlayerName)}
                       </h2>
                       <p className="text-gray-400 text-xs">
-                        Fase: {gameState.currentPhase === 'development' ? t.phases.development : gameState.currentPhase === 'dilemma' ? t.phases.dilemma : gameState.currentPhase === 'consequence' ? t.phases.consequence : gameState.currentPhase}
+                        {t.phases.phase}: {gameState.currentPhase === 'development' ? t.phases.development : gameState.currentPhase === 'dilemma' ? t.phases.dilemma : gameState.currentPhase === 'consequence' ? t.phases.consequence : gameState.currentPhase}
                       </p>
                     </div>
                   </div>
@@ -454,7 +454,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
               <div className="bg-gray-900 rounded-xl shadow-2xl p-6 sm:p-8 text-center border border-gray-700">
                 <Target className="w-12 h-12 mx-auto mb-4 text-gray-500" />
                 <p className="text-gray-300 text-sm sm:text-base mb-2">Nessun obiettivo assegnato</p>
-                <p className="text-gray-400 text-xs sm:text-sm">Un obiettivo verrà assegnato all'inizio della partita</p>
+                <p className="text-gray-400 text-xs sm:text-sm">{t.status.objectiveAssignedLater}</p>
               </div>
             ) : (() => {
               const objective = Objectives.getObjectiveById(player.objectiveId);

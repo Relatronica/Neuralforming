@@ -1,6 +1,7 @@
 import React from 'react';
 import { Consequence } from '../../game/types';
 import { ArrowUp, ArrowDown, Microscope, Scale, Brain, AlertTriangle, CheckCircle2, BarChart3 } from 'lucide-react';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 
 interface ConsequenceCardProps {
   consequence: Consequence;
@@ -9,6 +10,8 @@ interface ConsequenceCardProps {
 }
 
 export const ConsequenceCard: React.FC<ConsequenceCardProps> = ({ consequence, onContinue, isInteractive = true }) => {
+  const { t } = useGameCopy();
+
   // Crea array di effetti con icone e frecce invece di numeri
   const effects = [];
   if (consequence.effect.techPoints) {
@@ -66,7 +69,7 @@ export const ConsequenceCard: React.FC<ConsequenceCardProps> = ({ consequence, o
               ? 'bg-green-600/30 text-green-200 border-green-500/50'
               : 'bg-gray-600/30 text-gray-200 border-gray-500/50'
           }`}>
-            CONSEGUENZA
+            {t.cards.consequence}
           </span>
           <h2 className={`font-bold text-gray-100 break-words mt-1 ${isPWA ? 'text-lg sm:text-xl' : 'text-base line-clamp-2'}`}>
             {consequence.title}
@@ -89,7 +92,7 @@ export const ConsequenceCard: React.FC<ConsequenceCardProps> = ({ consequence, o
       
       {effects.length > 0 && (
         <div className="bg-gray-800 rounded-lg p-3 sm:p-4 mb-3 sm:mb-4 border border-gray-600">
-          <p className={`font-semibold text-gray-200 mb-2 ${isPWA ? 'text-xs sm:text-sm' : 'text-[10px]'}`}>Effetti:</p>
+          <p className={`font-semibold text-gray-200 mb-2 ${isPWA ? 'text-xs sm:text-sm' : 'text-[10px]'}`}>{t.cards.effects}</p>
           <div className="flex flex-wrap gap-2 sm:gap-3">
             {effects.map((effect, index) => {
               const Icon = effect.type === 'tech' ? Microscope : effect.type === 'ethics' ? Scale : Brain;
@@ -105,7 +108,7 @@ export const ConsequenceCard: React.FC<ConsequenceCardProps> = ({ consequence, o
                 <div
                   key={index}
                   className={`${bgClass} ${colorClass} rounded-lg px-3 py-2 flex items-center gap-2 group relative border border-gray-600`}
-                  title={`${effect.type === 'tech' ? 'Tech' : effect.type === 'ethics' ? 'Etica' : 'Neural'}: ${effect.isPositive ? '+' : ''}${effect.value}`}
+                  title={`${effect.type === 'tech' ? t.scores.tech : effect.type === 'ethics' ? t.cards.ethics : t.scores.neural}: ${effect.isPositive ? '+' : ''}${effect.value}`}
                 >
                   <Icon className={`${isPWA ? 'w-5 h-5 sm:w-6 sm:h-6' : 'w-4 h-4'}`} />
                   <ArrowIcon className={`${isPWA ? 'w-4 h-4 sm:w-5 sm:h-5' : 'w-3 h-3'}`} />
@@ -128,7 +131,7 @@ export const ConsequenceCard: React.FC<ConsequenceCardProps> = ({ consequence, o
             : 'bg-gray-800 text-gray-500 cursor-not-allowed opacity-60'
         }`}
       >
-        Continua
+        {t.common.continue}
       </button>
     </div>
   );

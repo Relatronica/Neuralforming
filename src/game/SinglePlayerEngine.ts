@@ -189,7 +189,7 @@ export class SinglePlayerEngine {
       const historyEntry: DecisionHistoryEntry = {
         turn: state.turn,
         type: 'technology',
-        title: `${technology.name} (RESPINTA)`,
+        title: `${technology.name} ${gameT(getSessionLocale()).game.rejectedSuffix}`,
         opinionChange: reaction.change,
         pointsGained: penaltyPoints,
       };

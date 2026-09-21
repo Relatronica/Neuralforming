@@ -32,6 +32,7 @@ import {
 import { HeroBackdrop } from './HeroBackdrop';
 import { NeuralformingMark } from '../Brand/NeuralformingMark';
 import { LangSwitch } from '../Brand/LangSwitch';
+import { SiteCredit } from '../Brand/SiteCredit';
 import { useLandingCopy } from '../../lib/i18n/useLandingCopy';
 
 const BMC_URL = 'https://buymeacoffee.com/relatronica';
@@ -240,7 +241,7 @@ export const LandingPage = ({
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-extrabold tracking-tight leading-[1.1] text-gray-100">
             {t.hero.titleLead}{' '}
-            <span className="bg-gradient-to-r from-tech-cyan via-neural-light to-ethics-amber bg-clip-text text-transparent">
+            <span className="whitespace-nowrap bg-gradient-to-r from-tech-cyan via-neural-light to-ethics-amber bg-clip-text text-transparent">
               {t.hero.titleAccent}
             </span>
           </h1>
@@ -728,7 +729,7 @@ export const LandingPage = ({
                 className="inline-flex items-center justify-center gap-2 glass-panel text-ethics-amber font-heading font-semibold py-3.5 px-8 rounded-xl border border-ethics-amber/30 hover:border-ethics-amber/60 transition-all duration-200 hover:-translate-y-0.5"
               >
                 <Coffee className="w-5 h-5" />
-                {t.cta.donateBmc}
+                {t.hero.donate}
               </a>
             </div>
 
@@ -768,7 +769,12 @@ export const LandingPage = ({
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3">
               <NeuralformingMark className="w-7 h-7" />
-              <span className="font-heading font-semibold text-gray-300">Neuralforming</span>
+              <div className="leading-tight">
+                <span className="font-heading font-semibold text-gray-300">Neuralforming</span>
+                <p className="text-xs text-gray-600 mt-0.5">
+                  <SiteCredit prefix={t.footer.by} />
+                </p>
+              </div>
             </div>
 
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-gray-500">

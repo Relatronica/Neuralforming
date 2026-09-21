@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Dilemma } from '../../game/types';
 import { DilemmaCard } from '../Cards/DilemmaCard';
 import { Scale, Clock, CheckCircle2, MessageCircle } from 'lucide-react';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 import { HeaderNewsTicker } from '../Game/HeaderNewsTicker';
 
 interface PlayerDilemmaVotingProps {
@@ -38,6 +39,7 @@ export const PlayerDilemmaVoting: React.FC<PlayerDilemmaVotingProps> = ({
   onVote,
   onReadyToVote,
 }) => {
+  const { t } = useGameCopy();
   const hasVoted = dilemmaVoteStatus?.hasVoted ?? false;
   const myOptionIndex = dilemmaVoteStatus?.myOptionIndex ?? null;
   const totalVotes = dilemmaVoteStatus?.totalVotes ?? 0;
@@ -88,12 +90,12 @@ export const PlayerDilemmaVoting: React.FC<PlayerDilemmaVotingProps> = ({
           <div className="flex items-center gap-2 mb-3">
             <Scale className="w-5 h-5 sm:w-6 sm:h-6 text-amber-400 flex-shrink-0" />
             <h1 className="text-xl sm:text-2xl font-bold text-gray-100">
-              Dilemma Etico
+              {t.dilemma.title}
             </h1>
           </div>
 
           <p className="text-gray-300 text-center mb-3 text-sm sm:text-base">
-            Il turno di <span className="font-bold text-gray-100">{currentPlayerName}</span> — Tutti votano!
+            {t.dilemma.allVote(currentPlayerName)}
           </p>
 
           {/* Discussion Phase Header */}
@@ -104,11 +106,11 @@ export const PlayerDilemmaVoting: React.FC<PlayerDilemmaVotingProps> = ({
                   <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6 text-amber-400" />
                 </div>
                 <p className="text-lg sm:text-xl font-bold text-gray-100">
-                  Discutete il Dilemma
+                  {t.dilemma.discussTitle}
                 </p>
               </div>
               <p className="text-amber-300/80 text-center mb-3 text-xs sm:text-sm">
-                Parlate tra voi e cercate di convincere gli altri!
+                {t.dilemma.discussHint}
               </p>
 
               {/* Countdown Timer */}
@@ -165,10 +167,10 @@ export const PlayerDilemmaVoting: React.FC<PlayerDilemmaVotingProps> = ({
               <p className={`text-center text-xs sm:text-sm font-semibold ${
                 hasVoted ? 'text-amber-200' : 'text-blue-200'
               }`}>
-                {hasVoted ? 'Hai votato! In attesa degli altri...' : 'Clicca su un\'opzione per votare'}
+                {hasVoted ? t.dilemma.votedWait : t.dilemma.clickToVote}
               </p>
               <div className="flex items-center justify-center gap-1 mt-1">
-                <span className="text-xs text-gray-400">Voti:</span>
+                <span className="text-xs text-gray-400">{t.voting.votes}:</span>
                 <span className="font-bold text-amber-300 text-xs">{totalVotes}</span>
                 <span className="text-gray-500 text-xs">/</span>
                 <span className="font-bold text-gray-200 text-xs">{requiredVotes}</span>
@@ -195,14 +197,14 @@ export const PlayerDilemmaVoting: React.FC<PlayerDilemmaVotingProps> = ({
                   className="w-full font-semibold py-3 sm:py-4 px-6 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg active:shadow-md flex items-center justify-center gap-2 text-sm sm:text-base bg-amber-600 hover:bg-amber-500 active:bg-amber-400 text-white"
                 >
                   <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6" />
-                  Pronto a Votare
+                  {t.voting.ready}
                 </button>
               ) : (
                 <div className="p-3 sm:p-4 bg-gray-800 rounded-lg border-2 border-amber-600/40">
                   <div className="flex items-center justify-center gap-2">
                     <CheckCircle2 className="w-5 h-5 text-amber-400" />
                     <p className="text-center text-amber-300 font-semibold text-sm sm:text-base">
-                      Sei pronto! In attesa degli altri...
+                      {t.voting.youAreReady}
                     </p>
                   </div>
                 </div>
@@ -212,7 +214,7 @@ export const PlayerDilemmaVoting: React.FC<PlayerDilemmaVotingProps> = ({
               {dilemmaDiscussionPhase && dilemmaDiscussionPhase.requiredCount > 0 && (
                 <div className="bg-gray-800 rounded-lg p-2.5 border border-gray-700">
                   <p className="text-center text-xs sm:text-sm text-gray-300">
-                    Pronti: <span className="font-bold text-amber-300">{dilemmaDiscussionPhase.readyCount}</span>
+                    {t.voting.readyCount} <span className="font-bold text-amber-300">{dilemmaDiscussionPhase.readyCount}</span>
                     <span className="text-gray-500"> / </span>
                     <span className="font-bold text-gray-200">{dilemmaDiscussionPhase.requiredCount}</span>
                   </p>
@@ -231,7 +233,7 @@ export const PlayerDilemmaVoting: React.FC<PlayerDilemmaVotingProps> = ({
           {isInDiscussion && (
             <div className="mt-2 text-center">
               <p className="text-xs text-gray-500 italic">
-                Leggi le opzioni qui sopra e discuti con gli altri giocatori
+                {t.dilemma.discussNote}
               </p>
             </div>
           )}

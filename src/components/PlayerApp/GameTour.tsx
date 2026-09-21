@@ -22,7 +22,7 @@ export const GameTour: React.FC<GameTourProps> = ({
       <div>
         <h3 className="text-lg font-bold text-gray-100 mb-2">{t.tour.newsTitle}</h3>
         <p className="text-gray-300 text-sm">
-          Le notizie mostrano eventi che influenzano il gioco. Puoi chiuderle temporaneamente, ma torneranno quando necessario.
+          {t.tour.newsBody}
         </p>
       </div>
     ),
@@ -47,9 +47,9 @@ export const GameTour: React.FC<GameTourProps> = ({
       target: '[data-tour="menu"]',
       content: (
         <div>
-          <h3 className="text-lg font-bold text-gray-100 mb-2">Menu di Gioco</h3>
+          <h3 className="text-lg font-bold text-gray-100 mb-2">{t.tour.menuTitle}</h3>
           <p className="text-gray-300 text-sm">
-            Da qui puoi accedere alle opzioni del gioco, incluso il pulsante per iniziare una nuova partita.
+            {t.tour.menuBody}
           </p>
         </div>
       ),
@@ -60,15 +60,15 @@ export const GameTour: React.FC<GameTourProps> = ({
       target: '[data-tour="tabs"]',
       content: (
         <div>
-          <h3 className="text-lg font-bold text-gray-100 mb-2">Le Tue Sezioni</h3>
+          <h3 className="text-lg font-bold text-gray-100 mb-2">{t.tour.sectionsTitle}</h3>
           <p className="text-gray-300 text-sm mb-2">
-            Hai 4 sezioni principali:
+            {t.tour.sectionsLead}
           </p>
           <ul className="text-gray-300 text-sm list-disc list-inside space-y-1">
-            <li><strong>Proposte:</strong> Le carte tecnologia nella tua mano</li>
-            <li><strong>Leggi:</strong> Le tecnologie che hai fatto approvare</li>
-            <li><strong>Milestone:</strong> Abilità speciali sbloccate</li>
-            <li><strong>Obiettivo:</strong> La tua missione segreta per vincere</li>
+            <li>{t.tour.sectionsProposals}</li>
+            <li>{t.tour.sectionsLaws}</li>
+            <li>{t.tour.sectionsMilestones}</li>
+            <li>{t.tour.sectionsObjective}</li>
           </ul>
         </div>
       ),
@@ -80,8 +80,7 @@ export const GameTour: React.FC<GameTourProps> = ({
         <div>
           <h3 className="text-lg font-bold text-gray-100 mb-2">{t.tour.objectiveTitle}</h3>
           <p className="text-gray-300 text-sm">
-            Ogni giocatore ha un obiettivo segreto. Raggiungilo per vincere la partita!
-            Controlla spesso questa sezione per vedere i tuoi progressi.
+            {t.tour.objectiveBody}
           </p>
         </div>
       ),
@@ -91,10 +90,9 @@ export const GameTour: React.FC<GameTourProps> = ({
       target: '[data-tour="hand-tab"]',
       content: (
         <div>
-          <h3 className="text-lg font-bold text-gray-100 mb-2">Le Tue Proposte</h3>
+          <h3 className="text-lg font-bold text-gray-100 mb-2">{t.tour.proposalsTitle}</h3>
           <p className="text-gray-300 text-sm">
-            Qui vedi le carte tecnologia nella tua mano. Quando è il tuo turno, puoi proporre una tecnologia
-            cliccando su una carta. Le altre carte mostrano i punti che guadagnerai se approvate.
+            {t.tour.proposalsBody}
           </p>
         </div>
       ),
@@ -104,10 +102,9 @@ export const GameTour: React.FC<GameTourProps> = ({
       target: '[data-tour="draw-button"]',
       content: (
         <div>
-          <h3 className="text-lg font-bold text-gray-100 mb-2">Pesca Nuove Carte</h3>
+          <h3 className="text-lg font-bold text-gray-100 mb-2">{t.tour.drawTitle}</h3>
           <p className="text-gray-300 text-sm">
-            Usa questo pulsante per pescare una nuova carta tecnologia dal mazzo.
-            Puoi pescare una carta per turno quando è il tuo momento di giocare.
+            {t.tour.drawBody}
           </p>
         </div>
       ),
@@ -120,8 +117,7 @@ export const GameTour: React.FC<GameTourProps> = ({
         <div>
           <h3 className="text-lg font-bold text-gray-100 mb-2">{t.tour.lawsTitle}</h3>
           <p className="text-gray-300 text-sm">
-            Quando una tecnologia viene approvata dalla maggioranza dei giocatori, diventa una legge.
-            Le leggi approvate ti danno punti permanenti e contano per il tuo obiettivo.
+            {t.tour.lawsBody}
           </p>
         </div>
       ),
@@ -133,8 +129,7 @@ export const GameTour: React.FC<GameTourProps> = ({
         <div>
           <h3 className="text-lg font-bold text-gray-100 mb-2">{t.tour.milestonesTitle}</h3>
           <p className="text-gray-300 text-sm">
-            Raggiungendo certi traguardi, sblocchi milestone che ti danno abilità speciali.
-            Queste abilità possono cambiare le regole del gioco a tuo favore!
+            {t.tour.milestonesBody}
           </p>
         </div>
       ),
@@ -144,19 +139,15 @@ export const GameTour: React.FC<GameTourProps> = ({
       target: 'body',
       content: (
         <div>
-          <h3 className="text-lg font-bold text-gray-100 mb-2">Come Funziona il Gioco</h3>
+          <h3 className="text-lg font-bold text-gray-100 mb-2">{t.tour.howTitle}</h3>
           <p className="text-gray-300 text-sm mb-2">
-            <strong>Fase di Sviluppo:</strong> Quando è il tuo turno, puoi proporre una tecnologia dalla tua mano.
-            Gli altri giocatori voteranno su di essa.
+            {t.tour.howDev}
           </p>
           <p className="text-gray-300 text-sm mb-2">
-            <strong>Votazione:</strong> Quando qualcuno propone una tecnologia, tutti votano Sì o No.
-            Ogni voto ha conseguenze sui tuoi punti: votare SÌ su una legge approvata ti dà bonus, 
-            mentre votare NO può darti penalità se la legge passa comunque.
+            {t.tour.howVote}
           </p>
           <p className="text-gray-300 text-sm">
-            <strong>Dilemmi:</strong> A volte dovrai affrontare dilemmi etici che influenzano i tuoi punti.
-            Scegli saggiamente!
+            {t.tour.howDilemma}
           </p>
         </div>
       ),

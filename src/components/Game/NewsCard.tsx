@@ -1,13 +1,66 @@
 import React, { useEffect, useState } from 'react';
 import { SocietyNews } from '../../game/types';
 import { Newspaper, TrendingUp, AlertTriangle, Sparkles, Zap, X } from 'lucide-react';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
+import type { GameCopy } from '../../lib/i18n/game';
 
 interface NewsCardProps {
   news: SocietyNews;
   onDismiss: () => void;
 }
 
+const getNewsStyle = (category: string, t: GameCopy) => {
+  switch (category) {
+    case 'tech':
+      return {
+        bg: 'bg-gray-800',
+        border: 'border-blue-600',
+        text: 'text-gray-200',
+        icon: Zap,
+        iconColor: 'text-blue-400',
+        title: t.news.tech,
+      };
+    case 'ethics':
+      return {
+        bg: 'bg-gray-800',
+        border: 'border-green-600',
+        text: 'text-gray-200',
+        icon: Sparkles,
+        iconColor: 'text-green-400',
+        title: t.news.ethics,
+      };
+    case 'breakthrough':
+      return {
+        bg: 'bg-gray-800',
+        border: 'border-purple-600',
+        text: 'text-gray-200',
+        icon: TrendingUp,
+        iconColor: 'text-purple-400',
+        title: t.news.breakthrough,
+      };
+    case 'crisis':
+      return {
+        bg: 'bg-gray-800',
+        border: 'border-red-600',
+        text: 'text-gray-200',
+        icon: AlertTriangle,
+        iconColor: 'text-red-400',
+        title: t.news.crisis,
+      };
+    default:
+      return {
+        bg: 'bg-gray-800',
+        border: 'border-gray-600',
+        text: 'text-gray-200',
+        icon: Newspaper,
+        iconColor: 'text-gray-400',
+        title: t.news.generic,
+      };
+  }
+};
+
 export const NewsCard: React.FC<NewsCardProps> = ({ news, onDismiss }) => {
+  const { t } = useGameCopy();
   const [timeLeft, setTimeLeft] = useState(20);
 
   useEffect(() => {
@@ -23,79 +76,29 @@ export const NewsCard: React.FC<NewsCardProps> = ({ news, onDismiss }) => {
 
     return () => clearInterval(timer);
   }, [onDismiss]);
-  // Determina lo stile in base alla categoria
-  const getNewsStyle = (category: string) => {
-    switch (category) {
-      case 'tech':
-        return {
-          bg: 'bg-gray-800',
-          border: 'border-blue-600',
-          text: 'text-gray-200',
-          icon: Zap,
-          iconColor: 'text-blue-400',
-          title: 'Notizie Tecnologiche',
-        };
-      case 'ethics':
-        return {
-          bg: 'bg-gray-800',
-          border: 'border-green-600',
-          text: 'text-gray-200',
-          icon: Sparkles,
-          iconColor: 'text-green-400',
-          title: 'Notizie Etiche',
-        };
-      case 'breakthrough':
-        return {
-          bg: 'bg-gray-800',
-          border: 'border-purple-600',
-          text: 'text-gray-200',
-          icon: TrendingUp,
-          iconColor: 'text-purple-400',
-          title: 'Breakthrough',
-        };
-      case 'crisis':
-        return {
-          bg: 'bg-gray-800',
-          border: 'border-red-600',
-          text: 'text-gray-200',
-          icon: AlertTriangle,
-          iconColor: 'text-red-400',
-          title: 'Crisi',
-        };
-      default:
-        return {
-          bg: 'bg-gray-800',
-          border: 'border-gray-600',
-          text: 'text-gray-200',
-          icon: Newspaper,
-          iconColor: 'text-gray-400',
-          title: 'Notizie',
-        };
-    }
-  };
 
-  const style = getNewsStyle(news.category);
+  const style = getNewsStyle(news.category, t);
   const Icon = style.icon;
 
   // Calcola gli effetti della news
   const effects = [];
   if (news.effect.techPoints) {
     effects.push({
-      type: 'Tech',
+      type: t.scores.tech,
       value: news.effect.techPoints,
       isPositive: news.effect.techPoints > 0,
     });
   }
   if (news.effect.ethicsPoints) {
     effects.push({
-      type: 'Etica',
+      type: t.scores.ethics,
       value: news.effect.ethicsPoints,
       isPositive: news.effect.ethicsPoints > 0,
     });
   }
   if (news.effect.neuralformingPoints) {
     effects.push({
-      type: 'Neural',
+      type: t.scores.neural,
       value: news.effect.neuralformingPoints,
       isPositive: news.effect.neuralformingPoints > 0,
     });
@@ -124,7 +127,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({ news, onDismiss }) => {
               <button
                 onClick={onDismiss}
                 className={`${style.text} hover:opacity-70 hover:bg-gray-700 rounded-full p-1 sm:p-2 transition-all duration-200`}
-                aria-label="Chiudi"
+                aria-label={t.common.close}
               >
                 <X className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
@@ -136,7 +139,7 @@ export const NewsCard: React.FC<NewsCardProps> = ({ news, onDismiss }) => {
           {effects.length > 0 && (
             <div className={`mt-3 pt-3 border-t-2 ${style.border} bg-gray-700 bg-opacity-30 rounded-lg p-2 sm:p-3`}>
               <p className={`${style.text} text-xs sm:text-sm font-semibold mb-1`}>
-                Effetti sulla società:
+                {t.news.societyEffects}
               </p>
               <div className="flex flex-wrap gap-2">
                 {effects.map((effect, index) => (
@@ -154,10 +157,10 @@ export const NewsCard: React.FC<NewsCardProps> = ({ news, onDismiss }) => {
               </div>
               <p className={`${style.text} text-xs mt-2`}>
                 {news.targets === 'all' 
-                  ? 'Questo evento ha influenzato tutti i partiti.' 
+                  ? t.news.affectedAll
                   : news.targets === 'current'
-                  ? 'Questo evento ha influenzato solo il giocatore corrente.'
-                  : 'Questo evento ha influenzato gli altri partiti.'}
+                  ? t.news.affectedCurrent
+                  : t.news.affectedOthers}
               </p>
             </div>
           )}

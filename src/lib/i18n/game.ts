@@ -128,6 +128,45 @@ export type GameCopy = {
     rejected: string;
     approvedLandslide: string;
     approved: string;
+    proposalInVote: string;
+    aPlayer: string;
+    proposedTech: string;
+    youAreReady: string;
+    readyCount: string;
+    playersDiscussYours: string;
+    playersDiscuss: string;
+    votePrompt: string;
+    votesUnit: string;
+    votingOnYours: string;
+    inProgress: string;
+    discussHint: string;
+    voteOnProposal: string;
+    votedYesShort: string;
+    votedNoShort: string;
+    waitingOtherVotes: string;
+    expressVote: string;
+    votesReceived: string;
+    parliamentResult: string;
+    approvalPct: string;
+    rejectedPct: string;
+    lawNotPassed: string;
+    inFavor: string;
+    against: string;
+    noSupporters: string;
+    noOpponents: string;
+    loading1: string;
+    loading2: string;
+    loading3: string;
+    pointsTitle: string;
+    voteLabel: string;
+    supportedPopular: string;
+    missedPrediction: string;
+    supportedUnpopular: string;
+    blockedProgress: string;
+    playersVotingYours: string;
+    playersReadyToVote: string;
+    voteStartsWhenReady: string;
+    waitingEveryoneVotes: string;
   };
   dilemma: {
     title: string;
@@ -135,11 +174,32 @@ export type GameCopy = {
     discussion: string;
     choose: string;
     jokerActive: string;
+    pointsMultiplied: string;
+    extraBonus: string;
+    decisionMade: string;
+    allVote: (name: string) => string;
+    discussTitle: string;
+    discussHint: string;
+    votedWait: string;
+    clickToVote: string;
+    discussNote: string;
+    transition1: string;
+    transition2: string;
+    transition3: string;
+    resolving: (name: string) => string;
   };
   cards: {
     law: string;
     bonusEffect: string;
     ethicsTimes: string;
+    consequence: string;
+    effects: string;
+    votingEffects: string;
+    highApproval: string;
+    mediumApproval: string;
+    rejected: string;
+    lawDoesNotPass: string;
+    ethics: string;
   };
   invite: {
     title: string;
@@ -161,10 +221,37 @@ export type GameCopy = {
     newProposal: string;
     playerNotFound: string;
     init: string;
+    aboutToStart: string;
+    masterInit: string;
+    waiting: string;
+    preparing: string;
+    loadingMatch: string;
+    waitInit: string;
+    objectiveComplete: string;
+    objectiveReached: string;
+    winWithObjective: (title: string) => string;
+    winDefault: string;
+    loseWithWinnerObjective: (name: string, title: string) => string;
+    loseWithWinner: (name: string) => string;
+    loseDefault: string;
+    neuralformingPoints: string;
+    newGame: string;
+    decisionBy: (name: string) => string;
+    currentPlayer: string;
+    consequenceFor: (name: string) => string;
+    aiPlaying: (name: string) => string;
+    lawProposals: string;
+    plusNew: string;
+    aiEvaluating: (name: string) => string;
+    rejectedSuffix: string;
+    playTitle: string;
   };
   opening: {
     playersReady: string;
     start: string;
+    imReady: string;
+    readyDone: string;
+    allReady: string;
   };
   sp: {
     yourParty: string;
@@ -177,6 +264,33 @@ export type GameCopy = {
     publicOpinion: string;
     highConsensus: string;
     crisisWarning: (n: number) => string;
+    chooseTech: string;
+    drawing: string;
+    drawN: (n: number) => string;
+    yourHand: (n: number) => string;
+    clickToPropose: string;
+    implementedTech: (n: number) => string;
+    opinionReaction: string;
+    proposalRejected: string;
+    publicReacted: string;
+    effectiveness: string;
+    faceDilemma: string;
+    yourChoice: string;
+    noExtraConsequence: string;
+    lastDecisions: string;
+    scores: string;
+    technologies: string;
+    turnsPlayed: string;
+    finalOpinion: string;
+    menu: string;
+    stable: string;
+    lowSupport: string;
+    crisisTick: string;
+    lowTick: string;
+    highTick: string;
+    activeEffects: string;
+    crisisAttention: string;
+    opinionWinWarn: string;
   };
   difficulty: {
     easy: string;
@@ -239,8 +353,10 @@ export type GameCopy = {
     title: string;
     techPct: string;
     ethicsPct: string;
+    neuralPct: string;
     balanceLabel: string;
     turn: string;
+    winGoal: string;
   };
   ticker: {
     label: string;
@@ -252,6 +368,47 @@ export type GameCopy = {
     skip: string;
     disconnected: string;
     aiOpponents: string;
+  };
+  board: {
+    parliament: string;
+    invitePlayers: string;
+    composition: string;
+    seatsOccupied: (occupied: number, total: number) => string;
+    you: string;
+    voteOutcome: string;
+    hemicycle: string;
+    seatsAvailable: (n: number) => string;
+    seatsUnassigned: string;
+    showQr: string;
+  };
+  news: {
+    tech: string;
+    ethics: string;
+    breakthrough: string;
+    crisis: string;
+    generic: string;
+    societyEffects: string;
+    affectedAll: string;
+    affectedCurrent: string;
+    affectedOthers: string;
+    eventNote: string;
+  };
+  qr: {
+    title: string;
+    cameraFail: string;
+    permissionDenied: string;
+    noCamera: string;
+    cameraInUse: string;
+  };
+  status: {
+    loading: string;
+    restoringSession: string;
+    reconnecting: string;
+    boardDisconnected: string;
+    waiting: string;
+    milestoneReached: string;
+    milestonesReached: string;
+    objectiveAssignedLater: string;
   };
 };
 
@@ -413,6 +570,45 @@ const it: GameCopy = {
     approvedLandslide:
       'Approvazione schiacciante! La proposta ha ricevuto ampio sostegno parlamentare (+30% bonus)',
     approved: 'Approvata! La proposta ha ottenuto il sostegno della maggioranza (+10% bonus)',
+    proposalInVote: 'Proposta in votazione',
+    aPlayer: 'Un giocatore',
+    proposedTech: 'ha proposto questa tecnologia',
+    youAreReady: 'Sei pronto! In attesa degli altri...',
+    readyCount: 'Pronti:',
+    playersDiscussYours: 'I giocatori discutono la tua proposta...',
+    playersDiscuss: 'I giocatori discutono la proposta...',
+    votePrompt: 'Vuoi votare a favore o contro?',
+    votesUnit: 'voti',
+    votingOnYours: 'Votazione sulla tua proposta...',
+    inProgress: 'Votazione in corso',
+    discussHint: 'Parlate tra voi prima di votare!',
+    voteOnProposal: 'Vota sulla Proposta',
+    votedYesShort: 'Hai votato: Sì',
+    votedNoShort: 'Hai votato: No',
+    waitingOtherVotes: 'In attesa degli altri voti...',
+    expressVote: 'Esprimi il tuo voto!',
+    votesReceived: 'Voti ricevuti:',
+    parliamentResult: 'Risultato Votazione Parlamentare',
+    approvalPct: 'Approvazione',
+    rejectedPct: 'Bocciata',
+    lawNotPassed: 'La legge non è stata approvata. Verranno applicate penalità.',
+    inFavor: 'A Favore',
+    against: 'Contro',
+    noSupporters: 'Nessun sostenitore',
+    noOpponents: 'Nessun oppositore',
+    loading1: 'Calcolo voti parlamentari...',
+    loading2: 'Analisi risultati...',
+    loading3: 'Verifica quorum...',
+    pointsTitle: 'Punti da Votazione',
+    voteLabel: 'Voto:',
+    supportedPopular: 'Hai sostenuto una legge popolare',
+    missedPrediction: 'Hai sbagliato previsione, ma la legge è passata',
+    supportedUnpopular: 'Hai sostenuto una legge impopolare',
+    blockedProgress: 'Hai bloccato il progresso',
+    playersVotingYours: 'I giocatori stanno votando sulla tua proposta',
+    playersReadyToVote: 'Giocatori pronti a votare',
+    voteStartsWhenReady: 'La votazione inizierà quando tutti saranno pronti...',
+    waitingEveryoneVotes: 'In attesa che tutti votino...',
   },
   dilemma: {
     title: 'Dilemma Etico',
@@ -420,11 +616,32 @@ const it: GameCopy = {
     discussion: 'Discussione in corso',
     choose: 'Scegli la tua decisione',
     jokerActive: 'Jolly Attivo',
+    pointsMultiplied: 'I punti del dilemma verranno moltiplicati',
+    extraBonus: 'Bonus aggiuntivi applicati',
+    decisionMade: 'Decisione presa:',
+    allVote: (name) => `Il turno di ${name} — Tutti votano!`,
+    discussTitle: 'Discutete il Dilemma',
+    discussHint: 'Parlate tra voi e cercate di convincere gli altri!',
+    votedWait: 'Hai votato! In attesa degli altri...',
+    clickToVote: "Clicca su un'opzione per votare",
+    discussNote: 'Leggi le opzioni qui sopra e discuti con gli altri giocatori',
+    transition1: 'Valutazione conseguenze...',
+    transition2: 'Analisi impatto decisione...',
+    transition3: 'Calcolo effetti etici...',
+    resolving: (name) => `${name} sta risolvendo un dilemma etico`,
   },
   cards: {
     law: 'LEGGE',
     bonusEffect: 'Effetto Bonus',
     ethicsTimes: 'Etica ×',
+    consequence: 'CONSEGUENZA',
+    effects: 'Effetti:',
+    votingEffects: 'Effetti Votazione:',
+    highApproval: 'Alta approvazione (>70%):',
+    mediumApproval: 'Media (>50%):',
+    rejected: 'Bocciata (<50%):',
+    lawDoesNotPass: '(legge non passa)',
+    ethics: 'Etica',
   },
   invite: {
     title: 'Invita giocatori',
@@ -447,10 +664,40 @@ const it: GameCopy = {
     newProposal: 'Nuova Proposta',
     playerNotFound: 'Giocatore non trovato',
     init: 'Inizializzazione partita...',
+    aboutToStart: 'Il gioco sta per iniziare...',
+    masterInit: 'Sei il master — inizializzazione in corso...',
+    waiting: 'Attesa...',
+    preparing: 'Preparazione della partita...',
+    loadingMatch: 'Caricamento partita...',
+    waitInit: "Attendere l'inizializzazione del gioco...",
+    objectiveComplete: 'Obiettivo Completato',
+    objectiveReached: 'Obiettivo Raggiunto',
+    winWithObjective: (title) => `Hai raggiunto per primo il tuo obiettivo! ${title}`,
+    winDefault:
+      "Hai guidato con successo la creazione di un'IA sostenibile! Le tue decisioni politiche hanno bilanciato innovazione tecnologica e responsabilità etica, creando un futuro migliore per tutti i cittadini.",
+    loseWithWinnerObjective: (name, title) =>
+      `${name} ha raggiunto per primo il suo obiettivo: ${title}. Le sue politiche hanno prevalso.`,
+    loseWithWinner: (name) =>
+      `${name} ha completato per primo il programma di IA sostenibile. Le sue politiche hanno prevalso.`,
+    loseDefault: "Le tue politiche non hanno raggiunto gli obiettivi richiesti. L'IA creata non è sostenibile.",
+    neuralformingPoints: 'Punti Neuralforming:',
+    newGame: 'Nuova Partita',
+    decisionBy: (name) => `Decisione presa da ${name}`,
+    currentPlayer: 'il giocatore corrente',
+    consequenceFor: (name) => `Conseguenza per ${name}`,
+    aiPlaying: (name) => `${name} sta giocando...`,
+    lawProposals: 'Proposte di Legge',
+    plusNew: '+ Nuova',
+    aiEvaluating: (name) => `${name} sta valutando le proprie strategie politiche...`,
+    rejectedSuffix: '(RESPINTA)',
+    playTitle: 'Gioca — Neuralforming',
   },
   opening: {
     playersReady: 'Giocatori pronti',
     start: 'Inizia il Gioco',
+    imReady: 'Sono Pronto',
+    readyDone: 'Pronto!',
+    allReady: 'Tutti pronti!',
   },
   sp: {
     yourParty: 'Il Tuo Partito',
@@ -464,6 +711,33 @@ const it: GameCopy = {
     publicOpinion: 'Opinione Pubblica',
     highConsensus: 'Consenso Alto',
     crisisWarning: (n) => `PERICOLO: Il governo cadrà tra ${n} turno/i!`,
+    chooseTech: 'Scegli una tecnologia dalla tua mano per proporla al parlamento.',
+    drawing: 'Pescando...',
+    drawN: (n) => `Pesca ${n} Carte`,
+    yourHand: (n) => `La tua mano (${n} carte)`,
+    clickToPropose: "Clicca su una carta per proporla. L'opinione pubblica reagirà alla tua scelta.",
+    implementedTech: (n) => `Tecnologie implementate (${n})`,
+    opinionReaction: "Reazione dell'Opinione Pubblica",
+    proposalRejected: "La proposta è stata respinta dall'opinione pubblica!",
+    publicReacted: 'Ecco come il pubblico ha reagito alla tua proposta...',
+    effectiveness: 'Efficacia punti:',
+    faceDilemma: 'Affronta il Dilemma',
+    yourChoice: 'La tua scelta:',
+    noExtraConsequence: 'Nessuna conseguenza aggiuntiva.',
+    lastDecisions: 'Ultime Decisioni',
+    scores: 'Punteggi',
+    technologies: 'Tecnologie:',
+    turnsPlayed: 'Turni giocati:',
+    finalOpinion: 'Opinione finale:',
+    menu: 'Menu',
+    stable: 'Stabile',
+    lowSupport: 'Consenso Basso',
+    crisisTick: 'Crisi',
+    lowTick: 'Basso',
+    highTick: 'Alto',
+    activeEffects: 'Effetti attivi',
+    crisisAttention: "Attenzione: opinione pubblica in crisi. Rischi il game over!",
+    opinionWinWarn: "Obiettivo raggiunto! Ma l'opinione pubblica deve essere ≥40% per vincere.",
   },
   difficulty: {
     easy: 'Facile',
@@ -603,8 +877,10 @@ const it: GameCopy = {
     title: 'Dashboard IA',
     techPct: 'Tecnologia %',
     ethicsPct: 'Etica %',
+    neuralPct: 'Neuralforming %',
     balanceLabel: 'Bilanciamento Etica/Tecnologia',
     turn: 'Turno',
+    winGoal: 'Obiettivo: 65+ Neuralforming, 45+ Etica, 5+ Tecnologie, Bilanciamento ≥0.5',
   },
   ticker: {
     label: 'News',
@@ -616,6 +892,47 @@ const it: GameCopy = {
     skip: 'Salta',
     disconnected: 'Offline',
     aiOpponents: 'Avversari IA',
+  },
+  board: {
+    parliament: 'Parlamento',
+    invitePlayers: 'Invita Giocatori',
+    composition: 'Composizione Parlamentare',
+    seatsOccupied: (occupied, total) => `${occupied}/${total} seggi occupati`,
+    you: 'TU',
+    voteOutcome: 'Esito Votazione',
+    hemicycle: 'Emiciclo Parlamentare',
+    seatsAvailable: (n) => `${n} seggi disponibili`,
+    seatsUnassigned: 'I seggi non sono ancora stati assegnati',
+    showQr: 'Mostra QR Code per invitare giocatori',
+  },
+  news: {
+    tech: 'Notizie Tecnologiche',
+    ethics: 'Notizie Etiche',
+    breakthrough: 'Breakthrough',
+    crisis: 'Crisi',
+    generic: 'Notizie',
+    societyEffects: 'Effetti sulla società:',
+    affectedAll: 'Questo evento ha influenzato tutti i partiti.',
+    affectedCurrent: 'Questo evento ha influenzato solo il giocatore corrente.',
+    affectedOthers: 'Questo evento ha influenzato gli altri partiti.',
+    eventNote: 'Questo evento ha influenzato tutti i partiti. Controlla i tuoi punteggi.',
+  },
+  qr: {
+    title: 'Scansiona QR Code',
+    cameraFail: 'Impossibile accedere alla fotocamera.',
+    permissionDenied: 'Permesso fotocamera negato. Abilita i permessi nelle impostazioni del browser.',
+    noCamera: 'Nessuna fotocamera trovata sul dispositivo.',
+    cameraInUse: "La fotocamera è già in uso da un'altra applicazione.",
+  },
+  status: {
+    loading: 'Caricamento...',
+    restoringSession: 'Ripristino sessione...',
+    reconnecting: 'Riconnessione in corso...',
+    boardDisconnected: 'Il tabellone di gioco si è disconnesso. In attesa di riconnessione...',
+    waiting: 'In attesa...',
+    milestoneReached: 'Milestone Raggiunto!',
+    milestonesReached: 'Milestone Raggiunti',
+    objectiveAssignedLater: "Un obiettivo verrà assegnato all'inizio della partita",
   },
 };
 
@@ -776,6 +1093,45 @@ const en: GameCopy = {
     approvedLandslide:
       'Overwhelming approval! The bill won broad parliamentary support (+30% bonus)',
     approved: 'Passed! The bill won a majority (+10% bonus)',
+    proposalInVote: 'Bill under vote',
+    aPlayer: 'A player',
+    proposedTech: 'proposed this technology',
+    youAreReady: 'You are ready! Waiting for the others...',
+    readyCount: 'Ready:',
+    playersDiscussYours: 'Players are debating your bill...',
+    playersDiscuss: 'Players are debating the bill...',
+    votePrompt: 'Do you want to vote for or against?',
+    votesUnit: 'votes',
+    votingOnYours: 'Vote on your bill...',
+    inProgress: 'Vote in progress',
+    discussHint: 'Talk it through before you vote!',
+    voteOnProposal: 'Vote on the bill',
+    votedYesShort: 'You voted: Yes',
+    votedNoShort: 'You voted: No',
+    waitingOtherVotes: 'Waiting for the other votes...',
+    expressVote: 'Cast your vote!',
+    votesReceived: 'Votes received:',
+    parliamentResult: 'Parliamentary vote result',
+    approvalPct: 'Approval',
+    rejectedPct: 'Rejected',
+    lawNotPassed: 'The bill did not pass. Penalties will apply.',
+    inFavor: 'In favour',
+    against: 'Against',
+    noSupporters: 'No supporters',
+    noOpponents: 'No opponents',
+    loading1: 'Tallying parliamentary votes...',
+    loading2: 'Analysing results...',
+    loading3: 'Checking quorum...',
+    pointsTitle: 'Points from the vote',
+    voteLabel: 'Vote:',
+    supportedPopular: 'You backed a popular bill',
+    missedPrediction: 'You called it wrong, but the bill passed',
+    supportedUnpopular: 'You backed an unpopular bill',
+    blockedProgress: 'You blocked progress',
+    playersVotingYours: 'Players are voting on your bill',
+    playersReadyToVote: 'Players ready to vote',
+    voteStartsWhenReady: 'The vote starts when everyone is ready...',
+    waitingEveryoneVotes: 'Waiting for everyone to vote...',
   },
   dilemma: {
     title: 'Ethical dilemma',
@@ -783,11 +1139,32 @@ const en: GameCopy = {
     discussion: 'Debate in progress',
     choose: 'Choose your decision',
     jokerActive: 'Joker active',
+    pointsMultiplied: 'Dilemma points will be multiplied',
+    extraBonus: 'Extra bonuses applied',
+    decisionMade: 'Decision made:',
+    allVote: (name) => `${name}'s turn — everyone votes!`,
+    discussTitle: 'Debate the dilemma',
+    discussHint: 'Talk it through and try to convince the others!',
+    votedWait: 'You voted! Waiting for the others...',
+    clickToVote: 'Tap an option to vote',
+    discussNote: 'Read the options above and debate with the other players',
+    transition1: 'Weighing consequences...',
+    transition2: 'Analysing the decision...',
+    transition3: 'Calculating ethical effects...',
+    resolving: (name) => `${name} is resolving an ethical dilemma`,
   },
   cards: {
     law: 'LAW',
     bonusEffect: 'Bonus effect',
     ethicsTimes: 'Ethics ×',
+    consequence: 'CONSEQUENCE',
+    effects: 'Effects:',
+    votingEffects: 'Voting effects:',
+    highApproval: 'High approval (>70%):',
+    mediumApproval: 'Medium (>50%):',
+    rejected: 'Rejected (<50%):',
+    lawDoesNotPass: '(bill does not pass)',
+    ethics: 'Ethics',
   },
   invite: {
     title: 'Invite players',
@@ -809,10 +1186,40 @@ const en: GameCopy = {
     newProposal: 'New bill',
     playerNotFound: 'Player not found',
     init: 'Starting the game...',
+    aboutToStart: 'The game is about to start...',
+    masterInit: 'You are the master — starting up...',
+    waiting: 'Waiting...',
+    preparing: 'Preparing the match...',
+    loadingMatch: 'Loading the game...',
+    waitInit: 'Waiting for the game to start...',
+    objectiveComplete: 'Objective completed',
+    objectiveReached: 'Objective reached',
+    winWithObjective: (title) => `You were first to complete your objective! ${title}`,
+    winDefault:
+      'You successfully steered the creation of a sustainable AI. Your political choices balanced technological innovation and ethical responsibility, building a better future for everyone.',
+    loseWithWinnerObjective: (name, title) =>
+      `${name} was first to complete their objective: ${title}. Their policies prevailed.`,
+    loseWithWinner: (name) =>
+      `${name} was first to complete the sustainable AI programme. Their policies prevailed.`,
+    loseDefault: 'Your policies did not meet the required goals. The AI that was built is not sustainable.',
+    neuralformingPoints: 'Neuralforming points:',
+    newGame: 'New game',
+    decisionBy: (name) => `Decision made by ${name}`,
+    currentPlayer: 'the current player',
+    consequenceFor: (name) => `Consequence for ${name}`,
+    aiPlaying: (name) => `${name} is playing...`,
+    lawProposals: 'Bills',
+    plusNew: '+ New',
+    aiEvaluating: (name) => `${name} is weighing political strategy...`,
+    rejectedSuffix: '(REJECTED)',
+    playTitle: 'Play — Neuralforming',
   },
   opening: {
     playersReady: 'Players ready',
     start: 'Start the game',
+    imReady: "I'm ready",
+    readyDone: 'Ready!',
+    allReady: 'Everyone is ready!',
   },
   sp: {
     yourParty: 'Your party',
@@ -825,6 +1232,33 @@ const en: GameCopy = {
     publicOpinion: 'Public opinion',
     highConsensus: 'High support',
     crisisWarning: (n) => `DANGER: the government will fall in ${n} turn(s)!`,
+    chooseTech: 'Choose a technology from your hand to propose to parliament.',
+    drawing: 'Drawing...',
+    drawN: (n) => `Draw ${n} cards`,
+    yourHand: (n) => `Your hand (${n} cards)`,
+    clickToPropose: 'Tap a card to propose it. Public opinion will react to your choice.',
+    implementedTech: (n) => `Technologies implemented (${n})`,
+    opinionReaction: 'Public opinion reaction',
+    proposalRejected: 'The bill was rejected by public opinion!',
+    publicReacted: 'This is how the public reacted to your bill...',
+    effectiveness: 'Point effectiveness:',
+    faceDilemma: 'Face the dilemma',
+    yourChoice: 'Your choice:',
+    noExtraConsequence: 'No extra consequence.',
+    lastDecisions: 'Recent decisions',
+    scores: 'Scores',
+    technologies: 'Technologies:',
+    turnsPlayed: 'Turns played:',
+    finalOpinion: 'Final opinion:',
+    menu: 'Menu',
+    stable: 'Stable',
+    lowSupport: 'Low support',
+    crisisTick: 'Crisis',
+    lowTick: 'Low',
+    highTick: 'High',
+    activeEffects: 'Active effects',
+    crisisAttention: 'Warning: public opinion is in crisis. You risk a game over!',
+    opinionWinWarn: 'Objective complete! But public opinion must be ≥40% to win.',
   },
   difficulty: {
     easy: 'Easy',
@@ -962,8 +1396,10 @@ const en: GameCopy = {
     title: 'AI dashboard',
     techPct: 'Technology %',
     ethicsPct: 'Ethics %',
+    neuralPct: 'Neuralforming %',
     balanceLabel: 'Ethics / Technology balance',
     turn: 'Turn',
+    winGoal: 'Goal: 65+ Neuralforming, 45+ Ethics, 5+ technologies, balance ≥0.5',
   },
   ticker: {
     label: 'News',
@@ -975,6 +1411,47 @@ const en: GameCopy = {
     skip: 'Skip',
     disconnected: 'Offline',
     aiOpponents: 'AI opponents',
+  },
+  board: {
+    parliament: 'Parliament',
+    invitePlayers: 'Invite players',
+    composition: 'Parliamentary composition',
+    seatsOccupied: (occupied, total) => `${occupied}/${total} seats occupied`,
+    you: 'YOU',
+    voteOutcome: 'Vote result',
+    hemicycle: 'Parliamentary hemicycle',
+    seatsAvailable: (n) => `${n} seats available`,
+    seatsUnassigned: 'Seats have not been assigned yet',
+    showQr: 'Show QR code to invite players',
+  },
+  news: {
+    tech: 'Technology news',
+    ethics: 'Ethics news',
+    breakthrough: 'Breakthrough',
+    crisis: 'Crisis',
+    generic: 'News',
+    societyEffects: 'Effects on society:',
+    affectedAll: 'This event affected every party.',
+    affectedCurrent: 'This event affected only the current player.',
+    affectedOthers: 'This event affected the other parties.',
+    eventNote: 'This event affected every party. Check your scores.',
+  },
+  qr: {
+    title: 'Scan QR code',
+    cameraFail: 'Could not access the camera.',
+    permissionDenied: 'Camera permission denied. Enable it in your browser settings.',
+    noCamera: 'No camera found on this device.',
+    cameraInUse: 'The camera is already in use by another application.',
+  },
+  status: {
+    loading: 'Loading...',
+    restoringSession: 'Restoring session...',
+    reconnecting: 'Reconnecting...',
+    boardDisconnected: 'The game board disconnected. Waiting to reconnect...',
+    waiting: 'Waiting...',
+    milestoneReached: 'Milestone unlocked!',
+    milestonesReached: 'Milestones unlocked',
+    objectiveAssignedLater: 'An objective will be assigned at the start of the game',
   },
 };
 

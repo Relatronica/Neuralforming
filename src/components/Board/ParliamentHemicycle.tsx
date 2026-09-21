@@ -5,6 +5,7 @@ import * as d3 from 'd3';
 import { parliamentChart } from 'd3-parliament-chart';
 import { getPartyColor } from '../../game/partyColors';
 import { Bot, User } from 'lucide-react';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 
 interface ParliamentHemicycleProps {
   players: PlayerState[];
@@ -19,6 +20,7 @@ export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
   mode,
   voteResult = null,
 }) => {
+  const { locale, t } = useGameCopy();
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -263,9 +265,9 @@ export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
       {mode === 'composition' ? (
         <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
           <div className="flex items-center justify-between mb-2">
-            <h4 className="text-sm font-heading font-bold text-gray-100">Composizione Parlamentare</h4>
+            <h4 className="text-sm font-heading font-bold text-gray-100">{t.board.composition}</h4>
             <span className="text-[10px] text-gray-400">
-              {occupiedSeats}/{totalParliamentSeats} seggi occupati
+              {t.board.seatsOccupied(occupiedSeats, totalParliamentSeats)}
             </span>
           </div>
           <div className="grid grid-cols-2 gap-2">
@@ -294,7 +296,7 @@ export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
                   <span className="text-gray-300 font-bold">{seats}</span>
                   {isCurrent && (
                     <span className="text-[10px] bg-gray-600 text-gray-100 px-1.5 py-0.5 rounded font-bold">
-                      TU
+                      {t.board.you}
                     </span>
                   )}
                 </div>
@@ -305,7 +307,7 @@ export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
       ) : voteResult ? (
         <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
           <div className="flex items-center justify-between mb-2">
-            <h4 className="text-sm font-heading font-bold text-gray-100">Esito Votazione</h4>
+            <h4 className="text-sm font-heading font-bold text-gray-100">{t.board.voteOutcome}</h4>
             <span className="text-xs text-gray-400">
               {Math.round((voteResult.approvalRate || 0) * 100)}% favorevoli
             </span>
@@ -335,7 +337,7 @@ export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
                       )}
                       <span>{player.name}</span>
                     </div>
-                    <span className="text-gray-300">Sì</span>
+                    <span className="text-gray-300">{locale === 'en' ? 'Yes' : 'Sì'}</span>
                   </div>
                 );
               })}
@@ -372,13 +374,13 @@ export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
       ) : (
         <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
           <div className="flex items-center justify-between mb-2">
-            <h4 className="text-sm font-heading font-bold text-gray-100">Emiciclo Parlamentare</h4>
+            <h4 className="text-sm font-heading font-bold text-gray-100">{t.board.hemicycle}</h4>
             <span className="text-[10px] text-gray-400">
-              {totalParliamentSeats} seggi disponibili
+              {t.board.seatsAvailable(totalParliamentSeats)}
             </span>
           </div>
           <div className="text-center text-gray-400 text-xs py-4">
-            I seggi non sono ancora stati assegnati
+            {t.board.seatsUnassigned}
           </div>
         </div>
       )}

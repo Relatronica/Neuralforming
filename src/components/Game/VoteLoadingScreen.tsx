@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Users, Loader2 } from 'lucide-react';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 
 interface VoteLoadingScreenProps {
   onComplete: () => void;
@@ -10,14 +11,11 @@ export const VoteLoadingScreen: React.FC<VoteLoadingScreenProps> = ({
   onComplete, 
   duration = 2500 
 }) => {
+  const { t } = useGameCopy();
   const [progress, setProgress] = useState(0);
   const [currentText, setCurrentText] = useState(0);
   
-  const loadingTexts = [
-    'Calcolo voti parlamentari...',
-    'Analisi risultati...',
-    'Verifica quorum...',
-  ];
+  const loadingTexts = [t.voting.loading1, t.voting.loading2, t.voting.loading3];
 
   useEffect(() => {
     // Aggiorna il progresso
