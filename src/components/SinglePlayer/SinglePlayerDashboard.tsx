@@ -17,6 +17,7 @@ import {
   TrendingDown,
   Gauge,
   Zap,
+  Check,
 } from 'lucide-react';
 
 interface SinglePlayerDashboardProps {
@@ -159,9 +160,9 @@ export const SinglePlayerDashboard: React.FC<SinglePlayerDashboardProps> = ({ st
             {objectiveProgress.details.map((detail, idx) => (
               <div key={idx} className="flex items-center justify-between text-[10px]">
                 <span className="text-gray-500">{detail.requirement}</span>
-                <span className={detail.progress >= 100 ? 'text-emerald-400' : 'text-gray-400'}>
+                <span className={`inline-flex items-center gap-1 ${detail.progress >= 100 ? 'text-emerald-400' : 'text-gray-400'}`}>
                   {detail.current}/{detail.target}
-                  {detail.progress >= 100 && ' ✓'}
+                  {detail.progress >= 100 && <Check className="w-3 h-3" />}
                 </span>
               </div>
             ))}

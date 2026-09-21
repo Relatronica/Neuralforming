@@ -1,6 +1,6 @@
 import React from 'react';
 import { Dilemma, DilemmaOption, Technology } from '../../game/types';
-import { Scale, Sparkles } from 'lucide-react';
+import { Scale, Sparkles, Check } from 'lucide-react';
 
 interface DilemmaCardProps {
   dilemma: Dilemma;
@@ -87,7 +87,7 @@ export const DilemmaCard: React.FC<DilemmaCardProps> = ({
                       isSelected ? 'text-white' : isClickable ? 'text-gray-100' : 'text-gray-500'
                     }`}>
                       {option.text}
-                      {isSelected && <span className="ml-2 text-neural-light">✓</span>}
+                      {isSelected && <Check className="inline w-3.5 h-3.5 ml-2 text-neural-light align-text-bottom" />}
                     </p>
                   </button>
                 );

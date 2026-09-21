@@ -20,7 +20,7 @@ import { TurnTransitionScreen } from './TurnTransitionScreen';
 import { MilestoneUnlockAnimation } from './MilestoneUnlockAnimation';
 import { OpeningStoryModal } from './OpeningStoryModal';
 import { useGameSocketContext } from '../../contexts/GameSocketContext';
-import { Bot, Landmark, Users, CheckCircle2, XCircle, Clock, MessageCircle, Scale, Loader2, QrCode } from 'lucide-react';
+import { Bot, Landmark, Users, CheckCircle2, XCircle, Clock, MessageCircle, Scale, Loader2, QrCode, Trophy } from 'lucide-react';
 import { InviteQrModal } from './InviteQrModal';
 import { HeaderNewsTicker } from './HeaderNewsTicker';
 import { loadGameContent } from '../../lib/i18n/content';
@@ -1298,7 +1298,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
         <div className="glass-card rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
           {isHumanWinner ? (
             <>
-              <div className="text-6xl mb-4">🎉</div>
+              <Trophy className="w-16 h-16 mx-auto mb-4 text-ethics-amber" />
               <h1 className="text-3xl font-bold text-gray-100 mb-4">{t.game.victory}</h1>
               {winnerObjective && (
                 <div className="bg-gray-800 border border-gray-600 rounded-lg p-4 mb-4">

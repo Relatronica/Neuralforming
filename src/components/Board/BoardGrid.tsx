@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react';
+import { Rocket, Trophy, Monitor, Scale, FlaskConical, Globe } from 'lucide-react';
 import { PlayerState } from '../../game/types';
 import { getPartyColor } from '../../game/partyColors';
+import { PartyIcon } from '../Brand/PartyIcon';
 
 interface BoardGridProps {
   players: PlayerState[];
@@ -58,23 +60,6 @@ export const BoardGrid: React.FC<BoardGridProps> = ({ players, currentPlayerId }
     return () => clearTimeout(timer);
   }, [players, snakePath]);
 
-  // Mappa icone a emoji
-  const iconEmojiMap: Record<string, string> = {
-    landmark: '🏛️',
-    shield: '🛡️',
-    star: '⭐',
-    flame: '🔥',
-    lightning: '⚡',
-    crown: '👑',
-    globe: '🌍',
-    torch: '🔦',
-  };
-
-  const getIconEmoji = (icon?: string): string => {
-    if (!icon) return '👤';
-    return iconEmojiMap[icon] || '👤';
-  };
-
   // Colori per i giocatori - usa il colore personalizzato se disponibile
   const getPlayerColorClass = (player: PlayerState): string => {
     if (player.color) {
@@ -93,13 +78,6 @@ export const BoardGrid: React.FC<BoardGridProps> = ({ players, currentPlayerId }
     ];
     const aiIndex = parseInt(player.id.split('-').pop() || '0') || 0;
     return aiColors[aiIndex % aiColors.length];
-  };
-
-  // Icone per i giocatori
-  const getPlayerIcon = (player: PlayerState) => {
-    if (player.isAI) return '🤖';
-    if (player.icon) return getIconEmoji(player.icon);
-    return '👤';
   };
 
   // Trova tutti i giocatori in una cella
@@ -125,15 +103,16 @@ export const BoardGrid: React.FC<BoardGridProps> = ({ players, currentPlayerId }
     return 'normal';
   };
 
-  const getCellIcon = (type: string): string => {
+  const getCellIcon = (type: string) => {
+    const className = 'w-3 h-3';
     switch (type) {
-      case 'start': return '🚀';
-      case 'finish': return '🏆';
-      case 'lab': return '💻';
-      case 'ethics': return '⚖️';
-      case 'test': return '🧪';
-      case 'social': return '🌐';
-      default: return '';
+      case 'start': return <Rocket className={className} />;
+      case 'finish': return <Trophy className={className} />;
+      case 'lab': return <Monitor className={className} />;
+      case 'ethics': return <Scale className={className} />;
+      case 'test': return <FlaskConical className={className} />;
+      case 'social': return <Globe className={className} />;
+      default: return null;
     }
   };
 
@@ -215,7 +194,7 @@ export const BoardGrid: React.FC<BoardGridProps> = ({ players, currentPlayerId }
                       }}
                       title={`${player.name}: ${player.neuralformingPoints} Neuralforming`}
                     >
-                      <span className="text-xs">{getPlayerIcon(player)}</span>
+                      <PartyIcon icon={player.icon} isAI={player.isAI} className="w-3.5 h-3.5 text-white" />
                     </div>
                   ))}
                 </div>
@@ -230,27 +209,27 @@ export const BoardGrid: React.FC<BoardGridProps> = ({ players, currentPlayerId }
         <h3 className="text-xs font-semibold text-gray-700 mb-1">Legenda</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-1.5 text-[10px]">
           <div className="flex items-center gap-2">
-            <span>🚀</span>
+            <Rocket className="w-3.5 h-3.5 text-gray-600" />
             <span className="text-gray-600">Partenza</span>
           </div>
           <div className="flex items-center gap-2">
-            <span>💻</span>
+            <Monitor className="w-3.5 h-3.5 text-gray-600" />
             <span className="text-gray-600">Lab Programmazione</span>
           </div>
           <div className="flex items-center gap-2">
-            <span>⚖️</span>
+            <Scale className="w-3.5 h-3.5 text-gray-600" />
             <span className="text-gray-600">Area Etica</span>
           </div>
           <div className="flex items-center gap-2">
-            <span>🧪</span>
+            <FlaskConical className="w-3.5 h-3.5 text-gray-600" />
             <span className="text-gray-600">Scenari Test</span>
           </div>
           <div className="flex items-center gap-2">
-            <span>🌐</span>
+            <Globe className="w-3.5 h-3.5 text-gray-600" />
             <span className="text-gray-600">Etica Sociale</span>
           </div>
           <div className="flex items-center gap-2">
-            <span>🏆</span>
+            <Trophy className="w-3.5 h-3.5 text-gray-600" />
             <span className="text-gray-600">Vittoria</span>
           </div>
         </div>

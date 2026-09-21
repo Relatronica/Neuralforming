@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TechnologyCard } from '../Cards/TechnologyCard';
-import { Vote, X, MessageCircle, Clock, CheckCircle2 } from 'lucide-react';
+import { Vote, X, MessageCircle, Clock, CheckCircle2, XCircle } from 'lucide-react';
 import { useGameCopy } from '../../lib/i18n/useGameCopy';
 import { HeaderNewsTicker } from '../Game/HeaderNewsTicker';
 
@@ -196,10 +196,11 @@ export const PlayerVoting: React.FC<PlayerVotingProps> = ({
                 <div className={`mb-4 sm:mb-6 p-3 sm:p-4 rounded-lg border-2 ${
                   myVote ? 'bg-emerald-900/20 border-emerald-600/40' : 'bg-red-900/20 border-red-600/40'
                 }`}>
-                  <p className={`text-center font-semibold text-sm sm:text-base ${
+                  <p className={`text-center font-semibold text-sm sm:text-base inline-flex items-center justify-center gap-1.5 w-full ${
                     myVote ? 'text-emerald-200' : 'text-red-200'
                   }`}>
-                    {myVote ? '✓ Hai votato: Sì' : '✗ Hai votato: No'}
+                    {myVote ? <CheckCircle2 className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
+                    {myVote ? 'Hai votato: Sì' : 'Hai votato: No'}
                   </p>
                   <p className="text-center text-gray-400 text-xs sm:text-sm mt-2">
                     In attesa degli altri voti... ({totalVotes}/{requiredVotes})

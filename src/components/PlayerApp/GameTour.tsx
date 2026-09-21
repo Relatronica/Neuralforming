@@ -20,7 +20,7 @@ export const GameTour: React.FC<GameTourProps> = ({
     target: '[data-tour="news"]',
     content: (
       <div>
-        <h3 className="text-lg font-bold text-gray-100 mb-2">Notizie Globali 📰</h3>
+        <h3 className="text-lg font-bold text-gray-100 mb-2">{t.tour.newsTitle}</h3>
         <p className="text-gray-300 text-sm">
           Le notizie mostrano eventi che influenzano il gioco. Puoi chiuderle temporaneamente, ma torneranno quando necessario.
         </p>
@@ -78,7 +78,7 @@ export const GameTour: React.FC<GameTourProps> = ({
       target: '[data-tour="objective-tab"]',
       content: (
         <div>
-          <h3 className="text-lg font-bold text-gray-100 mb-2">Il Tuo Obiettivo 🎯</h3>
+          <h3 className="text-lg font-bold text-gray-100 mb-2">{t.tour.objectiveTitle}</h3>
           <p className="text-gray-300 text-sm">
             Ogni giocatore ha un obiettivo segreto. Raggiungilo per vincere la partita!
             Controlla spesso questa sezione per vedere i tuoi progressi.
@@ -118,7 +118,7 @@ export const GameTour: React.FC<GameTourProps> = ({
       target: '[data-tour="laws-tab"]',
       content: (
         <div>
-          <h3 className="text-lg font-bold text-gray-100 mb-2">Leggi Approvate 📜</h3>
+          <h3 className="text-lg font-bold text-gray-100 mb-2">{t.tour.lawsTitle}</h3>
           <p className="text-gray-300 text-sm">
             Quando una tecnologia viene approvata dalla maggioranza dei giocatori, diventa una legge.
             Le leggi approvate ti danno punti permanenti e contano per il tuo obiettivo.
@@ -131,7 +131,7 @@ export const GameTour: React.FC<GameTourProps> = ({
       target: '[data-tour="milestones-tab"]',
       content: (
         <div>
-          <h3 className="text-lg font-bold text-gray-100 mb-2">Milestone 🏆</h3>
+          <h3 className="text-lg font-bold text-gray-100 mb-2">{t.tour.milestonesTitle}</h3>
           <p className="text-gray-300 text-sm">
             Raggiungendo certi traguardi, sblocchi milestone che ti danno abilità speciali.
             Queste abilità possono cambiare le regole del gioco a tuo favore!

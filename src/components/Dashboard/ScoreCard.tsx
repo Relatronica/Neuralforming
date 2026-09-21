@@ -4,7 +4,7 @@ interface ScoreCardProps {
   label: string;
   value: number;
   color: string;
-  icon?: string;
+  icon?: React.ReactNode;
 }
 
 export const ScoreCard: React.FC<ScoreCardProps> = ({ label, value, icon }) => {
@@ -16,10 +16,9 @@ export const ScoreCard: React.FC<ScoreCardProps> = ({ label, value, icon }) => {
           <p className="text-2xl font-bold text-gray-100 mt-1">{value}</p>
         </div>
         {icon && (
-          <div className="text-3xl">{icon}</div>
+          <div className="text-gray-300">{icon}</div>
         )}
       </div>
     </div>
   );
 };
-

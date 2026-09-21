@@ -1,6 +1,6 @@
 import React from 'react';
 import { Consequence } from '../../game/types';
-import { ArrowUp, ArrowDown, Microscope, Scale, Brain } from 'lucide-react';
+import { ArrowUp, ArrowDown, Microscope, Scale, Brain, AlertTriangle, CheckCircle2, BarChart3 } from 'lucide-react';
 
 interface ConsequenceCardProps {
   consequence: Consequence;
@@ -72,8 +72,14 @@ export const ConsequenceCard: React.FC<ConsequenceCardProps> = ({ consequence, o
             {consequence.title}
           </h2>
         </div>
-        <span className={`flex-shrink-0 ${isPWA ? 'text-3xl sm:text-4xl' : 'text-2xl'}`}>
-          {hasNegative && !hasPositive ? '⚠️' : hasPositive && !hasNegative ? '✅' : '📊'}
+        <span className={`flex-shrink-0 ${hasNegative && !hasPositive ? 'text-orange-400' : hasPositive && !hasNegative ? 'text-green-400' : 'text-gray-400'}`}>
+          {hasNegative && !hasPositive ? (
+            <AlertTriangle className={isPWA ? 'w-8 h-8 sm:w-10 sm:h-10' : 'w-7 h-7'} />
+          ) : hasPositive && !hasNegative ? (
+            <CheckCircle2 className={isPWA ? 'w-8 h-8 sm:w-10 sm:h-10' : 'w-7 h-7'} />
+          ) : (
+            <BarChart3 className={isPWA ? 'w-8 h-8 sm:w-10 sm:h-10' : 'w-7 h-7'} />
+          )}
         </span>
       </div>
       

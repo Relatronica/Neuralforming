@@ -284,7 +284,7 @@ const it: GameCopy = {
     partyColor: 'Colore del Partito',
     alreadyJoined: 'Già Unito',
     joinGame: 'Unisciti alla Partita',
-    joinedTitle: '✓ Ti sei unito alla partita!',
+    joinedTitle: 'Ti sei unito alla partita!',
     joinedWait: 'Aspetta che il master avvii il gioco...',
     start: 'Inizia Partita',
     waitPlayers: 'Aspetta almeno 2 giocatori per iniziare',
@@ -305,7 +305,7 @@ const it: GameCopy = {
     partyColor: 'Colore del Partito',
     partyIcon: 'Icona del Partito',
     submit: 'Accedi alla Partita',
-    newGame: '🆕 Nuova Partita',
+    newGame: 'Nuova Partita',
     newGameHint: 'Pulisce la sessione salvata per entrare in una nuova partita',
     nameTaken: 'Questo nome è già usato in questa partita. Scegli un altro nome.',
     invalidQr: 'QR code non valido. Assicurati di scansionare il QR code della partita.',
@@ -501,13 +501,13 @@ const it: GameCopy = {
     last: 'Fine',
     next: 'Avanti',
     skip: 'Salta',
-    welcomeTitle: 'Benvenuto in Neuralforming! 🎮',
+    welcomeTitle: 'Benvenuto in Neuralforming!',
     welcomeBody:
       "Questo tour ti guiderà attraverso le funzionalità principali del gioco. Prendi decisioni politiche per un'IA sostenibile e responsabile!",
     menuTitle: 'Menu di Gioco',
     menuBody:
       'Da qui puoi accedere alle opzioni del gioco, incluso il pulsante per iniziare una nuova partita.',
-    newsTitle: 'Notizie Globali 📰',
+    newsTitle: 'Notizie Globali',
     newsBody:
       'Le notizie mostrano eventi che influenzano il gioco. Puoi chiuderle temporaneamente, ma torneranno quando necessario.',
     sectionsTitle: 'Le Tue Sezioni',
@@ -516,7 +516,7 @@ const it: GameCopy = {
     sectionsLaws: 'Leggi: Le tecnologie che hai fatto approvare',
     sectionsMilestones: 'Milestone: Abilità speciali sbloccate',
     sectionsObjective: 'Obiettivo: La tua missione segreta per vincere',
-    objectiveTitle: 'Il Tuo Obiettivo 🎯',
+    objectiveTitle: 'Il Tuo Obiettivo',
     objectiveBody:
       'Ogni giocatore ha un obiettivo segreto. Raggiungilo per vincere la partita! Controlla spesso questa sezione per vedere i tuoi progressi.',
     proposalsTitle: 'Le Tue Proposte',
@@ -525,10 +525,10 @@ const it: GameCopy = {
     drawTitle: 'Pesca Nuove Carte',
     drawBody:
       'Usa questo pulsante per pescare una nuova carta tecnologia dal mazzo. Puoi pescare una carta per turno quando è il tuo momento di giocare.',
-    lawsTitle: 'Leggi Approvate 📜',
+    lawsTitle: 'Leggi Approvate',
     lawsBody:
       'Quando una tecnologia viene approvata dalla maggioranza dei giocatori, diventa una legge. Le leggi approvate ti danno punti permanenti e contano per il tuo obiettivo.',
-    milestonesTitle: 'Milestone 🏆',
+    milestonesTitle: 'Milestone',
     milestonesBody:
       'Raggiungendo certi traguardi, sblocchi milestone che ti danno abilità speciali. Queste abilità possono cambiare le regole del gioco a tuo favore!',
     howTitle: 'Come Funziona il Gioco',
@@ -647,7 +647,7 @@ const en: GameCopy = {
     partyColor: 'Party colour',
     alreadyJoined: 'Already joined',
     joinGame: 'Join the game',
-    joinedTitle: '✓ You have joined the game!',
+    joinedTitle: 'You have joined the game!',
     joinedWait: 'Wait for the master to start...',
     start: 'Start game',
     waitPlayers: 'Wait for at least 2 players to start',
@@ -668,7 +668,7 @@ const en: GameCopy = {
     partyColor: 'Party colour',
     partyIcon: 'Party icon',
     submit: 'Join the game',
-    newGame: '🆕 New game',
+    newGame: 'New game',
     newGameHint: 'Clears the saved session so you can join a new game',
     nameTaken: 'This name is already used in this game. Choose another.',
     invalidQr: 'Invalid QR code. Scan the QR code for this game.',

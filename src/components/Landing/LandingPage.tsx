@@ -27,6 +27,7 @@ import {
   Gamepad2,
   Map,
   HelpCircle,
+  Check,
 } from 'lucide-react';
 import { HeroBackdrop } from './HeroBackdrop';
 import { NeuralformingMark } from '../Brand/NeuralformingMark';
@@ -558,10 +559,10 @@ export const LandingPage = ({
                 <p className="text-sm text-gray-400 leading-relaxed mb-4 flex-1">{t.use.soloDesc}</p>
                 <ul className="space-y-2 text-xs text-gray-300 mb-6">
                   <li className="flex items-center gap-2">
-                    <span className="text-tech-cyan font-bold">✓</span> {t.use.soloBullet1}
+                    <Check className="w-3.5 h-3.5 text-tech-cyan shrink-0" /> {t.use.soloBullet1}
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="text-tech-cyan font-bold">✓</span> {t.use.soloBullet2}
+                    <Check className="w-3.5 h-3.5 text-tech-cyan shrink-0" /> {t.use.soloBullet2}
                   </li>
                 </ul>
                 <button
@@ -587,10 +588,10 @@ export const LandingPage = ({
                 <p className="text-sm text-gray-400 leading-relaxed mb-4 flex-1">{t.use.selfDesc}</p>
                 <ul className="space-y-2 text-xs text-gray-300 mb-6">
                   <li className="flex items-center gap-2">
-                    <span className="text-ethics-amber font-bold">✓</span> {t.use.selfBullet1}
+                    <Check className="w-3.5 h-3.5 text-ethics-amber shrink-0" /> {t.use.selfBullet1}
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="text-ethics-amber font-bold">✓</span> {t.use.selfBullet2}
+                    <Check className="w-3.5 h-3.5 text-ethics-amber shrink-0" /> {t.use.selfBullet2}
                   </li>
                 </ul>
                 <a

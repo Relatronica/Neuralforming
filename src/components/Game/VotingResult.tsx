@@ -1,7 +1,7 @@
 import React from 'react';
 import { VoteResult } from '../../game/types';
 import { PlayerState } from '../../game/types';
-import { CheckCircle2, XCircle, Users } from 'lucide-react';
+import { CheckCircle2, XCircle, Users, AlertTriangle } from 'lucide-react';
 import { getPartyColor } from '../../game/partyColors';
 
 interface VotingResultProps {
@@ -61,8 +61,9 @@ export const VotingResult: React.FC<VotingResultProps> = ({
         }`}>
           <p className="text-base font-bold text-center">{message}</p>
           {!isApproved && (
-            <p className="text-sm text-center mt-2 opacity-90">
-              ⚠️ La legge non è stata approvata. Verranno applicate penalità.
+            <p className="text-sm text-center mt-2 opacity-90 inline-flex items-center justify-center gap-1.5 w-full">
+              <AlertTriangle className="w-4 h-4 shrink-0" />
+              La legge non è stata approvata. Verranno applicate penalità.
             </p>
           )}
         </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { SocietyNews } from '../../game/types';
-import { Newspaper, TrendingUp, AlertTriangle, Sparkles, Zap } from 'lucide-react';
+import { Newspaper, TrendingUp, AlertTriangle, Sparkles, Zap, X } from 'lucide-react';
 
 interface NewsCardProps {
   news: SocietyNews;
@@ -123,9 +123,10 @@ export const NewsCard: React.FC<NewsCardProps> = ({ news, onDismiss }) => {
               </div>
               <button
                 onClick={onDismiss}
-                className={`${style.text} hover:opacity-70 hover:bg-gray-700 rounded-full p-1 sm:p-2 transition-all duration-200 text-base sm:text-lg font-bold`}
+                className={`${style.text} hover:opacity-70 hover:bg-gray-700 rounded-full p-1 sm:p-2 transition-all duration-200`}
+                aria-label="Chiudi"
               >
-                ✕
+                <X className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
           </div>

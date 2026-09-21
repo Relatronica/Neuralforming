@@ -9,7 +9,8 @@ import {
   Crown, 
   Globe, 
   Flashlight,
-  QrCode
+  QrCode,
+  RotateCcw,
 } from 'lucide-react';
 import { getQueryParam, extractRoomId } from '../../utils/deeplink';
 import { QRCodeScanner } from './QRCodeScanner';
@@ -310,8 +311,9 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
           <button
             type="button"
             onClick={handleNewGame}
-            className="w-full bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 text-sm"
+            className="w-full inline-flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 text-sm"
           >
+            <RotateCcw className="w-4 h-4" />
             {t.login.newGame}
           </button>
           <p className="text-xs text-gray-500 text-center mt-2">

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useGameSocketContext } from '../../contexts/GameSocketContext';
 import { RoomInfo } from '../../hooks/useGameSocket';
-import { Users, Play, Copy, Check } from 'lucide-react';
+import { Users, Play, Copy, Check, CheckCircle2 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { buildPlayerJoinUrl } from '../../utils/deeplink';
 import { NeuralformingMark } from '../Brand/NeuralformingMark';
@@ -455,7 +455,10 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
             {!isMaster && roomInfo?.players.some((p: RoomInfo['players'][0]) => p.name === playerName.trim()) && (
               <div className="border-t border-gray-700 pt-4">
                 <div className="bg-gray-800 border border-gray-600 rounded-lg p-4">
-                  <p className="text-gray-200 font-semibold">{t.setup.joinedTitle}</p>
+                  <p className="text-gray-200 font-semibold inline-flex items-center gap-2">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-400" />
+                    {t.setup.joinedTitle}
+                  </p>
                   <p className="text-sm text-gray-300 mt-1">{t.setup.joinedWait}</p>
                 </div>
               </div>

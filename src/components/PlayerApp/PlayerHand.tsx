@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { GameState, PlayerState, Technology } from '../../game/types';
 import { TechnologyCard } from '../Cards/TechnologyCard';
-import { Plus, Hand, ScrollText, Brain, Scale, Microscope, Trophy, Sparkles, Target, Users, Loader2, ArrowRight, BarChart3, AlertTriangle } from 'lucide-react';
+import { Plus, Hand, ScrollText, Brain, Scale, Microscope, Trophy, Sparkles, Target, Users, Loader2, ArrowRight, BarChart3, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { milestones, localizeMilestone } from '../../game/Milestones';
 import { Objectives } from '../../game/Objectives';
 import { useGameCopy } from '../../lib/i18n/useGameCopy';
@@ -496,8 +496,9 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
                         />
                       </div>
                       {progressDetails.completed && (
-                        <p className="text-xs sm:text-sm text-green-400 font-semibold mt-2 text-center">
-                          ✓ Obiettivo Raggiunto!
+                        <p className="text-xs sm:text-sm text-green-400 font-semibold mt-2 text-center inline-flex items-center justify-center gap-1.5 w-full">
+                          <CheckCircle2 className="w-4 h-4" />
+                          Obiettivo Raggiunto!
                         </p>
                       )}
                     </div>

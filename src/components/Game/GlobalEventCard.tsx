@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { GlobalEventInfo } from '../../game/types';
-import { AlertTriangle, TrendingUp, Users } from 'lucide-react';
+import { AlertTriangle, TrendingUp, Users, X } from 'lucide-react';
 
 interface GlobalEventCardProps {
   event: GlobalEventInfo;
@@ -70,16 +70,18 @@ export const GlobalEventCard: React.FC<GlobalEventCardProps> = ({ event, onDismi
               </div>
               <button
                 onClick={onDismiss}
-                className={`${style.text} hover:opacity-70 hover:bg-gray-700 rounded-full p-2 transition-all duration-200 text-lg sm:text-xl font-bold`}
+                className={`${style.text} hover:opacity-70 hover:bg-gray-700 rounded-full p-2 transition-all duration-200`}
+                aria-label="Chiudi"
               >
-                ✕
+                <X className="w-5 h-5" />
               </button>
             </div>
           </div>
           <p className={`${style.text} text-sm sm:text-base leading-relaxed mb-4 break-words`}>{event.description}</p>
           <div className={`mt-4 pt-4 border-t-2 ${style.border} bg-gray-700 bg-opacity-50 rounded-lg p-3`}>
-            <p className={`${style.text} text-xs sm:text-sm font-semibold`}>
-              ⚠️ Questo evento ha influenzato tutti i partiti. Controlla i tuoi punteggi.
+            <p className={`${style.text} text-xs sm:text-sm font-semibold inline-flex items-center gap-1.5`}>
+              <AlertTriangle className="w-4 h-4 shrink-0" />
+              Questo evento ha influenzato tutti i partiti. Controlla i tuoi punteggi.
             </p>
           </div>
         </div>

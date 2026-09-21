@@ -1,4 +1,4 @@
-import { X, BookOpen, Users, Zap, AlertCircle, Target, Trophy, Vote, Newspaper, TrendingUp } from 'lucide-react';
+import { X, BookOpen, Users, Zap, AlertCircle, Target, Trophy, Vote, Newspaper, TrendingUp, Microscope, Scale, Brain, BarChart3, CheckCircle2, XCircle, Lightbulb } from 'lucide-react';
 
 interface GameGuideProps {
   onClose: () => void;
@@ -66,21 +66,30 @@ export const GameGuide = ({ onClose }: GameGuideProps) => {
             </h3>
             <div className="space-y-4">
               <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                <h4 className="font-semibold text-blue-300 mb-2">🔵 Punti Tecnologia</h4>
+                <h4 className="font-semibold text-blue-300 mb-2 flex items-center gap-2">
+                  <Microscope className="w-4 h-4" />
+                  Punti Tecnologia
+                </h4>
                 <p className="text-gray-300 text-sm">
                   Rappresentano il progresso tecnologico e l'innovazione. Si ottengono giocando tecnologie avanzate 
                   e prendendo decisioni che favoriscono lo sviluppo tecnico.
                 </p>
               </div>
               <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                <h4 className="font-semibold text-green-300 mb-2">🟢 Punti Etica</h4>
+                <h4 className="font-semibold text-green-300 mb-2 flex items-center gap-2">
+                  <Scale className="w-4 h-4" />
+                  Punti Etica
+                </h4>
                 <p className="text-gray-300 text-sm">
                   Rappresentano l'impegno verso la responsabilità e i valori etici. Si ottengono prendendo decisioni 
                   che privilegiano il benessere sociale e la trasparenza.
                 </p>
               </div>
               <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                <h4 className="font-semibold text-purple-300 mb-2">🟣 Punti Neuralforming</h4>
+                <h4 className="font-semibold text-purple-300 mb-2 flex items-center gap-2">
+                  <Brain className="w-4 h-4" />
+                  Punti Neuralforming
+                </h4>
                 <p className="text-gray-300 text-sm">
                   Rappresentano il bilanciamento perfetto tra tecnologia ed etica. Si ottengono quando le tue decisioni 
                   combinano innovazione e responsabilità sociale.
@@ -143,14 +152,20 @@ export const GameGuide = ({ onClose }: GameGuideProps) => {
             </p>
             
             <div className="bg-gray-800 rounded-lg p-4 border border-gray-700 mb-4">
-              <h4 className="font-semibold text-gray-100 mb-3">📊 Sistema di Reward/Penalty</h4>
+              <h4 className="font-semibold text-gray-100 mb-3 flex items-center gap-2">
+                <BarChart3 className="w-4 h-4" />
+                Sistema di Reward/Penalty
+              </h4>
               <p className="text-gray-300 text-sm mb-3">
                 <strong>Ogni voto ha conseguenze!</strong> Non solo il proponente, ma anche tutti i votanti ricevono punti o penalità in base al loro voto e al risultato:
               </p>
               
               <div className="space-y-3">
                 <div className="bg-green-900/30 rounded p-3 border border-green-700/50">
-                  <h5 className="font-semibold text-green-300 mb-2">✅ Se la legge è APPROVATA (≥50%):</h5>
+                  <h5 className="font-semibold text-green-300 mb-2 flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4" />
+                    Se la legge è APPROVATA (≥50%):
+                  </h5>
                   <ul className="list-disc list-inside text-gray-300 text-sm space-y-1 ml-4">
                     <li><strong>Proponente:</strong> Riceve punti base + bonus in base all'approvazione (10-30%)</li>
                     <li><strong>Votanti SÌ:</strong> Ricevono +25% dei punti base (hanno sostenuto una legge popolare)</li>
@@ -159,7 +174,10 @@ export const GameGuide = ({ onClose }: GameGuideProps) => {
                 </div>
                 
                 <div className="bg-red-900/30 rounded p-3 border border-red-700/50">
-                  <h5 className="font-semibold text-red-300 mb-2">❌ Se la legge è BOCCIATA (&lt;50%):</h5>
+                  <h5 className="font-semibold text-red-300 mb-2 flex items-center gap-2">
+                    <XCircle className="w-4 h-4" />
+                    Se la legge è BOCCIATA (&lt;50%):
+                  </h5>
                   <ul className="list-disc list-inside text-gray-300 text-sm space-y-1 ml-4">
                     <li><strong>Proponente:</strong> Riceve penalità (-40% o -50% dei punti base)</li>
                     <li><strong>Votanti SÌ:</strong> Ricevono -10% dei punti base (hanno sostenuto una legge impopolare)</li>
@@ -168,8 +186,9 @@ export const GameGuide = ({ onClose }: GameGuideProps) => {
                 </div>
               </div>
               
-              <p className="text-gray-300 text-sm mt-3 italic">
-                💡 <strong>Strategia:</strong> Valuta attentamente se votare SÌ o NO - ogni scelta ha conseguenze reali sui tuoi punti!
+              <p className="text-gray-300 text-sm mt-3 italic inline-flex items-start gap-1.5">
+                <Lightbulb className="w-4 h-4 mt-0.5 shrink-0 text-amber-400" />
+                <span><strong>Strategia:</strong> Valuta attentamente se votare SÌ o NO - ogni scelta ha conseguenze reali sui tuoi punti!</span>
               </p>
             </div>
 
@@ -215,14 +234,20 @@ export const GameGuide = ({ onClose }: GameGuideProps) => {
             </p>
             <div className="space-y-3">
               <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                <h4 className="font-semibold text-cyan-300 mb-2">📰 News dalla Società</h4>
+                <h4 className="font-semibold text-cyan-300 mb-2 flex items-center gap-2">
+                  <Newspaper className="w-4 h-4" />
+                  News dalla Società
+                </h4>
                 <p className="text-gray-300 text-sm">
                   Eventi che influenzano tutti i giocatori, modificando i punti di tecnologia, etica o neuralforming. 
                   Possono essere positive o negative!
                 </p>
               </div>
               <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                <h4 className="font-semibold text-orange-300 mb-2">⚡ Eventi Globali</h4>
+                <h4 className="font-semibold text-orange-300 mb-2 flex items-center gap-2">
+                  <Zap className="w-4 h-4" />
+                  Eventi Globali
+                </h4>
                 <p className="text-gray-300 text-sm">
                   Situazioni speciali che cambiano le regole del gioco temporaneamente o influenzano tutti i giocatori 
                   in modo significativo.
@@ -293,7 +318,7 @@ export const GameGuide = ({ onClose }: GameGuideProps) => {
           {/* Footer */}
           <div className="pt-6 border-t border-gray-700">
             <p className="text-center text-gray-400 text-sm">
-              Buona fortuna nel guidare la società verso un futuro etico e tecnologico! 🚀
+              Buona fortuna nel guidare la società verso un futuro etico e tecnologico!
             </p>
           </div>
         </div>

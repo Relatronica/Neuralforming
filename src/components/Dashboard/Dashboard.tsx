@@ -1,4 +1,5 @@
 import React from 'react';
+import { Microscope, Scale, Brain } from 'lucide-react';
 import { PlayerState } from '../../game/types';
 import { Scoring } from '../../game/Scoring';
 import { ScoreCard } from './ScoreCard';
@@ -21,19 +22,19 @@ export const Dashboard: React.FC<DashboardProps> = ({ player, turn }) => {
           label="Tecnologia %"
           value={Math.round((player.techPoints / 50) * 100)}
           color="border-gray-600"
-          icon="🔬"
+          icon={<Microscope className="w-8 h-8" />}
         />
         <ScoreCard
           label="Etica %"
           value={Math.round((player.ethicsPoints / 45) * 100)}
           color="border-gray-600"
-          icon="⚖️"
+          icon={<Scale className="w-8 h-8" />}
         />
         <ScoreCard
           label="Neuralforming %"
           value={Math.round((player.neuralformingPoints / 65) * 100)}
           color="border-gray-600"
-          icon="🧠"
+          icon={<Brain className="w-8 h-8" />}
         />
       </div>
 
