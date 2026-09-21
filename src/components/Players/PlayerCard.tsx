@@ -1,189 +1,145 @@
 import React from 'react';
 import { PlayerState } from '../../game/types';
-import { Scoring } from '../../game/Scoring';
-import { Bot, User, Trophy, Microscope, Scale, Brain, Award, WifiOff } from 'lucide-react';
-
-// Mappa icone a emoji
-const iconEmojiMap: Record<string, string> = {
-  landmark: '🏛️',
-  shield: '🛡️',
-  star: '⭐',
-  flame: '🔥',
-  lightning: '⚡',
-  crown: '👑',
-  globe: '🌍',
-  torch: '🔦',
-};
-
-const getIconEmoji = (icon: string): string => {
-  return iconEmojiMap[icon] || '👤';
-};
+import { Trophy, Microscope, Scale, Brain, Award, WifiOff, ScrollText } from 'lucide-react';
+import { PartyIcon } from '../Brand/PartyIcon';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 
 interface PlayerCardProps {
   player: PlayerState;
   isCurrentPlayer: boolean;
   isWinner?: boolean;
   isDisconnected?: boolean;
-  turnOrder?: number; // 1-based turn order position
+  turnOrder?: number;
 }
 
-export const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentPlayer, isWinner = false, isDisconnected = false, turnOrder }) => {
-  const balance = Scoring.calculateBalance(player);
-  
-  // Calcola il progresso verso la vittoria
-  const neuralformingProgress = Math.min(100, Math.round((player.neuralformingPoints / 65) * 100));
-  const ethicsProgress = Math.min(100, Math.round((player.ethicsPoints / 45) * 100));
-  const techProgress = Math.min(100, Math.round((player.technologies.length / 5) * 100));
-  const balanceProgress = balance >= 0.5 ? 100 : Math.min(100, Math.round((balance / 0.5) * 100));
-  
-  // Progresso complessivo (media pesata)
-  const overallProgress = Math.round(
-    (neuralformingProgress * 0.35 + 
-     ethicsProgress * 0.25 + 
-     techProgress * 0.25 + 
-     balanceProgress * 0.15)
+function ScoreCell({
+  icon: Icon,
+  value,
+  label,
+  className,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  value: number;
+  label: string;
+  className: string;
+}) {
+  return (
+    <div className={`min-w-0 text-center ${className}`}>
+      <Icon className="w-3 h-3 mx-auto mb-0.5 opacity-80" />
+      <div className="text-sm font-heading font-bold tabular-nums leading-none">{value}</div>
+      <div className="text-[9px] uppercase tracking-wider opacity-70 mt-0.5 truncate">{label}</div>
+    </div>
   );
+}
 
-  // Colore del giocatore (per accento visivo)
+export const PlayerCard: React.FC<PlayerCardProps> = ({
+  player,
+  isCurrentPlayer,
+  isWinner = false,
+  isDisconnected = false,
+  turnOrder,
+}) => {
+  const { t } = useGameCopy();
   const playerColor = player.color || '#6B7280';
+  const laws = player.technologies.length;
+  const milestones = player.unlockedMilestones?.length ?? 0;
 
   return (
     <div
       className={`
-        rounded-lg shadow-sm p-2 transition-all duration-200 bg-cyber-800 border-l-4 border border-white/10
-        ${isCurrentPlayer ? 'ring-2 ring-offset-1 ring-offset-gray-900 shadow-lg' : ''}
-        ${isWinner ? 'bg-gradient-to-br from-amber-900/20 to-gray-800' : ''}
-        ${isDisconnected ? 'opacity-50' : ''}
+        relative rounded-lg px-2.5 py-2 border transition-colors duration-200
+        ${isDisconnected ? 'opacity-60' : ''}
+        ${isCurrentPlayer && !isDisconnected ? 'bg-cyber-800' : 'bg-cyber-800/50'}
       `}
       style={{
-        borderLeftColor: isDisconnected ? 'rgb(239, 68, 68)' : playerColor,
-        borderRightColor: isDisconnected ? 'rgb(239, 68, 68)' : isCurrentPlayer ? playerColor : 'rgb(55, 65, 81)',
-        borderTopColor: isDisconnected ? 'rgb(239, 68, 68)' : isCurrentPlayer ? playerColor : 'rgb(55, 65, 81)',
-        borderBottomColor: isDisconnected ? 'rgb(239, 68, 68)' : isCurrentPlayer ? playerColor : 'rgb(55, 65, 81)',
-        // Ring color set via Tailwind's ring utility + inline --tw-ring-color
-        ['--tw-ring-color' as string]: isCurrentPlayer ? playerColor : undefined,
+        borderColor: isDisconnected
+          ? 'rgba(239, 68, 68, 0.5)'
+          : isCurrentPlayer
+            ? playerColor
+            : 'rgba(255, 255, 255, 0.08)',
+        boxShadow: isCurrentPlayer && !isDisconnected ? `inset 3px 0 0 ${playerColor}` : undefined,
       }}
     >
-      {/* Header: Nome e Badge */}
-      <div className="flex items-center justify-between mb-2">
-        <div className="flex items-center gap-1.5">
-          {turnOrder && (
-            <span className="text-xs font-bold text-gray-500 w-4 text-center">{turnOrder}</span>
-          )}
-          {player.isAI ? (
-            <Bot className="w-3.5 h-3.5 text-gray-400" />
-          ) : player.icon ? (
-            <span className="text-base">{getIconEmoji(player.icon)}</span>
-          ) : (
-            <User className="w-3.5 h-3.5 text-gray-400" />
-          )}
-          <h3 className={`font-semibold text-sm ${isDisconnected ? 'text-gray-400' : 'text-gray-100'}`}>{player.name}</h3>
+      <div className="flex items-center gap-2 mb-2">
+        {turnOrder != null && (
+          <span className="w-4 shrink-0 text-center text-[10px] font-mono text-gray-500">
+            {turnOrder}
+          </span>
+        )}
+        <div
+          className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+          style={{ backgroundColor: isDisconnected ? '#4B5563' : playerColor }}
+          title={player.name}
+        >
+          <PartyIcon icon={player.icon} isAI={player.isAI} className="w-4 h-4 text-white" />
         </div>
-        <div className="flex items-center gap-1">
+        <div className="min-w-0 flex-1">
+          <h3 className={`text-sm font-heading font-semibold truncate ${isDisconnected ? 'text-gray-400' : 'text-gray-100'}`}>
+            {player.name}
+          </h3>
           {isDisconnected && (
-            <span className="bg-red-900/60 text-red-300 text-xs font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5" title="Giocatore disconnesso">
-              <WifiOff className="w-2.5 h-2.5" />
+            <p className="text-[10px] text-red-300/80 flex items-center gap-1">
+              <WifiOff className="w-3 h-3" />
+              {t.roster.disconnected}
+            </p>
+          )}
+        </div>
+        <div className="flex items-center gap-1 shrink-0">
+          {isWinner && (
+            <span className="bg-amber-600 text-white p-1 rounded" title={t.game.victory}>
+              <Trophy className="w-3 h-3" />
             </span>
           )}
           {isCurrentPlayer && !isDisconnected && (
-            <span 
-              className="text-white text-xs font-bold px-2 py-0.5 rounded animate-pulse"
+            <span
+              className="text-white text-[10px] font-heading font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded"
               style={{ backgroundColor: playerColor }}
             >
-              TURNO
+              {t.roster.turn}
             </span>
           )}
           {isCurrentPlayer && isDisconnected && (
-            <span className="bg-red-900/60 text-red-300 text-xs font-bold px-1.5 py-0.5 rounded animate-pulse">
-              SKIP...
-            </span>
-          )}
-          {isWinner && (
-            <span className="bg-amber-600 text-white text-xs font-bold px-1.5 py-0.5 rounded flex items-center gap-0.5">
-              <Trophy className="w-2.5 h-2.5" />
+            <span className="bg-red-900/70 text-red-200 text-[10px] font-heading font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded">
+              {t.roster.skip}
             </span>
           )}
         </div>
       </div>
 
-      {/* Barre di Progresso - con colori semantici e numeri sempre visibili */}
-      <div className="space-y-1.5 mb-2">
-        {/* Tech */}
-        <div>
-          <div className="flex items-center justify-between mb-0.5">
-            <div className="flex items-center gap-1">
-              <Microscope className="w-3 h-3 text-tech-cyan" />
-              <span className="text-xs text-tech-cyan/80">Tech</span>
-            </div>
-            <span className="text-xs font-bold text-tech-cyan">
-              {player.techPoints}
-            </span>
-          </div>
-          <div className="w-full bg-cyber-700 rounded-full h-1.5">
-            <div
-              className="bg-gradient-to-r from-tech-blue to-tech-cyan h-1.5 rounded-full transition-all duration-500"
-              style={{ width: `${Math.min(100, (player.techPoints / 50) * 100)}%` }}
-            />
-          </div>
-        </div>
-        {/* Etica */}
-        <div>
-          <div className="flex items-center justify-between mb-0.5">
-            <div className="flex items-center gap-1">
-              <Scale className="w-3 h-3 text-ethics-amber" />
-              <span className="text-xs text-ethics-amber/80">Etica</span>
-            </div>
-            <span className="text-xs font-bold text-ethics-amber">
-              {player.ethicsPoints}
-            </span>
-          </div>
-          <div className="w-full bg-cyber-700 rounded-full h-1.5">
-            <div
-              className="bg-gradient-to-r from-ethics-gold to-ethics-amber h-1.5 rounded-full transition-all duration-500"
-              style={{ width: `${Math.min(100, (player.ethicsPoints / 45) * 100)}%` }}
-            />
-          </div>
-        </div>
-        {/* Neural - Viola */}
-        <div>
-          <div className="flex items-center justify-between mb-0.5">
-            <div className="flex items-center gap-1">
-              <Brain className="w-3 h-3 text-neural-light" />
-              <span className="text-xs text-neural-light/80">Neural</span>
-            </div>
-            <span className="text-xs font-bold text-neural-light">
-              {player.neuralformingPoints}
-            </span>
-          </div>
-          <div className="w-full bg-cyber-700 rounded-full h-1.5">
-            <div
-              className="bg-gradient-to-r from-neural-dark to-neural-light h-1.5 rounded-full transition-all duration-500"
-              style={{ width: `${Math.min(100, (player.neuralformingPoints / 65) * 100)}%` }}
-            />
-          </div>
-        </div>
+      <div className="grid grid-cols-3 gap-1">
+        <ScoreCell
+          icon={Microscope}
+          value={player.techPoints}
+          label={t.scores.tech}
+          className="text-tech-cyan"
+        />
+        <ScoreCell
+          icon={Scale}
+          value={player.ethicsPoints}
+          label={t.scores.ethics}
+          className="text-ethics-amber"
+        />
+        <ScoreCell
+          icon={Brain}
+          value={player.neuralformingPoints}
+          label={t.scores.neural}
+          className="text-neural-light"
+        />
       </div>
 
-      {/* Info compatte: sempre visibili */}
-      <div className="flex items-center justify-between text-xs text-gray-400">
-        <div className="flex items-center gap-1" title={`Tecnologie: ${player.technologies.length}/5`}>
-          <Microscope className="w-3 h-3 text-tech-cyan/60" />
-          <span className="text-gray-300">{player.technologies.length}/5</span>
-        </div>
-        {player.unlockedMilestones && player.unlockedMilestones.length > 0 && (
-          <div className="flex items-center gap-1" title={`Milestone: ${player.unlockedMilestones.length}`}>
-            <Award className="w-3 h-3 text-amber-400/60" />
-            <span className="font-semibold text-amber-300">{player.unlockedMilestones.length}</span>
-          </div>
-        )}
-        {!player.isAI && (
-          <div className="flex items-center gap-1" title={`Progresso: ${overallProgress}%`}>
-            <Trophy className="w-3 h-3 text-amber-400/60" />
-            <span className="font-semibold text-gray-300">{overallProgress}%</span>
-          </div>
+      <div className="flex items-center gap-3 mt-2 pt-1.5 border-t border-white/5 text-[10px] text-gray-400">
+        <span className="flex items-center gap-1" title={t.hand.laws}>
+          <ScrollText className="w-3 h-3 text-tech-cyan/70" />
+          <span className="tabular-nums text-gray-300">{laws}</span>
+          <span>{t.hand.laws}</span>
+        </span>
+        {milestones > 0 && (
+          <span className="flex items-center gap-1" title={t.hand.milestones}>
+            <Award className="w-3 h-3 text-amber-400/70" />
+            <span className="tabular-nums text-amber-200">{milestones}</span>
+          </span>
         )}
       </div>
     </div>
   );
 };
-

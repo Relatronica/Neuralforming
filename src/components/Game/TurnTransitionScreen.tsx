@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { User, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import { PartyIcon } from '../Brand/PartyIcon';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 
 interface TurnTransitionScreenProps {
   playerName: string;
@@ -9,23 +11,6 @@ interface TurnTransitionScreenProps {
   duration?: number; // Durata in millisecondi (default: 2000ms)
 }
 
-// Mappa icone a emoji
-const iconEmojiMap: Record<string, string> = {
-  landmark: '🏛️',
-  shield: '🛡️',
-  star: '⭐',
-  flame: '🔥',
-  lightning: '⚡',
-  crown: '👑',
-  globe: '🌍',
-  torch: '🔦',
-};
-
-const getIconEmoji = (icon?: string): string => {
-  if (!icon) return '👤';
-  return iconEmojiMap[icon] || '👤';
-};
-
 export const TurnTransitionScreen: React.FC<TurnTransitionScreenProps> = ({ 
   playerName,
   playerColor,
@@ -33,6 +18,7 @@ export const TurnTransitionScreen: React.FC<TurnTransitionScreenProps> = ({
   onComplete,
   duration = 2000 
 }) => {
+  const { t } = useGameCopy();
   const [fadeIn, setFadeIn] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
 
@@ -72,18 +58,12 @@ export const TurnTransitionScreen: React.FC<TurnTransitionScreenProps> = ({
           {/* Avatar giocatore */}
           <div className="mb-6 relative">
             <div
-              className="w-20 h-20 rounded-full border-4 border-gray-600 shadow-xl flex items-center justify-center text-4xl transition-transform duration-300 hover:scale-110"
+              className="w-20 h-20 rounded-2xl shadow-xl flex items-center justify-center"
               style={{
                 backgroundColor: playerColor || '#3B82F6',
-                borderColor: playerColor ? `${playerColor}CC` : '#3B82F6CC',
               }}
             >
-              {getIconEmoji(playerIcon)}
-            </div>
-            <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
-              <div className="bg-gray-700 rounded-full px-3 py-1 border border-gray-600">
-                <User className="w-4 h-4 text-gray-300" />
-              </div>
+              <PartyIcon icon={playerIcon} className="w-10 h-10 text-white" />
             </div>
           </div>
 
@@ -94,7 +74,7 @@ export const TurnTransitionScreen: React.FC<TurnTransitionScreenProps> = ({
 
           {/* Testo */}
           <p className="text-lg text-gray-300 text-center mb-6">
-            È il tuo turno
+            {t.game.yourTurn}
           </p>
 
           {/* Indicatore di caricamento */}

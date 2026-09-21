@@ -5,6 +5,7 @@ import { Plus, Hand, ScrollText, Brain, Scale, Microscope, Trophy, Sparkles, Tar
 import { milestones, localizeMilestone } from '../../game/Milestones';
 import { Objectives } from '../../game/Objectives';
 import { useGameCopy } from '../../lib/i18n/useGameCopy';
+import { HeaderNewsTicker } from '../Game/HeaderNewsTicker';
 
 interface PlayerHandProps {
   player: PlayerState;
@@ -57,6 +58,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
   return (
     <div className="min-h-screen bg-cyber-950 p-3 sm:p-4 pb-6 sm:pb-8">
       <div className="max-w-2xl mx-auto">
+        <HeaderNewsTicker turn={gameState.turn} className="mb-3" />
         {/* Header con tabs */}
         <div className="bg-gray-900 rounded-xl shadow-2xl p-3 sm:p-4 mb-4 border border-gray-700">
           <div className="flex items-center gap-2 mb-3 border-b border-gray-700 pb-2">

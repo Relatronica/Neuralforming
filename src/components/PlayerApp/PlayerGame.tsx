@@ -13,6 +13,7 @@ import { Users, Loader2, LogOut, Menu, MessageCircle, Clock, CheckCircle2 } from
 import { TechnologyCard } from '../Cards/TechnologyCard';
 import { PlayerOpeningStory } from './PlayerOpeningStory';
 import { useGameCopy } from '../../lib/i18n/useGameCopy';
+import { HeaderNewsTicker } from '../Game/HeaderNewsTicker';
 
 // Vista dedicata per il proponente durante la votazione
 const PlayerProposerView: React.FC<{
@@ -27,7 +28,8 @@ const PlayerProposerView: React.FC<{
     readyCount: number;
     requiredCount: number;
   } | null;
-}> = ({ pendingVote, voteStatus, discussionPhase }) => {
+  turn?: number;
+}> = ({ pendingVote, voteStatus, discussionPhase, turn }) => {
   const [secondsLeft, setSecondsLeft] = useState(0);
 
   useEffect(() => {
@@ -61,6 +63,7 @@ const PlayerProposerView: React.FC<{
   return (
     <div className="min-h-screen bg-cyber-950 p-3 sm:p-4 pb-6 sm:pb-8">
       <div className="max-w-2xl mx-auto">
+        <HeaderNewsTicker turn={turn} className="mb-3" />
         <div className="bg-gray-900 rounded-xl shadow-2xl p-4 sm:p-6 border border-gray-700">
 
           {/* Header */}
@@ -528,6 +531,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
         discussionPhase={discussionPhase}
         onVote={sendVote}
         onReadyToVote={sendReadyToVote}
+        turn={gameState.turn}
       />
     );
   }
@@ -539,6 +543,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
         pendingVote={pendingVote}
         voteStatus={voteStatus}
         discussionPhase={discussionPhase}
+        turn={gameState.turn}
       />
     );
   }

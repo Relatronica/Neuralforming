@@ -242,6 +242,17 @@ export type GameCopy = {
     balanceLabel: string;
     turn: string;
   };
+  ticker: {
+    label: string;
+  };
+  roster: {
+    title: string;
+    inGame: string;
+    turn: string;
+    skip: string;
+    disconnected: string;
+    aiOpponents: string;
+  };
 };
 
 const it: GameCopy = {
@@ -595,6 +606,17 @@ const it: GameCopy = {
     balanceLabel: 'Bilanciamento Etica/Tecnologia',
     turn: 'Turno',
   },
+  ticker: {
+    label: 'News',
+  },
+  roster: {
+    title: 'Giocatori',
+    inGame: 'in gioco',
+    turn: 'Turno',
+    skip: 'Salta',
+    disconnected: 'Offline',
+    aiOpponents: 'Avversari IA',
+  },
 };
 
 const en: GameCopy = {
@@ -942,6 +964,17 @@ const en: GameCopy = {
     ethicsPct: 'Ethics %',
     balanceLabel: 'Ethics / Technology balance',
     turn: 'Turn',
+  },
+  ticker: {
+    label: 'News',
+  },
+  roster: {
+    title: 'Players',
+    inGame: 'in play',
+    turn: 'Turn',
+    skip: 'Skip',
+    disconnected: 'Offline',
+    aiOpponents: 'AI opponents',
   },
 };
 

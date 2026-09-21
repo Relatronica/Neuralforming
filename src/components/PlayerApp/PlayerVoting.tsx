@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TechnologyCard } from '../Cards/TechnologyCard';
 import { Vote, X, MessageCircle, Clock, CheckCircle2 } from 'lucide-react';
 import { useGameCopy } from '../../lib/i18n/useGameCopy';
+import { HeaderNewsTicker } from '../Game/HeaderNewsTicker';
 
 interface PlayerVotingProps {
   pendingVote: {
@@ -27,6 +28,7 @@ interface PlayerVotingProps {
   } | null;
   onVote: (technologyId: string, vote: boolean) => void;
   onReadyToVote: (technologyId: string) => void;
+  turn?: number;
 }
 
 export const PlayerVoting: React.FC<PlayerVotingProps> = ({
@@ -36,6 +38,7 @@ export const PlayerVoting: React.FC<PlayerVotingProps> = ({
   discussionPhase,
   onVote,
   onReadyToVote,
+  turn,
 }) => {
   const { t } = useGameCopy();
   const hasVoted = voteStatus?.hasVoted ?? false;
@@ -81,6 +84,7 @@ export const PlayerVoting: React.FC<PlayerVotingProps> = ({
   return (
     <div className="min-h-screen bg-cyber-950 p-3 sm:p-4 pb-6 sm:pb-8">
       <div className="max-w-2xl mx-auto">
+        <HeaderNewsTicker turn={turn} className="mb-3" />
         <div className="bg-gray-900 rounded-xl shadow-2xl p-4 sm:p-6 border border-gray-700">
           
           {/* Discussion Phase Header */}

@@ -22,6 +22,7 @@ import { OpeningStoryModal } from './OpeningStoryModal';
 import { useGameSocketContext } from '../../contexts/GameSocketContext';
 import { Bot, Landmark, Users, CheckCircle2, XCircle, Clock, MessageCircle, Scale, Loader2, QrCode } from 'lucide-react';
 import { InviteQrModal } from './InviteQrModal';
+import { HeaderNewsTicker } from './HeaderNewsTicker';
 import { loadGameContent } from '../../lib/i18n/content';
 import { useGameCopy } from '../../lib/i18n/useGameCopy';
 import { setSessionLocale } from '../../lib/i18n/session';
@@ -364,7 +365,6 @@ interface GameProps {
 
 export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBackToSetup }) => {
   const { locale, t } = useGameCopy();
-  const headerNews = loadGameContent(locale).headerNews;
   // Single player: stato locale
   // IMPORTANTE: In multiplayer, questo NON viene usato - viene sempre usato serverGameState
   const [localGameState, setLocalGameState] = useState<GameState>(() => 
@@ -404,9 +404,6 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
   const [showOpeningStory, setShowOpeningStory] = useState(false);
   const [hasShownOpeningStory, setHasShownOpeningStory] = useState(false);
   const [selectedOpeningStory, setSelectedOpeningStory] = useState<{ id: string; title: string; content: string; mood: string } | null>(null);
-  const [headerNewsIndex, setHeaderNewsIndex] = useState(() =>
-    Math.floor(Math.random() * loadGameContent().headerNews.length)
-  );
   const [showInviteQr, setShowInviteQr] = useState(false);
 
   // Multiplayer: stato dal server
@@ -1210,25 +1207,6 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
     }
   }, [mode, isMaster, socket, gameState, roomId, setGameState]);
 
-  // Rotazione automatica delle news nell'header ogni 20 secondi
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setHeaderNewsIndex((prev) => {
-        // Cambia alla news successiva, tornando all'inizio se necessario
-        return (prev + 1) % headerNews.length;
-      });
-    }, 20000); // Cambia ogni 20 secondi
-
-    return () => clearInterval(interval);
-  }, []);
-
-  // Cambia la news nell'header anche quando cambia il turno (random)
-  useEffect(() => {
-    if (!gameState) return;
-    // Cambia news random ad ogni turno
-    setHeaderNewsIndex(Math.floor(Math.random() * headerNews.length));
-  }, [gameState?.turn]);
-
   // Rileva cambio turno per mostrare transizione
   useEffect(() => {
     if (!gameState) return;
@@ -1477,35 +1455,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
         {/* Header con news */}
       <header className="flex-shrink-0 px-4 py-3 bg-cyber-950/90 backdrop-blur-md border-b border-white/10 relative z-10">
         <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4 flex-1 min-w-0">
-            <div className="flex items-center gap-2 text-xs text-gray-400 whitespace-nowrap font-mono uppercase tracking-wider">
-              <span className="text-tech-cyan">News</span>
-            </div>
-            <div className="flex items-center gap-4 flex-1 min-w-0 overflow-hidden">
-              {headerNews[headerNewsIndex] && (
-                <>
-                  <div className="text-xs text-gray-500 whitespace-nowrap">
-                    {new Date(headerNews[headerNewsIndex].date).toLocaleDateString(locale === 'en' ? 'en-GB' : 'it-IT', { 
-                      day: '2-digit', 
-                      month: 'short', 
-                      year: 'numeric' 
-                    })}
-                  </div>
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <span className="text-sm text-gray-300 font-medium truncate">
-                      {headerNews[headerNewsIndex].title}
-                    </span>
-                    <span className="text-xs text-gray-500 truncate hidden sm:inline">
-                      • {headerNews[headerNewsIndex].shortText}
-                    </span>
-                  </div>
-                  <div className="text-xs text-gray-500 whitespace-nowrap hidden md:inline">
-                    {headerNews[headerNewsIndex].source}
-                  </div>
-                </>
-              )}
-            </div>
-          </div>
+          <HeaderNewsTicker variant="board" turn={gameState.turn} />
           <div className="flex items-center gap-3 shrink-0">
             {mode === 'multiplayer' && roomId && (
               <button
