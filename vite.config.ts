@@ -3,6 +3,7 @@ import { defineConfig, loadEnv, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import { processContactRequest, type ContactEnv } from './src/lib/sendContactEmail'
+import { seoPlugin } from './vite.seo'
 
 function readBody(req: IncomingMessage): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -75,31 +76,39 @@ export default defineConfig(({ mode }) => {
         CONTACT_FROM_EMAIL: env.CONTACT_FROM_EMAIL,
       }),
       react(),
+      seoPlugin(env.VITE_SITE_URL),
       VitePWA({
         registerType: 'autoUpdate',
-        includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+        includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'og.png', 'icon-192.svg', 'icon-512.svg'],
         manifest: {
           name: 'Neuralforming - Gioco Educativo sull\'IA Etica',
           short_name: 'Neuralforming',
-          description: 'App mobile per giocare a Neuralforming - decisioni politiche per un\'IA sostenibile',
-          theme_color: '#3b82f6',
-          background_color: '#1e1b4b',
+          description: 'Parlamento in miniatura per governare l\'IA. Gioco educativo multiplayer, 2–5 giocatori.',
+          theme_color: '#0b0f19',
+          background_color: '#0b0f19',
           display: 'standalone',
           orientation: 'portrait',
           scope: '/',
           start_url: '/player',
+          lang: 'it',
           icons: [
             {
               src: 'icon-192.svg',
               sizes: '192x192',
               type: 'image/svg+xml',
-              purpose: 'any maskable'
+              purpose: 'any'
             },
             {
               src: 'icon-512.svg',
               sizes: '512x512',
               type: 'image/svg+xml',
-              purpose: 'any maskable'
+              purpose: 'any'
+            },
+            {
+              src: 'apple-touch-icon.png',
+              sizes: '180x180',
+              type: 'image/png',
+              purpose: 'any'
             }
           ]
         },

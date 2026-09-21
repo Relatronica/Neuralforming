@@ -2,10 +2,19 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Mail } from 'lucide-react';
 import { NeuralformingMark } from '../Brand/NeuralformingMark';
 import { ContactForm } from './ContactForm';
+import { useDocumentMeta } from '../../hooks/useDocumentMeta';
 
 export function ContactPage() {
   const [params] = useSearchParams();
   const initialReason = params.get('motivo') ?? '';
+
+  useDocumentMeta({
+    title: 'Contatti — Neuralforming',
+    description:
+      'Scrivi a Relatronica per richiedere un’istanza stabile, segnalare un bug, organizzare un workshop o contribuire a Neuralforming.',
+    path: '/contatti',
+    locale: 'it',
+  });
 
   return (
     <div className="min-h-screen bg-cyber-950 text-gray-100">

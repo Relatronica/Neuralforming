@@ -47,7 +47,7 @@ const ROOM_GAMEOVER_TTL_MS = 5 * 60 * 1000; // 5 minuti dopo game over prima di 
 const ROOM_CLEANUP_INTERVAL_MS = 60 * 1000; // Controlla ogni 60 secondi
 const DEFAULT_MAX_PLAYERS = 5;
 const MIN_PLAYERS = 2;
-const MAX_PLAYERS_LIMIT = 8; // Limite massimo assoluto
+const MAX_PLAYERS_LIMIT = 5; // Limite massimo assoluto
 
 // Rate limiting
 const RATE_LIMIT_WINDOW_MS = 1000; // Finestra di 1 secondo

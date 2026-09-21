@@ -1,17 +1,18 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
+import { useDocumentMeta } from '../../hooks/useDocumentMeta';
 import { LANDING } from './landing';
 import { detectLocale, persistLocale, type Locale } from './locale';
 
 export function useLandingCopy() {
   const [locale, setLocaleState] = useState<Locale>(() => detectLocale());
+  const copy = LANDING[locale];
 
-  useEffect(() => {
-    const copy = LANDING[locale];
-    document.documentElement.lang = locale;
-    document.title = copy.metaTitle;
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute('content', copy.metaDescription);
-  }, [locale]);
+  useDocumentMeta({
+    title: copy.metaTitle,
+    description: copy.metaDescription,
+    path: '/',
+    locale,
+  });
 
   const setLocale = useCallback((next: Locale) => {
     setLocaleState(next);

@@ -31,6 +31,7 @@ Questa guida spiega come mettere online l'applicazione Neuralforming usando **Ne
    - **Build command**: `npm run build`
    - **Publish directory**: `dist`
 3. Aggiungi le variabili d'ambiente in **Site settings** → **Environment variables**:
+   - `VITE_SITE_URL`: L'URL pubblico del sito (es: `https://neuralforming.netlify.app`) ⚠️ *Senza barra finale `/`*.
    - `VITE_SERVER_URL`: L'URL del tuo server Render (es: `https://neuralforming-server.onrender.com`).
    - `RESEND_API_KEY`: chiave API Resend per il form Contatti.
    - (opzionali) `CONTACT_TO_EMAIL`, `CONTACT_FROM_EMAIL`.
@@ -57,6 +58,7 @@ Questa guida spiega come mettere online l'applicazione Neuralforming usando **Ne
 ### Variabili per il Client (Netlify)
 | Variabile | Valore | Descrizione |
 | :--- | :--- | :--- |
+| `VITE_SITE_URL` | `https://tuo-sito.netlify.app` | URL pubblico del frontend (canonical, Open Graph, sitemap). **Senza barra finale**. |
 | `VITE_SERVER_URL` | `https://tuo-server.onrender.com` | URL del server WebSocket su Render a cui il client si connetterà. |
 | `RESEND_API_KEY` | chiave Resend | API key per il form Contatti (`POST /api/contact`). Senza questa variabile l'invio non parte. |
 | `CONTACT_TO_EMAIL` | `info@relatronica.com` | Destinatario dei messaggi (opzionale, ha un default). |

@@ -228,6 +228,7 @@ export const LandingPage = ({
         )}
       </nav>
 
+      <main>
       <header className="relative min-h-screen flex items-center justify-center pt-20 pb-16 overflow-hidden">
         <HeroBackdrop />
 
@@ -270,7 +271,7 @@ export const LandingPage = ({
 
           <div className="pt-6 border-t border-white/10 grid grid-cols-3 gap-4 max-w-md mx-auto">
             <div>
-              <p className="text-xl sm:text-2xl font-mono font-bold text-tech-cyan">2–8</p>
+              <p className="text-xl sm:text-2xl font-mono font-bold text-tech-cyan">2–5</p>
               <p className="text-xs text-gray-400 font-sans">{t.hero.players}</p>
             </div>
             <div>
@@ -633,15 +634,16 @@ export const LandingPage = ({
                       onClick={() => setOpenFaq(open ? null : i)}
                       className="w-full flex items-center justify-between gap-4 px-5 py-4 text-left"
                       aria-expanded={open}
+                      aria-controls={`faq-panel-${i}`}
                     >
                       <span className="font-heading font-semibold text-gray-100">{item.q}</span>
                       <ChevronDown
                         className={`w-4 h-4 text-tech-cyan shrink-0 transition-transform ${open ? 'rotate-180' : ''}`}
                       />
                     </button>
-                    {open && (
+                    <div id={`faq-panel-${i}`} role="region" hidden={!open}>
                       <p className="px-5 pb-5 text-sm text-gray-400 leading-relaxed">{item.a}</p>
-                    )}
+                    </div>
                   </div>
                 );
               })}
@@ -758,6 +760,8 @@ export const LandingPage = ({
           </RevealSection>
         </div>
       </section>
+
+      </main>
 
       <footer className="border-t border-white/10 py-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">

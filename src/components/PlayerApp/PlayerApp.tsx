@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { GameSocketProvider } from '../../contexts/GameSocketContext';
 import { PlayerLogin } from './PlayerLogin';
 import { PlayerGame } from './PlayerGame';
+import { useDocumentMeta } from '../../hooks/useDocumentMeta';
 
 /**
  * PWA per i giocatori mobile
@@ -27,6 +28,13 @@ export const PlayerApp: React.FC = () => {
   const [playerColor, setPlayerColor] = useState<string | null>(null);
   const [playerIcon, setPlayerIcon] = useState<string | null>(null);
   const [isLoadingSession, setIsLoadingSession] = useState(true);
+
+  useDocumentMeta({
+    title: 'Gioca — Neuralforming',
+    description: 'Entra in una stanza Neuralforming dal telefono.',
+    path: '/player',
+    robots: 'noindex,nofollow',
+  });
 
   // Ascolta eventi di errore per resettare il form quando il nome è già usato
   // IMPORTANTE: questo viene chiamato solo quando c'è un errore specifico di nome già usato

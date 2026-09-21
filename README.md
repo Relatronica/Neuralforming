@@ -4,7 +4,7 @@
 [![Node.js](https://img.shields.io/badge/node-18%2B-green)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.2-blue)](https://www.typescriptlang.org/)
 [![PWA](https://img.shields.io/badge/PWA-ready-purple)](https://web.dev/progressive-web-apps/)
-[![Multiplayer](https://img.shields.io/badge/Multiplayer-2--8_giocatori-orange)](#come-giocare)
+[![Multiplayer](https://img.shields.io/badge/Multiplayer-2--5_giocatori-orange)](#come-giocare)
 
 Un gioco educativo **multiplayer** che simula lo sviluppo di un'intelligenza artificiale bilanciando tecnologia avanzata ed etica. Disponibile come **Progressive Web App (PWA)** per un'esperienza nativa su qualsiasi dispositivo.
 
@@ -19,7 +19,7 @@ Assumi il ruolo di un **Politico** che lavora con un team di sviluppatori per "f
 Il gioco supporta due modalita:
 
 1. **Gioco Singolo**: Gioca da solo contro 4 avversari IA con difficolta adattiva e un sistema di opinione pubblica
-2. **Multiplayer**: Gioca con 2-8 giocatori in tempo reale via WebSocket, con un dispositivo "master" (tabellone) e i giocatori collegati da smartphone
+2. **Multiplayer**: Gioca con 2-5 giocatori in tempo reale via WebSocket, con un dispositivo "master" (tabellone) e i giocatori collegati da smartphone
 
 ### Architettura Master/Player
 
@@ -137,7 +137,7 @@ npm start
 
 ### Caratteristiche Tecniche
 
-- **Real-time Multiplayer** - 2-8 giocatori simultaneamente
+- **Real-time Multiplayer** - 2-5 giocatori simultaneamente
 - **Master Heartbeat** - Monitoraggio connessione master con timeout e riconnessione
 - **Session Persistence** - Riconnessione automatica con grace period di 60 secondi
 - **Responsive Design** - Ottimizzato per desktop, tablet e mobile

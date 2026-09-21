@@ -1,4 +1,5 @@
 import type { Locale } from './locale';
+import seo from '../../config/seo.config.json';
 
 export type LandingCopy = {
   metaTitle: string;
@@ -241,7 +242,7 @@ const it: LandingCopy = {
     classTitle: 'In classe, multiplayer',
     classDesc:
       'Trasforma la classe in un parlamento. Un computer è il tabellone; ogni studente entra dal telefono, dibatte e vota. Nessuna registrazione: solo pratica civica.',
-    classBullet1: 'Master + 2–8 smartphone',
+    classBullet1: 'Master + 2–5 smartphone',
     classBullet2: 'Dibattito e voto parlamentare',
     classCta: 'Avvia stanza cloud',
     soloBadge: '1 giocatore',
@@ -262,40 +263,7 @@ const it: LandingCopy = {
     kicker: 'Domande',
     title: 'FAQ',
     lead: 'Quello che di solito chiedono docenti, organizzatori e chi vuole self-hostare.',
-    items: [
-      {
-        q: 'Serve un account o una registrazione?',
-        a: 'No. Apri una stanza, condividi il QR code o il link, e i giocatori entrano dal telefono. Nessun login, nessun dato di profilazione.',
-      },
-      {
-        q: 'Quanti giocatori servono e che dispositivi?',
-        a: 'Il multiplayer è pensato per 2-8 giocatori. Serve un dispositivo master (computer o tablet) che mostra tabellone e parlamento, più lo smartphone di ciascun giocatore. Il playground singolo si gioca da soli su un solo schermo.',
-      },
-      {
-        q: 'Quanto dura una partita?',
-        a: 'Una sessione di classe dura in genere 45-90 minuti, a seconda di quanto tempo dedicate al dibattito. Il playground singolo è più rapido e si chiude al massimo in 15 turni.',
-      },
-      {
-        q: 'Il cloud è stabile per una lezione?',
-        a: 'L’istanza pubblica è una demo sperimentale su risorse condivise: con molte stanze contemporanee possono capitare rallentamenti. Per una lezione o un evento è meglio self-hostare o richiedere un’istanza dedicata dalla pagina Contatti.',
-      },
-      {
-        q: 'Posso usarlo offline o sulla rete della scuola?',
-        a: 'Sì. Il progetto è open source (AGPL-3.0): puoi installarlo in locale o su un server della scuola con Node.js o Docker. Il codice e le istruzioni sono sul repository GitHub.',
-      },
-      {
-        q: 'Perché un gioco, e non un corso sull’IA?',
-        a: 'Perché la governance non si impara ascoltando: si impara decidendo, perdendo un voto, negoziando con chi la pensa diversamente. Il gioco è il dispositivo politico. Il corso può arrivare dopo.',
-      },
-      {
-        q: 'È adatto a quale età o materia?',
-        a: 'Funziona bene in scuole superiori, università e workshop civici su etica dell’IA, educazione civica, informatica e filosofia. Non servono competenze di programmazione: servono dibattito e voto.',
-      },
-      {
-        q: 'Come posso sostenere il progetto?',
-        a: 'Neuralforming è gratuito e senza pubblicità. Puoi donare su Buy Me a Coffee, scrivere dalla pagina Contatti (bug, workshop, contributi) o aprire una issue su GitHub.',
-      },
-    ],
+    items: seo.faqIt,
   },
   roadmap: {
     kicker: 'Dove stiamo andando',
@@ -305,7 +273,7 @@ const it: LandingCopy = {
     next: 'Prossimo',
     later: 'Oltre',
     nowItems: [
-      'Multiplayer 2–8 con tabellone master e player su smartphone',
+      'Multiplayer 2–5 con tabellone master e player su smartphone',
       'Playground singolo con opinione pubblica',
       'Dilemmi, tecnologie, parlamento e PWA',
       'Guida in-app e codice AGPL-3.0',
@@ -446,7 +414,7 @@ const en: LandingCopy = {
     classTitle: 'In class, multiplayer',
     classDesc:
       'Turn the classroom into a parliament. One computer is the board; each student joins from their phone, debates and votes. No sign-up: civic practice only.',
-    classBullet1: 'Master + 2–8 phones',
+    classBullet1: 'Master + 2–5 phones',
     classBullet2: 'Debate and parliamentary vote',
     classCta: 'Start a cloud room',
     soloBadge: '1 player',
@@ -474,7 +442,7 @@ const en: LandingCopy = {
       },
       {
         q: 'How many players and which devices?',
-        a: 'Multiplayer is designed for 2–8 players. You need a master device (computer or tablet) showing the board and parliament, plus each player’s smartphone. The single-player playground is played alone on one screen.',
+        a: 'Multiplayer is designed for 2–5 players. You need a master device (computer or tablet) showing the board and parliament, plus each player’s smartphone. The single-player playground is played alone on one screen.',
       },
       {
         q: 'How long is a game?',
@@ -510,7 +478,7 @@ const en: LandingCopy = {
     next: 'Next',
     later: 'Beyond',
     nowItems: [
-      '2–8 multiplayer with master board and players on phones',
+      '2–5 multiplayer with master board and players on phones',
       'Single-player playground with public opinion',
       'Dilemmas, technologies, parliament and PWA',
       'In-app guide and AGPL-3.0 code',

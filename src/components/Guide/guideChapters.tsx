@@ -403,7 +403,7 @@ export const guideChapters: GuideChapter[] = [
               <span className="text-xs font-semibold bg-neural-medium/20 text-neural-light px-2 py-0.5 rounded-full">Consigliato</span>
             </div>
             <p className="text-gray-300 mb-3">
-              Crea una stanza e invita 2-8 giocatori tramite QR code o link diretto.
+              Crea una stanza e invita 2-5 giocatori tramite QR code o link diretto.
               Un dispositivo (desktop o tablet) funge da tabellone master, mentre ogni
               giocatore si collega dal proprio smartphone.
             </p>

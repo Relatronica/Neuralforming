@@ -1,0 +1,49 @@
+{
+  "origin": "https://neuralforming.netlify.app",
+  "name": "Neuralforming",
+  "title": "Neuralforming — Il futuro dell'IA si decide. Non si subisce.",
+  "description": "Neuralforming: un parlamento in miniatura per governare l'IA. Attivismo civico, dibattito e voto — soprattutto con i giovani.",
+  "entity": "Neuralforming è un gioco educativo multiplayer AGPL di Relatronica: trasforma una classe in un parlamento in miniatura per dibattere e votare governance ed etica dell'IA. 2–5 giocatori, dispositivo master più smartphone, senza login né pubblicità.",
+  "github": "https://github.com/Relatronica/Neuralforming",
+  "license": "https://www.gnu.org/licenses/agpl-3.0.html",
+  "donate": "https://buymeacoffee.com/relatronica",
+  "organization": {
+    "name": "Relatronica",
+    "url": "https://relatronica.com",
+    "email": "info@relatronica.com"
+  },
+  "faqIt": [
+    {
+      "q": "Serve un account o una registrazione?",
+      "a": "No. Apri una stanza, condividi il QR code o il link, e i giocatori entrano dal telefono. Nessun login, nessun dato di profilazione."
+    },
+    {
+      "q": "Quanti giocatori servono e che dispositivi?",
+      "a": "Il multiplayer è pensato per 2-5 giocatori. Serve un dispositivo master (computer o tablet) che mostra tabellone e parlamento, più lo smartphone di ciascun giocatore. Il playground singolo si gioca da soli su un solo schermo."
+    },
+    {
+      "q": "Quanto dura una partita?",
+      "a": "Una sessione di classe dura in genere 45-90 minuti, a seconda di quanto tempo dedicate al dibattito. Il playground singolo è più rapido e si chiude al massimo in 15 turni."
+    },
+    {
+      "q": "Il cloud è stabile per una lezione?",
+      "a": "L’istanza pubblica è una demo sperimentale su risorse condivise: con molte stanze contemporanee possono capitare rallentamenti. Per una lezione o un evento è meglio self-hostare o richiedere un’istanza dedicata dalla pagina Contatti."
+    },
+    {
+      "q": "Posso usarlo offline o sulla rete della scuola?",
+      "a": "Sì. Il progetto è open source (AGPL-3.0): puoi installarlo in locale o su un server della scuola con Node.js o Docker. Il codice e le istruzioni sono sul repository GitHub."
+    },
+    {
+      "q": "Perché un gioco, e non un corso sull’IA?",
+      "a": "Perché la governance non si impara ascoltando: si impara decidendo, perdendo un voto, negoziando con chi la pensa diversamente. Il gioco è il dispositivo politico. Il corso può arrivare dopo."
+    },
+    {
+      "q": "È adatto a quale età o materia?",
+      "a": "Funziona bene in scuole superiori, università e workshop civici su etica dell’IA, educazione civica, informatica e filosofia. Non servono competenze di programmazione: servono dibattito e voto."
+    },
+    {
+      "q": "Come posso sostenere il progetto?",
+      "a": "Neuralforming è gratuito e senza pubblicità. Puoi donare su Buy Me a Coffee, scrivere dalla pagina Contatti (bug, workshop, contributi) o aprire una issue su GitHub."
+    }
+  ]
+}

@@ -3,11 +3,20 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, BookOpen, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import { guideChapters } from './guideChapters';
 import { NeuralformingMark } from '../Brand/NeuralformingMark';
+import { useDocumentMeta } from '../../hooks/useDocumentMeta';
 
 export const GuidePage = () => {
   const [activeId, setActiveId] = useState(guideChapters[0].id);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const sectionRefs = useRef<Map<string, HTMLElement>>(new Map());
+
+  useDocumentMeta({
+    title: 'Guida al gioco — Neuralforming',
+    description:
+      'Come si gioca a Neuralforming: fasi del turno, voto parlamentare, dilemmi etici e uso in classe con master e smartphone.',
+    path: '/guida',
+    locale: 'it',
+  });
 
   useEffect(() => {
     const els = Array.from(sectionRefs.current.values());
