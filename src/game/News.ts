@@ -1,32 +1,30 @@
 import { GameState, SocietyNews, PlayerState } from './types';
 import { TurnManager } from './TurnManager';
-import newsData from '../data/news.json';
+import { loadGameContent } from '../lib/i18n/content';
 
 /**
  * Modulo centralizzato per la gestione delle news dalla società
  */
 export class News {
-  private static news: SocietyNews[] = newsData as SocietyNews[];
-
   /**
    * Ottiene tutte le news disponibili
    */
   static getAllNews(): SocietyNews[] {
-    return [...this.news];
+    return [...loadGameContent().news];
   }
 
   /**
    * Ottiene una news per ID
    */
   static getNewsById(id: string): SocietyNews | undefined {
-    return this.news.find(n => n.id === id);
+    return this.getAllNews().find(n => n.id === id);
   }
 
   /**
    * Pesca una news randomica (escludendo quelle troppo recenti se necessario)
    */
   static drawRandomNews(excludeIds?: string[]): SocietyNews {
-    let available = [...this.news];
+    let available = this.getAllNews();
     
     if (excludeIds && excludeIds.length > 0) {
       available = available.filter(n => !excludeIds.includes(n.id));
@@ -34,7 +32,7 @@ export class News {
     
     // Se non ci sono news disponibili (esclusa), riusa tutte
     if (available.length === 0) {
-      available = [...this.news];
+      available = this.getAllNews();
     }
     
     const randomIndex = Math.floor(Math.random() * available.length);

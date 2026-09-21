@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { QrCode, X, Copy, Check } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { buildPlayerJoinUrl } from '../../utils/deeplink';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 
 export function InviteQrModal({
   roomId,
@@ -10,6 +11,7 @@ export function InviteQrModal({
   roomId: string;
   onClose: () => void;
 }) {
+  const { t } = useGameCopy();
   const [copied, setCopied] = useState(false);
   const joinUrl = buildPlayerJoinUrl(roomId);
 
@@ -31,7 +33,7 @@ export function InviteQrModal({
         <button
           onClick={onClose}
           className="absolute top-3 right-3 text-gray-400 hover:text-gray-200 transition-colors"
-          aria-label="Chiudi"
+          aria-label={t.common.close}
         >
           <X className="w-5 h-5" />
         </button>
@@ -39,10 +41,10 @@ export function InviteQrModal({
         <div className="text-center mb-4">
           <div className="flex items-center justify-center gap-2 mb-1">
             <QrCode className="w-5 h-5 text-tech-cyan" />
-            <h3 className="text-lg font-heading font-bold text-gray-100">Invita giocatori</h3>
+            <h3 className="text-lg font-heading font-bold text-gray-100">{t.invite.title}</h3>
           </div>
           <p className="text-xs text-gray-400">
-            Inquadra il QR code per unirti alla partita in corso
+            {t.invite.hint}
           </p>
         </div>
 
@@ -70,12 +72,12 @@ export function InviteQrModal({
             className="px-3 py-2 bg-cyber-800 hover:bg-cyber-700 rounded-lg transition-colors flex items-center gap-1.5 text-gray-200 text-xs whitespace-nowrap border border-white/10"
           >
             {copied ? <Check className="w-3.5 h-3.5 text-tech-cyan" /> : <Copy className="w-3.5 h-3.5" />}
-            {copied ? 'Copiato!' : 'Copia'}
+            {copied ? t.common.copied : t.common.copy}
           </button>
         </div>
 
         <p className="text-[10px] text-gray-500 text-center mt-3">
-          I nuovi giocatori entreranno nella partita con 0 punti
+          {t.invite.footnote}
         </p>
       </div>
     </div>

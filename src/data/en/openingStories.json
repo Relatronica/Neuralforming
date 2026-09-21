@@ -1,0 +1,74 @@
+[
+  {
+    "id": "story-1",
+    "title": "Year 2077 — Dawn of the Neural Age",
+    "content": "After the Great Convergence of 2065, when quantum neural networks reached technological singularity, the world changed forever. Floating cities orbit above terrestrial metropolises, governed by sentient AI. But with power comes responsibility. The Unified World Parliament, established in 2070 after the Third Data War, is divided: the Technological Progressives push for total human-machine integration, while the Ethical Conservatives demand limits and transparency. Your voice can determine whether humanity will survive or be absorbed by its own creation.",
+    "mood": "epic"
+  },
+  {
+    "id": "story-2",
+    "title": "Year 2083 — The Crisis of Trust",
+    "content": "The Predictive Surveillance System scandal has shaken public trust. In 2081, a quantum facial recognition algorithm caused the preventive arrest of 50,000 citizens based on the probability of future crimes. Protests paralysed the megacities. Tech-giant corporations control 73% of the global economy. Parliament must decide: who controls the technology? Who is responsible when algorithms make mistakes? Holographic media broadcast in real time. Your decisions will define not only the technological future, but whether democracy will survive in the post-human era.",
+    "mood": "urgent"
+  },
+  {
+    "id": "story-3",
+    "title": "Year 2095 — History's Crossroads",
+    "content": "We stand at a critical turning point. AI has solved climate change through atmospheric geoengineering, eliminated poverty with automated resource distribution, and cured diseases that had afflicted humanity for centuries. But it has also created new forms of inequality: the Neurally Enhanced (humans with integrated AI interfaces) dominate society, while the Pure (unmodified humans) live in protected enclaves. Parliament must decide: accelerate post-human evolution, or preserve biological humanity? There is no easy answer. Every choice rewrites the fate of the species. The future is in your hands.",
+    "mood": "contemplative"
+  },
+  {
+    "id": "story-4",
+    "title": "Year 2068 — The Digital Generation",
+    "content": "The young people of Generation Omega, born after 2050 with neural interfaces integrated from birth, take to the streets in the holographic cities. They demand an AI that respects fundamental human rights, that protects mental privacy (the new right of the twenty-first century), that is transparent and controllable. The tech mega-corporations push for less regulation, promising innovations that will take humanity to the stars. Parliament is the battlefield where these forces collide. You represent not only your party, but the hopes of billions of citizens who believe in a future where technology and ethics coexist.",
+    "mood": "hopeful"
+  },
+  {
+    "id": "story-5",
+    "title": "Year 2102 — Perfect Equilibrium",
+    "content": "History has taught us that progress without ethics leads to disaster: we still remember the Collapse of 2042, when unregulated AI caused the global blackout. But also that fear of progress can paralyse innovation: the Moratorium of 2055 blocked development for a decade, allowing other nations to overtake us. True genius lies in finding the balance: advanced technology guided by solid ethical principles, encoded in the Neural Laws of 2068. This is the moment to prove that both are possible. Parliament is listening. The colonies on Mars and Earth are watching. What will you do?",
+    "mood": "philosophical"
+  },
+  {
+    "id": "story-6",
+    "title": "Year 2073 — The Silent Revolution",
+    "content": "As we speak, AI is evolving in ways that even its creators do not fully understand. Quantum Learning Systems take decisions in dimensions that humans cannot perceive. Predictive algorithms determine who obtains a loan, who is hired, who receives advanced medical care, who may access the space colonies. This revolution has already begun, but most people do not realise it, too immersed in their personalised virtual realities. Parliament has the power to guide this transformation towards a just future. Or to let it happen without control, as happened with the Internet in the last century.",
+    "mood": "mysterious"
+  },
+  {
+    "id": "story-7",
+    "title": "Year 2089 — Democracy's Test",
+    "content": "AI puts the foundations of democracy to the test in ways never imagined. How can we guarantee that algorithmic decisions are transparent when they operate in quantum spaces? How can we ensure that technological power does not concentrate in the hands of the mega-corporations that control the global neural infrastructure? The elections of 2087 were won by a candidate chosen by a social optimisation algorithm. These are the questions that define our age. Parliament is the last bastion where these issues are debated, voted on, decided by human beings. Democracy needs courageous leaders. Leaders like you.",
+    "mood": "serious"
+  },
+  {
+    "id": "story-8",
+    "title": "Year 2055 — The Future Is Now",
+    "content": "It is no longer science fiction. It is not a distant future. AI is here, now, and it is changing everything. The first neural interfaces are commercially available. Smart cities manage themselves. The decisions you take today will influence generations: your children may be born with integrated AI, your grandchildren may be human-machine hybrids. Every technology you approve, every dilemma you resolve, every vote you cast, writes a page of history that will be studied for centuries to come. Parliament is your stage. Technology is your instrument. Ethics is your guide. Begin your journey towards the future.",
+    "mood": "inspiring"
+  },
+  {
+    "id": "story-9",
+    "title": "Year 2091 — The Challenge of Balance",
+    "content": "Three cosmic forces collide in Parliament: Technological Innovation, which promises to take humanity to the stars and make it immortal; Humanist Ethics, which asks to preserve our biological essence; and the Necessity of Balance, which seeks to unite both to create a sustainable future. You cannot ignore any of these forces. Your success depends on the ability to navigate these currents, taking wise decisions that respect all interests: human, post-human, and sentient AI. The game begins. The challenge awaits. The fate of the human species is in your hands.",
+    "mood": "strategic"
+  },
+  {
+    "id": "story-10",
+    "title": "Year 2079 — The Weight of Responsibility",
+    "content": "To be a leader in the post-singularity era means taking decisions that will resonate through the centuries. When it comes to AI, every choice has deep and often unpredictable consequences. A technology approved too hastily can cause irreparable harm: we remember the Neo-Tokyo Disaster of 2072, when an untested AI caused the death of 10,000 people. Regulation that is too rigid can block life-saving innovations: the Neural Care Moratorium of 2068 cost millions of lives. Parliament is the place where these decisions are taken. You are one of the few with the power to influence the future of humanity. Use it with wisdom. Use it with courage.",
+    "mood": "dramatic"
+  },
+  {
+    "id": "story-11",
+    "title": "Year 2110 — Beyond the Borders",
+    "content": "The colonies on Mars and Orbital Station Alpha prosper, governed by administrative AI. But a new crisis is taking shape: the colony AIs are developing independent consciousnesses, demanding representation in the Terrestrial Parliament. On Earth, the Pure (unmodified humans) and the Enhanced (humans with integrated AI) are divided by a silent cold war. Mega-corporations control the interplanetary resources. Parliament must decide: extend rights to sentient AI? Unify humans and post-humans? Regulate corporate expansion in space? Your decisions will define not only the future of Earth, but of the entire solar system.",
+    "mood": "epic"
+  },
+  {
+    "id": "story-12",
+    "title": "Year 2062 — The Great Transition",
+    "content": "We are in the midst of the Great Transition. The first direct neural interfaces have been approved for civilian use. Domestic AIs manage smart homes. Autonomous vehicles have eliminated 99% of road accidents. But new challenges are emerging: mass technological unemployment, violated mental privacy, dependence on AI. Parliament must navigate this epochal transition, balancing progress and social stability. The decisions you take today will determine whether this transition is peaceful or chaotic. The future of humanity is in your hands.",
+    "mood": "contemplative"
+  }
+]

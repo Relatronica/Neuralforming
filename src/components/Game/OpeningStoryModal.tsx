@@ -1,6 +1,7 @@
 import { X, Sparkles, Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import openingStoriesData from '../../data/openingStories.json';
+import { loadGameContent } from '../../lib/i18n/content';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 
 interface OpeningStory {
   id: string;
@@ -18,12 +19,13 @@ interface OpeningStoryModalProps {
 }
 
 export const OpeningStoryModal = ({ onClose, story: externalStory, readyCount = 0, totalPlayers = 0, onStorySelected }: OpeningStoryModalProps) => {
+  const { t } = useGameCopy();
   const [story, setStory] = useState<OpeningStory | null>(externalStory || null);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     if (!externalStory) {
-      const stories = openingStoriesData as OpeningStory[];
+      const stories = loadGameContent().openingStories;
       const randomStory = stories[Math.floor(Math.random() * stories.length)];
       setStory(randomStory);
       onStorySelected?.(randomStory);
@@ -73,7 +75,7 @@ export const OpeningStoryModal = ({ onClose, story: externalStory, readyCount = 
             <button
               onClick={onClose}
               className="text-white/80 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-lg backdrop-blur-sm"
-              aria-label="Chiudi"
+              aria-label={t.common.close}
             >
               <X className="w-5 h-5" />
             </button>
@@ -103,7 +105,7 @@ export const OpeningStoryModal = ({ onClose, story: externalStory, readyCount = 
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4 text-white/70" />
-                  <span className="text-white/80 text-sm">Giocatori pronti</span>
+                  <span className="text-white/80 text-sm">{t.opening.playersReady}</span>
                 </div>
                 <span className="text-white font-bold text-lg">
                   {readyCount}/{totalPlayers}
@@ -129,7 +131,7 @@ export const OpeningStoryModal = ({ onClose, story: externalStory, readyCount = 
               onClick={onClose}
               className="bg-white/20 hover:bg-white/30 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-200 backdrop-blur-sm border border-white/30 hover:scale-105 shadow-lg"
             >
-              Inizia il Gioco
+              {t.opening.start}
             </button>
           </div>
         </div>

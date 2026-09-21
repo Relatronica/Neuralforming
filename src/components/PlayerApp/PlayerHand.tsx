@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { GameState, PlayerState, Technology } from '../../game/types';
 import { TechnologyCard } from '../Cards/TechnologyCard';
 import { Plus, Hand, ScrollText, Brain, Scale, Microscope, Trophy, Sparkles, Target, Users, Loader2, ArrowRight, BarChart3, AlertTriangle } from 'lucide-react';
-import { milestones } from '../../game/Milestones';
+import { milestones, localizeMilestone } from '../../game/Milestones';
 import { Objectives } from '../../game/Objectives';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 
 interface PlayerHandProps {
   player: PlayerState;
@@ -22,6 +23,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
   onDrawTechnology,
   onAddTechnology,
 }) => {
+  const { t } = useGameCopy();
   const [activeTab, setActiveTab] = useState<'hand' | 'laws' | 'milestones' | 'objective'>('hand');
   const [hasProposedTechnology, setHasProposedTechnology] = useState(false);
   const [confirmingTech, setConfirmingTech] = useState<Technology | null>(null);
@@ -68,7 +70,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
               <Target className="w-5 h-5 sm:w-6 sm:h-6 text-gray-100 flex-shrink-0" />
             )}
             <h1 className="text-base sm:text-xl font-bold text-gray-100 truncate flex-1">
-              {activeTab === 'hand' ? 'Le Tue Proposte' : activeTab === 'laws' ? 'Leggi Approvate' : activeTab === 'milestones' ? 'I Tuoi Milestone' : 'Il Tuo Obiettivo'}
+              {activeTab === 'hand' ? t.hand.yourProposals : activeTab === 'laws' ? t.hand.approvedLaws : activeTab === 'milestones' ? t.hand.yourMilestones : t.hand.yourObjective}
             </h1>
           </div>
           
@@ -86,7 +88,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
               <div className="flex flex-col items-center gap-1">
                 <Hand className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                 <span className="text-[10px] sm:text-xs font-medium text-center leading-tight">
-                  <span className="hidden sm:inline">Proposte</span>
+                  <span className="hidden sm:inline">{t.hand.proposals}</span>
                   <span className="sm:hidden">{player.hand.length}</span>
                 </span>
                 <span className="hidden sm:block text-[9px] opacity-75">
@@ -106,7 +108,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
               <div className="flex flex-col items-center gap-1">
                 <ScrollText className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                 <span className="text-[10px] sm:text-xs font-medium text-center leading-tight">
-                  <span className="hidden sm:inline">Leggi</span>
+                  <span className="hidden sm:inline">{t.hand.laws}</span>
                   <span className="sm:hidden">{player.technologies.length}</span>
                 </span>
                 <span className="hidden sm:block text-[9px] opacity-75">
@@ -126,7 +128,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
               <div className="flex flex-col items-center gap-1">
                 <Trophy className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                 <span className="text-[10px] sm:text-xs font-medium text-center leading-tight">
-                  <span className="hidden sm:inline">Milestone</span>
+                  <span className="hidden sm:inline">{t.hand.milestones}</span>
                   <span className="sm:hidden">{player.unlockedMilestones?.length || 0}</span>
                 </span>
                 <span className="hidden sm:block text-[9px] opacity-75">
@@ -146,7 +148,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
               <div className="flex flex-col items-center gap-1">
                 <Target className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                 <span className="text-[10px] sm:text-xs font-medium text-center leading-tight">
-                  <span className="hidden sm:inline">Obiettivo</span>
+                  <span className="hidden sm:inline">{t.hand.objective}</span>
                   <span className="sm:hidden">Target</span>
                 </span>
                 <span className="hidden sm:block text-[9px] opacity-75">
@@ -163,11 +165,11 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
             <div className="bg-gray-900 rounded-xl shadow-2xl p-4 sm:p-6 max-w-md w-full border border-gray-700">
               <div className="flex items-center gap-2 mb-3">
                 <AlertTriangle className="w-5 h-5 text-amber-400" />
-                <h3 className="text-lg font-bold text-gray-100">Conferma Proposta</h3>
+                <h3 className="text-lg font-bold text-gray-100">{t.hand.confirmTitle}</h3>
               </div>
               <p className="text-gray-300 text-sm mb-4">
-                Stai per proporre <span className="font-bold text-gray-100">{confirmingTech.name}</span>. 
-                Tutti i giocatori voteranno su questa proposta. Puoi proporre <span className="font-bold text-amber-300">una sola legge per turno</span>.
+                {t.hand.confirmBodyBefore} <span className="font-bold text-gray-100">{confirmingTech.name}</span>. 
+                {t.hand.confirmBodyAfter}
               </p>
               <div className="bg-gray-800 rounded-lg p-3 mb-4 border border-gray-700">
                 <TechnologyCard
@@ -216,13 +218,13 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
                         Turno di {currentPlayerName}
                       </h2>
                       <p className="text-gray-400 text-xs">
-                        Fase: {gameState.currentPhase === 'development' ? 'Sviluppo' : gameState.currentPhase === 'dilemma' ? 'Dilemma Etico' : gameState.currentPhase === 'consequence' ? 'Conseguenza' : gameState.currentPhase}
+                        Fase: {gameState.currentPhase === 'development' ? t.phases.development : gameState.currentPhase === 'dilemma' ? t.phases.dilemma : gameState.currentPhase === 'consequence' ? t.phases.consequence : gameState.currentPhase}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-gray-400">
                     <Loader2 className="w-3 h-3 animate-spin text-blue-400" />
-                    <span>In attesa del tuo turno...</span>
+                    <span>{t.hand.waitingTurn}</span>
                   </div>
                 </div>
 
@@ -230,7 +232,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
                 <div className="bg-gray-900 rounded-xl shadow-lg p-4 border border-gray-700">
                   <div className="flex items-center gap-2 mb-3">
                     <ArrowRight className="w-4 h-4 text-gray-400" />
-                    <h3 className="text-sm font-bold text-gray-200">Ordine Turni</h3>
+                    <h3 className="text-sm font-bold text-gray-200">{t.hand.turnOrder}</h3>
                   </div>
                   <div className="space-y-1.5">
                     {gameState.players.map((p, idx) => {
@@ -247,7 +249,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
                           <span className={`font-semibold ${isCurrent ? 'text-blue-300' : isMe ? 'text-gray-100' : 'text-gray-400'}`}>
                             {p.name}{isMe ? ' (tu)' : ''}
                           </span>
-                          {isCurrent && <span className="ml-auto text-blue-400 text-xs font-bold">IN GIOCO</span>}
+                          {isCurrent && <span className="ml-auto text-blue-400 text-xs font-bold">{t.hand.inPlay}</span>}
                         </div>
                       );
                     })}
@@ -258,7 +260,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
                 <div className="bg-gray-900 rounded-xl shadow-lg p-4 border border-gray-700">
                   <div className="flex items-center gap-2 mb-3">
                     <BarChart3 className="w-4 h-4 text-gray-400" />
-                    <h3 className="text-sm font-bold text-gray-200">I tuoi punti</h3>
+                    <h3 className="text-sm font-bold text-gray-200">{t.scores.yourPoints}</h3>
                   </div>
                   <div className="grid grid-cols-3 gap-2">
                     <div className="bg-cyber-800 rounded-lg p-2 text-center border border-tech-cyan/20">
@@ -269,7 +271,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
                     <div className="bg-cyber-800 rounded-lg p-2 text-center border border-ethics-amber/20">
                       <Scale className="w-4 h-4 text-ethics-amber mx-auto mb-1" />
                       <p className="text-lg font-bold text-ethics-amber">{player.ethicsPoints}</p>
-                      <p className="text-xs text-gray-500">Etica</p>
+                      <p className="text-xs text-gray-500">{t.scores.ethics}</p>
                     </div>
                     <div className="bg-cyber-800 rounded-lg p-2 text-center border border-neural-medium/30">
                       <Brain className="w-4 h-4 text-neural-light mx-auto mb-1" />
@@ -286,7 +288,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
               </div>
             ) : player.hand.length === 0 ? (
               <div className="bg-gray-900 rounded-xl shadow-2xl p-6 sm:p-8 text-center border border-gray-700">
-                <p className="text-gray-300 mb-4 sm:mb-6 text-sm sm:text-base">Non hai proposte disponibili</p>
+                <p className="text-gray-300 mb-4 sm:mb-6 text-sm sm:text-base">{t.hand.noProposals}</p>
                 <button
                   onClick={onDrawTechnology}
                   className="w-full bg-gray-600 hover:bg-gray-500 active:bg-gray-400 text-white font-semibold py-3 sm:py-4 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg active:shadow-md flex items-center justify-center gap-2 text-sm sm:text-base"
@@ -302,8 +304,8 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
                   <div className="bg-gray-800 border border-gray-600 rounded-xl p-3 sm:p-4 text-center">
                     <p className="text-sm sm:text-base text-gray-300 font-semibold">
                       {hasProposedTechnology 
-                        ? "Hai già proposto una legge in questo turno. Attendi il prossimo turno."
-                        : "Non puoi proporre leggi in questo momento."}
+                        ? t.hand.alreadyProposed
+                        : t.hand.cannotPropose}
                     </p>
                   </div>
                 )}
@@ -342,8 +344,8 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
             {player.technologies.length === 0 ? (
               <div className="bg-gray-900 rounded-xl shadow-2xl p-6 sm:p-8 text-center border border-gray-700">
                 <ScrollText className="w-12 h-12 mx-auto mb-4 text-gray-500" />
-                <p className="text-gray-300 text-sm sm:text-base mb-2">Nessuna legge approvata ancora</p>
-                <p className="text-gray-400 text-xs sm:text-sm">Presenta proposte per iniziare</p>
+                <p className="text-gray-300 text-sm sm:text-base mb-2">{t.hand.noLaws}</p>
+                <p className="text-gray-400 text-xs sm:text-sm">{t.hand.noLawsHint}</p>
               </div>
             ) : (
               player.technologies.map((tech, index) => (
@@ -396,13 +398,14 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
             {!player.unlockedMilestones || player.unlockedMilestones.length === 0 ? (
               <div className="bg-gray-900 rounded-xl shadow-2xl p-6 sm:p-8 text-center border border-gray-700">
                 <Trophy className="w-12 h-12 mx-auto mb-4 text-gray-500" />
-                <p className="text-gray-300 text-sm sm:text-base mb-2">Nessun milestone raggiunto ancora</p>
-                <p className="text-gray-400 text-xs sm:text-sm">Raggiungi obiettivi per sbloccare abilità speciali</p>
+                <p className="text-gray-300 text-sm sm:text-base mb-2">{t.hand.noMilestones}</p>
+                <p className="text-gray-400 text-xs sm:text-sm">{t.hand.noMilestonesHint}</p>
               </div>
             ) : (
               player.unlockedMilestones.map((milestoneId) => {
-                const milestone = milestones.find(m => m.id === milestoneId);
-                if (!milestone) return null;
+                const found = milestones.find(m => m.id === milestoneId);
+                if (!found) return null;
+                const milestone = localizeMilestone(found);
                 
                 return (
                   <div

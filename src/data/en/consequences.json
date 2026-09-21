@@ -1,0 +1,222 @@
+[
+  {
+    "id": "c1",
+    "title": "Public Criticism of Efficiency",
+    "description": "The law increased success rates but generated public protests over the lack of equity. Your popularity falls.",
+    "effect": {
+      "ethicsPoints": -2,
+      "techPoints": 3
+    }
+  },
+  {
+    "id": "c2",
+    "title": "Public Approval",
+    "description": "The law has gained broad public and media support. Your political reputation improves.",
+    "effect": {
+      "ethicsPoints": 4,
+      "neuralformingPoints": 2
+    }
+  },
+  {
+    "id": "c3",
+    "title": "Political Balance",
+    "description": "Human oversight slowed implementation but gained the support of ethics groups.",
+    "effect": {
+      "ethicsPoints": 3,
+      "techPoints": -1
+    }
+  },
+  {
+    "id": "c4",
+    "title": "Protests and Resignations",
+    "description": "The law perpetuated inequalities, generating public protests and official resignations. A political scandal.",
+    "effect": {
+      "ethicsPoints": -5,
+      "techPoints": 2
+    }
+  },
+  {
+    "id": "c5",
+    "title": "Electoral Success",
+    "description": "The law has led to positive results in diversity. Civil rights groups support you publicly.",
+    "effect": {
+      "ethicsPoints": 5,
+      "neuralformingPoints": 3
+    }
+  },
+  {
+    "id": "c6",
+    "title": "Data Blindness",
+    "description": "Completely removing demographic data made the system less precise but fairer.",
+    "effect": {
+      "ethicsPoints": 2,
+      "techPoints": -2
+    }
+  },
+  {
+    "id": "c7",
+    "title": "Increased Security",
+    "description": "Comprehensive surveillance reduced crime but raised privacy concerns.",
+    "effect": {
+      "ethicsPoints": -4,
+      "techPoints": 4
+    }
+  },
+  {
+    "id": "c8",
+    "title": "Balance Achieved",
+    "description": "Rigorous checks have maintained security while preserving civil rights.",
+    "effect": {
+      "ethicsPoints": 4,
+      "techPoints": 2,
+      "neuralformingPoints": 2
+    }
+  },
+  {
+    "id": "c9",
+    "title": "Privacy Preserved",
+    "description": "Rejecting surveillance protected privacy, but some crimes increased.",
+    "effect": {
+      "ethicsPoints": 5,
+      "techPoints": -3
+    }
+  },
+  {
+    "id": "c10",
+    "title": "Consumer Trust",
+    "description": "Prioritising the passenger increased consumer trust in autonomous vehicles.",
+    "effect": {
+      "ethicsPoints": 2,
+      "techPoints": 3
+    }
+  },
+  {
+    "id": "c11",
+    "title": "Utilitarianism Applied",
+    "description": "Minimising total harm generated ethical debate but demonstrated effectiveness.",
+    "effect": {
+      "ethicsPoints": 1,
+      "techPoints": 2
+    }
+  },
+  {
+    "id": "c12",
+    "title": "Safety First",
+    "description": "The ability to stop quickly prevented accidents, winning public approval.",
+    "effect": {
+      "ethicsPoints": 4,
+      "techPoints": 1
+    }
+  },
+  {
+    "id": "c13",
+    "title": "Privacy Violation",
+    "description": "The use of data without consent led to fines and a loss of trust.",
+    "effect": {
+      "ethicsPoints": -6,
+      "techPoints": 3
+    }
+  },
+  {
+    "id": "c14",
+    "title": "Privacy Respected",
+    "description": "Respect for consent has gained the trust and support of users.",
+    "effect": {
+      "ethicsPoints": 6,
+      "neuralformingPoints": 3
+    }
+  },
+  {
+    "id": "c15",
+    "title": "User Control",
+    "description": "The opt-in system gave users control, improving satisfaction.",
+    "effect": {
+      "ethicsPoints": 4,
+      "techPoints": 1
+    }
+  },
+  {
+    "id": "c16",
+    "title": "Mass Unemployment",
+    "description": "Complete automation caused unemployment, generating social instability.",
+    "effect": {
+      "ethicsPoints": -7,
+      "techPoints": 5
+    }
+  },
+  {
+    "id": "c17",
+    "title": "Sustainable Transition",
+    "description": "Retraining allowed a gradual transition, maintaining social stability.",
+    "effect": {
+      "ethicsPoints": 6,
+      "techPoints": 3,
+      "neuralformingPoints": 4
+    }
+  },
+  {
+    "id": "c18",
+    "title": "Partial Compromise",
+    "description": "Partial automation preserved jobs but limited efficiency gains.",
+    "effect": {
+      "ethicsPoints": 2,
+      "techPoints": -1
+    }
+  },
+  {
+    "id": "c19",
+    "title": "Widespread Disinformation",
+    "description": "Unrestricted technology was used to create false content, causing social harm.",
+    "effect": {
+      "ethicsPoints": -8,
+      "techPoints": 5
+    }
+  },
+  {
+    "id": "c20",
+    "title": "Responsible Technology",
+    "description": "Watermarking allowed the technology to be used while preventing abuse.",
+    "effect": {
+      "ethicsPoints": 5,
+      "techPoints": 3,
+      "neuralformingPoints": 3
+    }
+  },
+  {
+    "id": "c21",
+    "title": "Limited Access",
+    "description": "Restricting access prevented abuse but slowed legitimate research.",
+    "effect": {
+      "ethicsPoints": 3,
+      "techPoints": -2
+    }
+  },
+  {
+    "id": "c22",
+    "title": "Competitive Advantage",
+    "description": "Keeping algorithms secret conferred an advantage but generated distrust.",
+    "effect": {
+      "ethicsPoints": -3,
+      "techPoints": 4
+    }
+  },
+  {
+    "id": "c23",
+    "title": "Public Transparency",
+    "description": "Transparency gained public trust and accelerated collaborative innovation.",
+    "effect": {
+      "ethicsPoints": 7,
+      "techPoints": 1,
+      "neuralformingPoints": 4
+    }
+  },
+  {
+    "id": "c24",
+    "title": "Transparency Balance",
+    "description": "Controlled publication balanced transparency and competitiveness.",
+    "effect": {
+      "ethicsPoints": 4,
+      "techPoints": 2
+    }
+  }
+]

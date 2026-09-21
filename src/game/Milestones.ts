@@ -1,5 +1,7 @@
 import { PlayerState } from './types';
 import { Scoring } from './Scoring';
+import { GAME } from '../lib/i18n/game';
+import { getSessionLocale } from '../lib/i18n/session';
 
 /**
  * Modulo centralizzato per il sistema di milestone
@@ -25,6 +27,25 @@ export interface MilestoneAbility {
 /**
  * Tutti i milestone disponibili nel gioco
  */
+export function localizeMilestone(milestone: Milestone): Milestone {
+  const copy = GAME[getSessionLocale()].milestones[milestone.id];
+  if (!copy) return milestone;
+  return {
+    ...milestone,
+    name: copy.name,
+    description: copy.description,
+    ability: {
+      ...milestone.ability,
+      name: copy.abilityName,
+      description: copy.abilityDescription,
+    },
+  };
+}
+
+export function localizedMilestones(): Milestone[] {
+  return milestones.map(localizeMilestone);
+}
+
 export const milestones: Milestone[] = [
   {
     id: 'milestone-tech-pioneer',

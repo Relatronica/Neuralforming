@@ -30,6 +30,8 @@ import {
 } from 'lucide-react';
 import { HeroBackdrop } from './HeroBackdrop';
 import { NeuralformingMark } from '../Brand/NeuralformingMark';
+import { LangSwitch } from '../Brand/LangSwitch';
+import { useLandingCopy } from '../../lib/i18n/useLandingCopy';
 
 const BMC_URL = 'https://buymeacoffee.com/relatronica';
 const GITHUB_URL = 'https://github.com/Relatronica/Neuralforming';
@@ -88,58 +90,24 @@ function SectionKicker({ children }: { children: React.ReactNode }) {
   );
 }
 
-const NAV_ITEMS = [
-  { id: 'why', label: 'Perché' },
-  { id: 'about', label: 'Il Gioco' },
-  { id: 'how', label: 'Funziona' },
-  { id: 'use', label: 'Utilizzo' },
-  { id: 'faq', label: 'FAQ' },
-  { id: 'roadmap', label: 'Roadmap' },
-];
-
-const FAQ_ITEMS = [
-  {
-    q: 'Serve un account o una registrazione?',
-    a: 'No. Apri una stanza, condividi il QR code o il link, e i giocatori entrano dal telefono. Nessun login, nessun dato di profilazione.',
-  },
-  {
-    q: 'Quanti giocatori servono e che dispositivi?',
-    a: 'Il multiplayer è pensato per 2-8 giocatori. Serve un dispositivo master (computer o tablet) che mostra tabellone e parlamento, più lo smartphone di ciascun giocatore. Il playground singolo si gioca da soli su un solo schermo.',
-  },
-  {
-    q: 'Quanto dura una partita?',
-    a: 'Una sessione di classe dura in genere 45-90 minuti, a seconda di quanto tempo dedicate al dibattito. Il playground singolo è più rapido e si chiude al massimo in 15 turni.',
-  },
-  {
-    q: 'Il cloud è stabile per una lezione?',
-    a: 'L’istanza pubblica è una demo sperimentale su risorse condivise: con molte stanze contemporanee possono capitare rallentamenti. Per una lezione o un evento è meglio self-hostare o richiedere un’istanza dedicata dalla pagina Contatti.',
-  },
-  {
-    q: 'Posso usarlo offline o sulla rete della scuola?',
-    a: 'Sì. Il progetto è open source (AGPL-3.0): puoi installarlo in locale o su un server della scuola con Node.js o Docker. Il codice e le istruzioni sono sul repository GitHub.',
-  },
-  {
-    q: 'Perché un gioco, e non un corso sull’IA?',
-    a: 'Perché la governance non si impara ascoltando: si impara decidendo, perdendo un voto, negoziando con chi la pensa diversamente. Il gioco è il dispositivo politico. Il corso può arrivare dopo.',
-  },
-  {
-    q: 'È adatto a quale età o materia?',
-    a: 'Funziona bene in scuole superiori, università e workshop civici su etica dell’IA, educazione civica, informatica e filosofia. Non servono competenze di programmazione: servono dibattito e voto.',
-  },
-  {
-    q: 'Come posso sostenere il progetto?',
-    a: 'Neuralforming è gratuito e senza pubblicità. Puoi donare su Buy Me a Coffee, scrivere dalla pagina Contatti (bug, workshop, contributi) o aprire una issue su GitHub.',
-  },
-];
-
 export const LandingPage = ({
   onStartMultiplayer,
   onStartSinglePlayer,
 }: LandingPageProps) => {
+  const { locale, setLocale, t } = useLandingCopy();
   const [navOpen, setNavOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [showCloudModal, setShowCloudModal] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+
+  const navItems = [
+    { id: 'why', label: t.nav.why },
+    { id: 'about', label: t.nav.about },
+    { id: 'how', label: t.nav.how },
+    { id: 'use', label: t.nav.use },
+    { id: 'faq', label: t.nav.faq },
+    { id: 'roadmap', label: t.nav.roadmap },
+  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -154,7 +122,6 @@ export const LandingPage = ({
 
   return (
     <div className="min-h-screen bg-cyber-950 text-gray-100 selection:bg-tech-cyan selection:text-cyber-950">
-      {/* ── Navbar ── */}
       <nav
         className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
           scrolled
@@ -174,7 +141,7 @@ export const LandingPage = ({
           </button>
 
           <div className="hidden lg:flex items-center gap-3 xl:gap-4 min-w-0 flex-1 justify-end">
-            {NAV_ITEMS.map((item) => (
+            {navItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => scrollTo(item.id)}
@@ -183,6 +150,7 @@ export const LandingPage = ({
                 {item.label}
               </button>
             ))}
+            <LangSwitch locale={locale} setLocale={setLocale} />
             <a
               href={BMC_URL}
               target="_blank"
@@ -190,28 +158,31 @@ export const LandingPage = ({
               className="inline-flex items-center gap-1.5 text-sm font-heading font-semibold text-ethics-amber hover:text-amber-300 transition-colors shrink-0"
             >
               <Coffee className="w-4 h-4" />
-              Dona
+              {t.nav.donate}
             </a>
             <button
               onClick={() => scrollTo('play')}
               className="shrink-0 bg-gradient-to-r from-neural-medium to-neural-dark hover:from-neural-light hover:to-neural-medium text-white text-sm font-heading font-semibold px-4 py-2 rounded-xl transition-all shadow-md shadow-neural-medium/30 hover:shadow-neural-medium/50 hover:-translate-y-0.5"
             >
-              Gioca Ora
+              {t.nav.playNow}
             </button>
           </div>
 
-          <button
-            className="lg:hidden text-gray-300 hover:text-gray-100 p-2"
-            onClick={() => setNavOpen(!navOpen)}
-            aria-label="Menu"
-          >
-            {navOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
+          <div className="flex items-center gap-1 lg:hidden">
+            <LangSwitch locale={locale} setLocale={setLocale} />
+            <button
+              className="text-gray-300 hover:text-gray-100 p-2"
+              onClick={() => setNavOpen(!navOpen)}
+              aria-label={t.nav.menu}
+            >
+              {navOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
 
         {navOpen && (
           <div className="lg:hidden glass-panel border-t border-white/10 px-4 pb-4 space-y-1">
-            {NAV_ITEMS.map((item) => (
+            {navItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => scrollTo(item.id)}
@@ -225,14 +196,14 @@ export const LandingPage = ({
               className="flex items-center gap-1.5 py-2.5 text-gray-300 hover:text-tech-cyan transition-colors text-sm"
             >
               <BookOpen className="w-3.5 h-3.5" />
-              Guida al Gioco
+              {t.nav.guide}
             </Link>
             <Link
               to="/contatti"
               className="flex items-center gap-1.5 py-2.5 text-gray-300 hover:text-tech-cyan transition-colors text-sm"
             >
               <Mail className="w-3.5 h-3.5" />
-              Contatti
+              {t.nav.contact}
             </Link>
             <a
               href={BMC_URL}
@@ -241,7 +212,7 @@ export const LandingPage = ({
               className="flex items-center gap-1.5 py-2.5 text-ethics-amber hover:text-amber-300 transition-colors text-sm font-heading font-semibold"
             >
               <Coffee className="w-4 h-4" />
-              Dona
+              {t.nav.donate}
             </a>
             <button
               onClick={() => {
@@ -250,33 +221,30 @@ export const LandingPage = ({
               }}
               className="block w-full text-left py-2.5 text-tech-cyan font-heading font-semibold text-sm"
             >
-              Gioca Ora
+              {t.nav.playNow}
             </button>
           </div>
         )}
       </nav>
 
-      {/* ── Hero ── */}
       <header className="relative min-h-screen flex items-center justify-center pt-20 pb-16 overflow-hidden">
         <HeroBackdrop />
 
         <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 w-full text-center space-y-6">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-panel border border-tech-cyan/30 text-tech-cyan text-xs font-mono tracking-wide">
             <Sparkles className="w-3.5 h-3.5 animate-pulse text-ethics-amber" />
-            <span>ATTIVISMO CIVICO · GOVERNANCE DELL&apos;IA</span>
+            <span>{t.hero.badge}</span>
           </div>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-extrabold tracking-tight leading-[1.1] text-gray-100">
-            Il futuro dell&apos;IA si decide.{' '}
+            {t.hero.titleLead}{' '}
             <span className="bg-gradient-to-r from-tech-cyan via-neural-light to-ethics-amber bg-clip-text text-transparent">
-              Non si subisce.
+              {t.hero.titleAccent}
             </span>
           </h1>
 
           <p className="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed font-sans">
-            Neuralforming è un parlamento in miniatura per chi non vuole restare spettatore.
-            Giovani, classi, collettivi: si dibatte, si vota, si sbaglia — e si impara a governare
-            la tecnologia che già sta riscrivendo diritti, lavoro e vita pubblica.
+            {t.hero.lead}
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
@@ -285,7 +253,7 @@ export const LandingPage = ({
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 bg-gradient-to-r from-neural-medium to-neural-dark hover:from-neural-light hover:to-neural-medium text-white font-heading font-semibold py-4 px-8 rounded-xl transition-all duration-200 shadow-lg shadow-neural-medium/30 hover:shadow-neural-medium/50 hover:-translate-y-0.5"
             >
               <Users className="w-5 h-5 text-tech-cyan" />
-              Gioca in Multiplayer
+              {t.hero.playMulti}
             </button>
 
             <a
@@ -295,22 +263,22 @@ export const LandingPage = ({
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 glass-panel hover:bg-cyber-800/80 text-ethics-amber font-heading font-semibold py-4 px-7 rounded-xl border border-ethics-amber/30 hover:border-ethics-amber/60 transition-all duration-200 hover:-translate-y-0.5"
             >
               <Coffee className="w-5 h-5" />
-              Dona
+              {t.hero.donate}
             </a>
           </div>
 
           <div className="pt-6 border-t border-white/10 grid grid-cols-3 gap-4 max-w-md mx-auto">
             <div>
               <p className="text-xl sm:text-2xl font-mono font-bold text-tech-cyan">2–8</p>
-              <p className="text-xs text-gray-400 font-sans">Giocatori realtime</p>
+              <p className="text-xs text-gray-400 font-sans">{t.hero.players}</p>
             </div>
             <div>
               <p className="text-xl sm:text-2xl font-mono font-bold text-ethics-amber">15+</p>
-              <p className="text-xs text-gray-400 font-sans">Dilemmi etici</p>
+              <p className="text-xs text-gray-400 font-sans">{t.hero.dilemmas}</p>
             </div>
             <div>
               <p className="text-xl sm:text-2xl font-mono font-bold text-neural-light">AGPL</p>
-              <p className="text-xs text-gray-400 font-sans">Open source</p>
+              <p className="text-xs text-gray-400 font-sans">{t.hero.openSource}</p>
             </div>
           </div>
         </div>
@@ -318,27 +286,22 @@ export const LandingPage = ({
         <button
           onClick={() => scrollTo('why')}
           className="absolute bottom-6 left-1/2 -translate-x-1/2 text-gray-400 hover:text-tech-cyan transition-colors animate-bounce p-2"
-          aria-label="Scorri verso il basso"
+          aria-label={t.hero.scrollDown}
         >
           <ChevronDown className="w-7 h-7" />
         </button>
       </header>
 
-      {/* ── Perché / Manifesto ── */}
       <section id="why" className="py-24 sm:py-32 bg-cyber-900/60 border-y border-white/5 scroll-mt-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <RevealSection className="max-w-3xl mx-auto text-center mb-16">
-            <SectionKicker>Il manifesto</SectionKicker>
+            <SectionKicker>{t.why.kicker}</SectionKicker>
             <h2 className="text-3xl sm:text-4xl font-heading font-bold mb-6">
-              Perché un gioco, e perché adesso
+              {t.why.title}
             </h2>
-            <p className="text-gray-300 text-lg leading-relaxed mb-8">
-              L&apos;Intelligenza Artificiale non è un tema da convegno. Sta già decidendo chi viene assunto,
-              cosa vediamo, come si insegna, chi viene sorvegliato. Se chi cresce dentro questa infrastruttura
-              non impara a discuterla, la governerà qualcun altro — in silenzio.
-            </p>
+            <p className="text-gray-300 text-lg leading-relaxed mb-8">{t.why.lead}</p>
             <blockquote className="font-heading text-xl sm:text-2xl text-neural-light italic leading-snug">
-              «Il futuro non è uno spettacolo. È un voto.»
+              {t.why.quote}
             </blockquote>
           </RevealSection>
 
@@ -348,22 +311,22 @@ export const LandingPage = ({
                 icon: Megaphone,
                 color: 'text-crisis-rose',
                 border: 'border-crisis-rose/25',
-                title: 'Perché l’IA è politica',
-                desc: 'Ogni algoritmo incorpora valori: efficienza contro equità, sicurezza contro libertà, profitto contro cura. Non sono bug da patchare in seguito. Sono scelte. Neuralforming le rende visibili e votabili.',
+                title: t.why.politicalTitle,
+                desc: t.why.politicalDesc,
               },
               {
                 icon: Landmark,
                 color: 'text-ethics-amber',
                 border: 'border-ethics-amber/25',
-                title: 'Perché è un gioco',
-                desc: 'L’attivismo ha bisogno di palestre, non solo di manifesti. Un gioco costringe a prendere posizione, a perdere, a allearsi. È pratica democratica: il contrario di una lezione in cui si ascolta e si dimentica.',
+                title: t.why.gameTitle,
+                desc: t.why.gameDesc,
               },
               {
                 icon: Handshake,
                 color: 'text-tech-cyan',
                 border: 'border-tech-cyan/25',
-                title: 'Perché i giovani',
-                desc: 'Sono la generazione che vivrà più a lungo con queste macchine. Coinvolgerli non è “didattica innovativa”: è non escluderli dalle decisioni che formeranno il loro spazio pubblico. Chi si allena a decidere oggi non sarà spettatore domani.',
+                title: t.why.youthTitle,
+                desc: t.why.youthDesc,
               },
             ].map((item) => (
               <RevealSection key={item.title}>
@@ -379,25 +342,21 @@ export const LandingPage = ({
           <RevealSection>
             <div className="glass-panel rounded-2xl p-6 sm:p-8 max-w-3xl mx-auto text-center border border-neural-medium/25">
               <p className="text-gray-300 leading-relaxed text-lg">
-                Neuralforming esiste perché il potere sull&apos;IA non deve restare a chi la costruisce.
-                Una classe che vota una legge sull&apos;automazione, un workshop che dibatte la sorveglianza:
-                sono già atti civici. Il gioco è lo strumento. L&apos;obiettivo è una generazione che sa dire
-                <strong className="text-gray-100"> no</strong>, <strong className="text-gray-100">sì</strong> e{' '}
-                <strong className="text-gray-100">dipende</strong> — con argomenti, non con slogan.
+                {t.why.closerBefore}{' '}
+                <strong className="text-gray-100">{t.why.closerNo}</strong>,{' '}
+                <strong className="text-gray-100">{t.why.closerYes}</strong> {t.why.closerAnd}{' '}
+                <strong className="text-gray-100">{t.why.closerDepends}</strong> {t.why.closerAfter}
               </p>
             </div>
           </RevealSection>
         </div>
       </section>
 
-      {/* ── Obiettivo + Cos'è ── */}
       <section id="about" className="py-24 sm:py-32 relative scroll-mt-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <RevealSection>
-            <SectionKicker>Obiettivo</SectionKicker>
-            <h2 className="text-3xl sm:text-4xl font-heading font-bold mb-6">
-              Cos&apos;è Neuralforming?
-            </h2>
+            <SectionKicker>{t.about.kicker}</SectionKicker>
+            <h2 className="text-3xl sm:text-4xl font-heading font-bold mb-6">{t.about.title}</h2>
           </RevealSection>
 
           <RevealSection className="mb-12">
@@ -407,12 +366,8 @@ export const LandingPage = ({
                   <Target className="w-6 h-6 text-neural-light" />
                 </div>
                 <div>
-                  <p className="font-heading font-semibold text-neural-light mb-2">L&apos;obiettivo del gioco</p>
-                  <p className="text-gray-300 leading-relaxed text-lg">
-                    Completa il tuo <strong className="text-gray-100">obiettivo segreto di partito</strong> formando
-                    un&apos;IA all&apos;avanguardia <em>e</em> eticamente accettabile. Se la tecnologia galoppa
-                    e l&apos;etica resta indietro, la società perde — anche se i tuoi punteggi tecnici sono alti.
-                  </p>
+                  <p className="font-heading font-semibold text-neural-light mb-2">{t.about.objectiveLabel}</p>
+                  <p className="text-gray-300 leading-relaxed text-lg">{t.about.objective}</p>
                 </div>
               </div>
             </div>
@@ -420,25 +375,19 @@ export const LandingPage = ({
 
           <div className="grid md:grid-cols-2 gap-12 items-start">
             <RevealSection>
+              <p className="text-gray-300 leading-relaxed text-lg mb-6">{t.about.body1}</p>
               <p className="text-gray-300 leading-relaxed text-lg mb-6">
-                Lo strumento è un gioco strategico: ogni giocatore è un{' '}
-                <strong className="text-gray-100">partito politico</strong> che guida lo sviluppo
-                dell&apos;Intelligenza Artificiale. A ogni turno proponi una tecnologia, affronti un dilemma
-                morale e sottoponi le tue scelte al voto parlamentare degli altri.
-              </p>
-              <p className="text-gray-300 leading-relaxed text-lg mb-6">
-                Tre indicatori raccontano la tua IA:{' '}
-                <strong className="text-tech-cyan">Tecnologia</strong>,{' '}
-                <strong className="text-ethics-amber">Etica</strong> e{' '}
-                <strong className="text-neural-light">Neuralforming</strong> — il punteggio che nasce solo
-                quando progresso e responsabilità avanzano insieme.
+                {t.about.body2Before}{' '}
+                <strong className="text-tech-cyan">{t.about.tech}</strong>,{' '}
+                <strong className="text-ethics-amber">{t.about.ethics}</strong> {t.why.closerAnd}{' '}
+                <strong className="text-neural-light">{t.about.neural}</strong> {t.about.body2After}
               </p>
               <Link
                 to="/guida"
                 className="inline-flex items-center gap-2 text-tech-cyan hover:text-tech-blue font-medium transition-colors"
               >
                 <BookOpen className="w-4 h-4" />
-                Leggi la guida completa
+                {t.about.readGuide}
               </Link>
             </RevealSection>
 
@@ -450,32 +399,32 @@ export const LandingPage = ({
                     color: 'text-tech-cyan',
                     bg: 'bg-tech-cyan/10',
                     border: 'border-tech-cyan/20',
-                    title: 'Punti Tecnologia',
-                    desc: 'Fai avanzare la ricerca con leggi e prototipi all’avanguardia',
+                    title: t.about.techTitle,
+                    desc: t.about.techDesc,
                   },
                   {
                     icon: Scale,
                     color: 'text-ethics-amber',
                     bg: 'bg-ethics-amber/10',
                     border: 'border-ethics-amber/20',
-                    title: 'Punti Etica',
-                    desc: 'Difendi trasparenza, diritti e impatto sociale delle tue scelte',
+                    title: t.about.ethicsTitle,
+                    desc: t.about.ethicsDesc,
                   },
                   {
                     icon: Brain,
                     color: 'text-neural-light',
                     bg: 'bg-neural-medium/15',
                     border: 'border-neural-medium/25',
-                    title: 'Neuralforming',
-                    desc: 'Il bilanciamento tra progresso ed etica: il vero punteggio del gioco',
+                    title: t.about.neuralTitle,
+                    desc: t.about.neuralDesc,
                   },
                   {
                     icon: Target,
                     color: 'text-ethics-gold',
                     bg: 'bg-ethics-gold/10',
                     border: 'border-ethics-gold/20',
-                    title: 'Obiettivi segreti',
-                    desc: 'Ogni partito ha una missione unica: chi la completa per primo vince',
+                    title: t.about.secretsTitle,
+                    desc: t.about.secretsDesc,
                   },
                 ].map((item) => (
                   <div
@@ -495,16 +444,12 @@ export const LandingPage = ({
         </div>
       </section>
 
-      {/* ── Come Funziona ── */}
       <section id="how" className="py-24 sm:py-32 bg-cyber-900/60 border-y border-white/5 scroll-mt-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <RevealSection className="text-center mb-16">
-            <SectionKicker>Le meccaniche</SectionKicker>
-            <h2 className="text-3xl sm:text-4xl font-heading font-bold mb-4">Come Funziona</h2>
-            <p className="text-gray-400 max-w-2xl mx-auto text-lg">
-              Ogni turno ha quattro fasi: strategia, dilemmi, diplomazia e conseguenze.
-              È lo stesso ciclo che userai in classe o nel playground.
-            </p>
+            <SectionKicker>{t.how.kicker}</SectionKicker>
+            <h2 className="text-3xl sm:text-4xl font-heading font-bold mb-4">{t.how.title}</h2>
+            <p className="text-gray-400 max-w-2xl mx-auto text-lg">{t.how.lead}</p>
           </RevealSection>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -514,38 +459,38 @@ export const LandingPage = ({
                 icon: Zap,
                 color: 'text-tech-cyan',
                 border: 'border-tech-cyan/25',
-                title: 'Sviluppo tecnologico',
-                desc: 'Gioca una carta tecnologia dalla tua mano e proponila al parlamento per l’approvazione.',
+                title: t.how.p1Title,
+                desc: t.how.p1Desc,
               },
               {
                 step: '02',
                 icon: Scale,
                 color: 'text-ethics-amber',
                 border: 'border-ethics-amber/25',
-                title: 'Dilemma etico',
-                desc: 'Affronta uno scenario ispirato a problemi reali e scegli tra opzioni con effetti diversi.',
+                title: t.how.p2Title,
+                desc: t.how.p2Desc,
               },
               {
                 step: '03',
                 icon: Vote,
                 color: 'text-crisis-rose',
                 border: 'border-crisis-rose/25',
-                title: 'Voto parlamentare',
-                desc: 'Le proposte vanno al voto: allearsi, bloccare o mediare cambia i punteggi di tutti.',
+                title: t.how.p3Title,
+                desc: t.how.p3Desc,
               },
               {
                 step: '04',
                 icon: Target,
                 color: 'text-neural-light',
                 border: 'border-neural-medium/30',
-                title: 'Conseguenze',
-                desc: 'Notizie, eventi globali e milestone rendono visibile l’impatto a lungo termine.',
+                title: t.how.p4Title,
+                desc: t.how.p4Desc,
               },
             ].map((phase) => (
               <RevealSection key={phase.step}>
                 <div className={`glass-panel rounded-xl p-6 h-full hover:bg-cyber-800/80 transition-colors ${phase.border}`}>
                   <span className={`text-xs font-mono font-bold ${phase.color} uppercase tracking-widest`}>
-                    Fase {phase.step}
+                    {t.how.phase} {phase.step}
                   </span>
                   <div className="mt-4 mb-3">
                     <phase.icon className={`w-8 h-8 ${phase.color}`} />
@@ -559,15 +504,12 @@ export const LandingPage = ({
         </div>
       </section>
 
-      {/* ── Come utilizzare ── */}
       <section id="use" className="py-24 sm:py-32 scroll-mt-20">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <RevealSection className="text-center mb-16">
-            <SectionKicker>Come usarlo</SectionKicker>
-            <h2 className="text-3xl sm:text-4xl font-heading font-bold mb-4">Come puoi utilizzarlo</h2>
-            <p className="text-gray-400 max-w-2xl mx-auto text-lg">
-              Tre modi, stesso gioco: in classe, da solo per allenarti, o sul tuo server.
-            </p>
+            <SectionKicker>{t.use.kicker}</SectionKicker>
+            <h2 className="text-3xl sm:text-4xl font-heading font-bold mb-4">{t.use.title}</h2>
+            <p className="text-gray-400 max-w-2xl mx-auto text-lg">{t.use.lead}</p>
           </RevealSection>
 
           <div className="grid md:grid-cols-3 gap-6">
@@ -578,29 +520,26 @@ export const LandingPage = ({
                     <Monitor className="w-6 h-6 text-neural-light" />
                   </div>
                   <span className="text-[10px] font-mono tracking-wider uppercase px-2.5 py-1 rounded-full bg-neural-medium/15 text-neural-light border border-neural-medium/30">
-                    Consigliato
+                    {t.use.recommended}
                   </span>
                 </div>
-                <h3 className="font-heading text-xl font-bold mb-2">In classe, multiplayer</h3>
-                <p className="text-sm text-gray-400 leading-relaxed mb-4 flex-1">
-                  Trasforma la classe in un parlamento. Un computer è il tabellone; ogni studente entra
-                  dal telefono, dibatte e vota. Nessuna registrazione: solo pratica civica.
-                </p>
+                <h3 className="font-heading text-xl font-bold mb-2">{t.use.classTitle}</h3>
+                <p className="text-sm text-gray-400 leading-relaxed mb-4 flex-1">{t.use.classDesc}</p>
                 <ul className="space-y-2 text-xs text-gray-300 mb-6">
                   <li className="flex items-center gap-2">
                     <Smartphone className="w-3.5 h-3.5 text-tech-cyan shrink-0" />
-                    Master + 2–8 smartphone
+                    {t.use.classBullet1}
                   </li>
                   <li className="flex items-center gap-2">
                     <Users className="w-3.5 h-3.5 text-tech-cyan shrink-0" />
-                    Dibattito e voto parlamentare
+                    {t.use.classBullet2}
                   </li>
                 </ul>
                 <button
                   onClick={() => setShowCloudModal(true)}
                   className="w-full inline-flex items-center justify-center gap-2 bg-gradient-to-r from-neural-medium to-neural-dark hover:from-neural-light hover:to-neural-medium text-white font-heading font-semibold py-2.5 px-4 rounded-xl transition-all shadow-md shadow-neural-medium/20 text-sm"
                 >
-                  Avvia stanza cloud
+                  {t.use.classCta}
                 </button>
               </div>
             </RevealSection>
@@ -612,27 +551,24 @@ export const LandingPage = ({
                     <Gamepad2 className="w-6 h-6 text-tech-cyan" />
                   </div>
                   <span className="text-[10px] font-mono tracking-wider uppercase px-2.5 py-1 rounded-full bg-cyber-800 text-gray-400 border border-white/10">
-                    1 giocatore
+                    {t.use.soloBadge}
                   </span>
                 </div>
-                <h3 className="font-heading text-xl font-bold mb-2">Playground singolo</h3>
-                <p className="text-sm text-gray-400 leading-relaxed mb-4 flex-1">
-                  Allena le meccaniche da solo: l&apos;opinione pubblica sostituisce il parlamento
-                  e reagisce alle tue leggi. Ideale per docenti e per chi arriva in classe già pronto.
-                </p>
+                <h3 className="font-heading text-xl font-bold mb-2">{t.use.soloTitle}</h3>
+                <p className="text-sm text-gray-400 leading-relaxed mb-4 flex-1">{t.use.soloDesc}</p>
                 <ul className="space-y-2 text-xs text-gray-300 mb-6">
                   <li className="flex items-center gap-2">
-                    <span className="text-tech-cyan font-bold">✓</span> Difficoltà adattiva, max 15 turni
+                    <span className="text-tech-cyan font-bold">✓</span> {t.use.soloBullet1}
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="text-tech-cyan font-bold">✓</span> Stesso mazzo di dilemmi e tecnologie
+                    <span className="text-tech-cyan font-bold">✓</span> {t.use.soloBullet2}
                   </li>
                 </ul>
                 <button
                   onClick={onStartSinglePlayer}
                   className="w-full inline-flex items-center justify-center gap-2 glass-panel hover:bg-cyber-800 text-gray-100 font-heading font-semibold py-2.5 px-4 rounded-xl border border-tech-cyan/30 hover:border-tech-cyan/60 transition-all text-sm"
                 >
-                  Prova il playground
+                  {t.use.soloCta}
                 </button>
               </div>
             </RevealSection>
@@ -647,17 +583,14 @@ export const LandingPage = ({
                     Self-hosted
                   </span>
                 </div>
-                <h3 className="font-heading text-xl font-bold mb-2">Sul tuo server</h3>
-                <p className="text-sm text-gray-400 leading-relaxed mb-4 flex-1">
-                  Codice libero, Docker o Node.js. Per università, eventi e reti scolastiche
-                  che vogliono controllo, privacy e zero dipendenza dal cloud demo.
-                </p>
+                <h3 className="font-heading text-xl font-bold mb-2">{t.use.selfTitle}</h3>
+                <p className="text-sm text-gray-400 leading-relaxed mb-4 flex-1">{t.use.selfDesc}</p>
                 <ul className="space-y-2 text-xs text-gray-300 mb-6">
                   <li className="flex items-center gap-2">
-                    <span className="text-ethics-amber font-bold">✓</span> Licenza AGPL-3.0
+                    <span className="text-ethics-amber font-bold">✓</span> {t.use.selfBullet1}
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="text-ethics-amber font-bold">✓</span> Personalizzabile (mazzi, testi, regole)
+                    <span className="text-ethics-amber font-bold">✓</span> {t.use.selfBullet2}
                   </li>
                 </ul>
                 <a
@@ -667,7 +600,7 @@ export const LandingPage = ({
                   className="w-full inline-flex items-center justify-center gap-2 bg-cyber-800 hover:bg-cyber-700 text-gray-200 font-heading font-semibold py-2.5 px-4 rounded-xl border border-white/10 transition-colors text-sm"
                 >
                   <Github className="w-4 h-4" />
-                  Repository GitHub
+                  {t.use.selfCta}
                 </a>
               </div>
             </RevealSection>
@@ -675,23 +608,20 @@ export const LandingPage = ({
         </div>
       </section>
 
-      {/* ── FAQ ── */}
       <section id="faq" className="py-24 sm:py-32 scroll-mt-20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
           <RevealSection className="text-center mb-12">
-            <SectionKicker>Domande</SectionKicker>
+            <SectionKicker>{t.faq.kicker}</SectionKicker>
             <h2 className="text-3xl sm:text-4xl font-heading font-bold mb-4 flex items-center justify-center gap-3">
               <HelpCircle className="w-8 h-8 text-tech-cyan" />
-              FAQ
+              {t.faq.title}
             </h2>
-            <p className="text-gray-400 text-lg">
-              Quello che di solito chiedono docenti, organizzatori e chi vuole self-hostare.
-            </p>
+            <p className="text-gray-400 text-lg">{t.faq.lead}</p>
           </RevealSection>
 
           <RevealSection>
             <div className="space-y-3">
-              {FAQ_ITEMS.map((item, i) => {
+              {t.faq.items.map((item, i) => {
                 const open = openFaq === i;
                 return (
                   <div
@@ -719,59 +649,39 @@ export const LandingPage = ({
         </div>
       </section>
 
-      {/* ── Roadmap ── */}
       <section id="roadmap" className="py-24 sm:py-32 bg-cyber-900/60 border-y border-white/5 scroll-mt-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">
           <RevealSection className="text-center mb-16">
-            <SectionKicker>Dove stiamo andando</SectionKicker>
+            <SectionKicker>{t.roadmap.kicker}</SectionKicker>
             <h2 className="text-3xl sm:text-4xl font-heading font-bold mb-4 flex items-center justify-center gap-3">
               <Map className="w-8 h-8 text-neural-light" />
-              Roadmap
+              {t.roadmap.title}
             </h2>
-            <p className="text-gray-400 max-w-2xl mx-auto text-lg">
-              Neuralforming è un progetto vivo. Questa è la direzione, non una promessa di date.
-            </p>
+            <p className="text-gray-400 max-w-2xl mx-auto text-lg">{t.roadmap.lead}</p>
           </RevealSection>
 
           <div className="grid md:grid-cols-3 gap-6">
             {[
               {
-                label: 'Ora',
+                label: t.roadmap.now,
                 accent: 'text-tech-cyan',
                 dot: 'bg-tech-cyan',
                 border: 'border-tech-cyan/30',
-                items: [
-                  'Multiplayer 2–8 con tabellone master e player su smartphone',
-                  'Playground singolo con opinione pubblica',
-                  'Dilemmi, tecnologie, parlamento e PWA',
-                  'Guida in-app e codice AGPL-3.0',
-                  'Demo cloud sperimentale',
-                ],
+                items: t.roadmap.nowItems,
               },
               {
-                label: 'Prossimo',
+                label: t.roadmap.next,
                 accent: 'text-neural-light',
                 dot: 'bg-neural-light',
                 border: 'border-neural-medium/35',
-                items: [
-                  'Nuovi mazzi di dilemmi e tecnologie',
-                  'Report di sessione per docenti',
-                  'Traduzione inglese',
-                  'Istanza cloud più stabile per le classi',
-                  'UX player più chiara su mobile',
-                ],
+                items: t.roadmap.nextItems,
               },
               {
-                label: 'Oltre',
+                label: t.roadmap.later,
                 accent: 'text-ethics-amber',
                 dot: 'bg-ethics-amber',
                 border: 'border-ethics-amber/30',
-                items: [
-                  'Dashboard docente e scenari per materia',
-                  'Versione ibrida da tavolo (carte stampabili)',
-                  'Contributi della community sui mazzi',
-                  'Workshop e kit per eventi civici',
-                ],
+                items: t.roadmap.laterItems,
               },
             ].map((col) => (
               <RevealSection key={col.label}>
@@ -794,17 +704,11 @@ export const LandingPage = ({
         </div>
       </section>
 
-      {/* ── CTA Finale ── */}
       <section id="play" className="py-24 sm:py-32 scroll-mt-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <RevealSection>
-            <h2 className="text-3xl sm:text-4xl font-heading font-bold mb-4">
-              Apri un parlamento. Oggi.
-            </h2>
-            <p className="text-gray-400 text-lg mb-10 max-w-xl mx-auto">
-              Una classe, un workshop, un collettivo: il primo atto è votare.
-              Se credi che questo strumento debba restare libero e senza pubblicità, sostienilo.
-            </p>
+            <h2 className="text-3xl sm:text-4xl font-heading font-bold mb-4">{t.cta.title}</h2>
+            <p className="text-gray-400 text-lg mb-10 max-w-xl mx-auto">{t.cta.lead}</p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
               <button
@@ -812,7 +716,7 @@ export const LandingPage = ({
                 className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-neural-medium to-neural-dark hover:from-neural-light hover:to-neural-medium text-white font-heading font-semibold py-3.5 px-8 rounded-xl transition-all duration-200 shadow-lg shadow-neural-medium/25 hover:-translate-y-0.5"
               >
                 <Users className="w-5 h-5 text-tech-cyan" />
-                Crea stanza multiplayer
+                {t.cta.createRoom}
               </button>
               <a
                 href={BMC_URL}
@@ -821,7 +725,7 @@ export const LandingPage = ({
                 className="inline-flex items-center justify-center gap-2 glass-panel text-ethics-amber font-heading font-semibold py-3.5 px-8 rounded-xl border border-ethics-amber/30 hover:border-ethics-amber/60 transition-all duration-200 hover:-translate-y-0.5"
               >
                 <Coffee className="w-5 h-5" />
-                Dona su Buy Me a Coffee
+                {t.cta.donateBmc}
               </a>
             </div>
 
@@ -831,14 +735,14 @@ export const LandingPage = ({
                 className="inline-flex items-center gap-2 text-gray-400 hover:text-tech-cyan transition-colors"
               >
                 <BookOpen className="w-4 h-4" />
-                Guida al gioco
+                {t.cta.guide}
               </Link>
               <Link
                 to="/contatti"
                 className="inline-flex items-center gap-2 text-gray-400 hover:text-tech-cyan transition-colors"
               >
                 <Mail className="w-4 h-4" />
-                Contatti
+                {t.cta.contact}
               </Link>
               <a
                 href={GITHUB_URL}
@@ -854,7 +758,6 @@ export const LandingPage = ({
         </div>
       </section>
 
-      {/* ── Footer ── */}
       <footer className="border-t border-white/10 py-10">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
@@ -865,10 +768,10 @@ export const LandingPage = ({
 
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-gray-500">
               <Link to="/guida" className="hover:text-gray-300 transition-colors">
-                Guida
+                {t.footer.guide}
               </Link>
               <Link to="/contatti" className="hover:text-gray-300 transition-colors">
-                Contatti
+                {t.footer.contact}
               </Link>
               <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="hover:text-gray-300 transition-colors">
                 GitHub
@@ -880,7 +783,7 @@ export const LandingPage = ({
                 className="hover:text-ethics-amber transition-colors flex items-center gap-1"
               >
                 <Heart className="w-3 h-3" />
-                Dona
+                {t.footer.donate}
               </a>
             </div>
 
@@ -895,7 +798,7 @@ export const LandingPage = ({
             <button
               onClick={() => setShowCloudModal(false)}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-200 transition-colors p-1"
-              aria-label="Chiudi"
+              aria-label={t.modal.close}
             >
               <X className="w-5 h-5" />
             </button>
@@ -905,17 +808,14 @@ export const LandingPage = ({
                 <AlertTriangle className="w-6 h-6" />
               </div>
               <div>
-                <h3 className="text-xl font-heading font-bold text-gray-100">Stato del server cloud</h3>
+                <h3 className="text-xl font-heading font-bold text-gray-100">{t.modal.title}</h3>
                 <span className="text-xs font-mono font-semibold px-2 py-0.5 bg-ethics-amber/20 text-amber-300 rounded-full border border-ethics-amber/40 uppercase">
-                  Demo / condivisa
+                  {t.modal.badge}
                 </span>
               </div>
             </div>
 
-            <p className="text-sm text-gray-300 leading-relaxed">
-              Il server cloud gratuito è in <strong>fase sperimentale</strong> e gira su risorse condivise.
-              Con molte sessioni contemporanee possono esserci rallentamenti o disconnessioni.
-            </p>
+            <p className="text-sm text-gray-300 leading-relaxed">{t.modal.body}</p>
 
             <div className="space-y-3 pt-2">
               <button
@@ -927,7 +827,7 @@ export const LandingPage = ({
               >
                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4 text-tech-cyan" />
-                  <span>Prova la demo cloud</span>
+                  <span>{t.modal.tryDemo}</span>
                 </div>
                 <span className="text-xs text-neural-light group-hover:translate-x-0.5 transition-transform">→</span>
               </button>
@@ -938,7 +838,7 @@ export const LandingPage = ({
               >
                 <div className="flex items-center gap-2">
                   <Mail className="w-4 h-4 text-ethics-amber" />
-                  <span>Richiedi un&apos;istanza stabile</span>
+                  <span>{t.modal.requestInstance}</span>
                 </div>
                 <span className="text-xs text-ethics-amber">→</span>
               </Link>
@@ -951,15 +851,13 @@ export const LandingPage = ({
               >
                 <div className="flex items-center gap-2">
                   <Github className="w-4 h-4 text-gray-400" />
-                  <span>Self-host da GitHub</span>
+                  <span>{t.modal.selfHost}</span>
                 </div>
                 <ExternalLink className="w-3.5 h-3.5 text-gray-400" />
               </a>
             </div>
 
-            <p className="text-[11px] text-gray-500 text-center">
-              Per eventi accademici o istituzionali è meglio il self-hosting o una stanza dedicata.
-            </p>
+            <p className="text-[11px] text-gray-500 text-center">{t.modal.footnote}</p>
           </div>
         </div>
       )}

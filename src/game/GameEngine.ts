@@ -1,4 +1,4 @@
-import { GameState, Dilemma, Technology, Consequence, DilemmaOption, PlayerState, MilestoneUnlocked } from './types';
+import { GameState, Dilemma, Technology, DilemmaOption, PlayerState, MilestoneUnlocked } from './types';
 import { Scoring } from './Scoring';
 import { TurnManager } from './TurnManager';
 import { conductParliamentVote, calculateVotingEffects } from './ParliamentVoting';
@@ -7,31 +7,24 @@ import { checkMilestones, applyMilestoneVotingBonus, calculateMilestonePointsBon
 import { milestones } from './Milestones';
 import { Objectives } from './Objectives';
 import { News } from './News';
-import dilemmasData from '../data/dilemmas.json';
-import technologiesData from '../data/technologies.json';
-import consequencesData from '../data/consequences.json';
+import { loadGameContent } from '../lib/i18n/content';
+import { gameT } from '../lib/i18n/game';
+import { getSessionLocale } from '../lib/i18n/session';
 
 /**
  * Modulo centralizzato per la logica principale del gioco
  */
 export class GameEngine {
   /**
-   * Nomi per i giocatori AI
-   */
-  private static aiNames = [
-    'Partito Progressista',
-    'Alleanza Tecnologica',
-    'Coalizione Etica',
-    'Movimento Innovazione',
-  ];
-
-  /**
    * Inizializza un nuovo stato di gioco con 5 giocatori (1 umano + 4 AI)
    */
   static initializeGame(): GameState {
+    const { technologies, dilemmas } = loadGameContent();
+    const t = gameT(getSessionLocale());
+
     // Mescola i mazzi
-    const technologyDeck = this.shuffleArray([...technologiesData] as Technology[]);
-    const dilemmaDeck = this.shuffleArray([...dilemmasData] as Dilemma[]);
+    const technologyDeck = this.shuffleArray([...technologies] as Technology[]);
+    const dilemmaDeck = this.shuffleArray([...dilemmas] as Dilemma[]);
 
     // Crea i giocatori
     let players: PlayerState[] = [];
@@ -40,7 +33,7 @@ export class GameEngine {
     const humanHand = technologyDeck.splice(0, 2);
     players.push({
       id: 'player-human',
-      name: 'Il Tuo Partito',
+      name: t.sp.yourParty,
       isAI: false,
       techPoints: 0,
       ethicsPoints: 0,
@@ -55,7 +48,7 @@ export class GameEngine {
       const aiHand = technologyDeck.splice(0, 2);
       players.push({
         id: `player-ai-${i}`,
-        name: this.aiNames[i],
+        name: gameT(getSessionLocale()).aiNames[i],
         isAI: true,
         techPoints: 0,
         ethicsPoints: 0,
@@ -122,7 +115,7 @@ export class GameEngine {
   static drawTechnology(gameState: GameState, playerId: string): GameState {
     if (gameState.technologyDeck.length === 0) {
       // Rimescola il mazzo se è vuoto
-      const reshuffled = this.shuffleArray([...technologiesData] as Technology[]);
+      const reshuffled = this.shuffleArray([...loadGameContent().technologies] as Technology[]);
       return {
         ...gameState,
         technologyDeck: reshuffled,
@@ -431,7 +424,7 @@ export class GameEngine {
   static drawDilemma(gameState: GameState): GameState {
     if (gameState.dilemmaDeck.length === 0) {
       // Rimescola il mazzo se è vuoto
-      const reshuffled = this.shuffleArray([...dilemmasData] as Dilemma[]);
+      const reshuffled = this.shuffleArray([...loadGameContent().dilemmas] as Dilemma[]);
       return {
         ...gameState,
         dilemmaDeck: reshuffled,
@@ -505,7 +498,7 @@ export class GameEngine {
     }
 
     // Trova la conseguenza
-    const consequence = (consequencesData as Consequence[]).find(
+    const consequence = loadGameContent().consequences.find(
       c => c.id === option.consequence
     );
 

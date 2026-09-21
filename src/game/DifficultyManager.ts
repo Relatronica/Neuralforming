@@ -1,6 +1,8 @@
 import { Dilemma, SocietyNews } from './types';
 import { DifficultyLevel, SinglePlayerState } from './singlePlayerTypes';
-import newsData from '../data/news.json';
+import { loadGameContent } from '../lib/i18n/content';
+import { gameT } from '../lib/i18n/game';
+import { getSessionLocale } from '../lib/i18n/session';
 
 /**
  * Gestione della difficoltà progressiva per il Single Player.
@@ -232,7 +234,7 @@ export class DifficultyManager {
    * In crisi, le news tendono ad essere negative. Con alta opinione, positive.
    */
   static selectAppropriateNews(state: SinglePlayerState): SocietyNews | null {
-    const allNews = newsData as SocietyNews[];
+    const allNews = loadGameContent().news;
     if (allNews.length === 0) return null;
     
     const { publicOpinion, difficulty } = state;
@@ -270,30 +272,31 @@ export class DifficultyManager {
     color: string;
     description: string;
   } {
+    const t = gameT(getSessionLocale());
     switch (difficulty) {
       case 'easy':
         return {
-          label: 'Facile',
+          label: t.difficulty.easy,
           color: 'text-green-400',
-          description: 'Situazione stabile. Il parlamento è collaborativo.',
+          description: t.difficulty.easyDesc,
         };
       case 'medium':
         return {
-          label: 'Moderata',
+          label: t.difficulty.medium,
           color: 'text-yellow-400',
-          description: 'Le scelte si fanno più complesse. Attenzione al bilanciamento.',
+          description: t.difficulty.mediumDesc,
         };
       case 'hard':
         return {
-          label: 'Difficile',
+          label: t.difficulty.hard,
           color: 'text-orange-400',
-          description: 'Crisi in arrivo. Ogni decisione conta.',
+          description: t.difficulty.hardDesc,
         };
       case 'crisis':
         return {
-          label: 'Crisi',
+          label: t.difficulty.crisis,
           color: 'text-red-400',
-          description: 'Situazione critica! L\'opinione pubblica è volatile.',
+          description: t.difficulty.crisisDesc,
         };
     }
   }

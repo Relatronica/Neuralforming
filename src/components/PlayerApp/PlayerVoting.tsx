@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { TechnologyCard } from '../Cards/TechnologyCard';
 import { Vote, X, MessageCircle, Clock, CheckCircle2 } from 'lucide-react';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 
 interface PlayerVotingProps {
   pendingVote: {
@@ -36,6 +37,7 @@ export const PlayerVoting: React.FC<PlayerVotingProps> = ({
   onVote,
   onReadyToVote,
 }) => {
+  const { t } = useGameCopy();
   const hasVoted = voteStatus?.hasVoted ?? false;
   const myVote = voteStatus?.myVote;
   const totalVotes = voteStatus?.totalVotes ?? 0;
@@ -239,7 +241,7 @@ export const PlayerVoting: React.FC<PlayerVotingProps> = ({
                   }`}
                 >
                   <Vote className="w-7 h-7 sm:w-8 sm:h-8" />
-                  <span className="font-bold">{hasVoted && myVote === true ? 'Votato Sì' : 'Vota Sì'}</span>
+                  <span className="font-bold">{hasVoted && myVote === true ? t.voting.votedYes : t.voting.yes}</span>
                 </button>
                 <button
                   onClick={() => {
@@ -257,7 +259,7 @@ export const PlayerVoting: React.FC<PlayerVotingProps> = ({
                   }`}
                 >
                   <X className="w-7 h-7 sm:w-8 sm:h-8" />
-                  <span className="font-bold">{hasVoted && myVote === false ? 'Votato No' : 'Vota No'}</span>
+                  <span className="font-bold">{hasVoted && myVote === false ? t.voting.votedNo : t.voting.no}</span>
                 </button>
               </div>
             </>

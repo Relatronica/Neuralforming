@@ -93,6 +93,7 @@ interface GameRoom {
   lastActivity: number;
   lastMasterHeartbeat: number;
   masterHeartbeatTimer?: NodeJS.Timeout;
+  locale: 'it' | 'en';
 }
 
 // Rate limiter per socket
@@ -291,10 +292,24 @@ export class GameServer {
 
   private setupSocketHandlers() {
     this.io.on('connection', (socket: Socket) => {
-      socket.on('createRoom', ({ playerName, playerColor, maxPlayers }: { playerName?: string; playerColor?: string; maxPlayers?: number } = {}) => {
-        const roomId = this.createRoom(socket.id, playerName, playerColor, maxPlayers);
+      socket.on('createRoom', ({ playerName, playerColor, maxPlayers, locale }: { playerName?: string; playerColor?: string; maxPlayers?: number; locale?: string } = {}) => {
+        const roomId = this.createRoom(socket.id, playerName, playerColor, maxPlayers, locale);
         socket.join(roomId);
-        socket.emit('roomCreated', { roomId });
+        const room = this.rooms.get(roomId);
+        socket.emit('roomCreated', { roomId, locale: room?.locale ?? 'it' });
+        this.broadcastRoomUpdate(roomId);
+      });
+
+      socket.on('setRoomLocale', ({ roomId, locale }: { roomId: string; locale: string }) => {
+        const room = this.rooms.get(roomId);
+        if (!room || room.masterSocketId !== socket.id || room.isGameStarted) {
+          return;
+        }
+        if (locale !== 'it' && locale !== 'en') {
+          return;
+        }
+        room.locale = locale;
+        this.touchRoom(room);
         this.broadcastRoomUpdate(roomId);
       });
 
@@ -548,7 +563,7 @@ export class GameServer {
     });
   }
 
-  private createRoom(socketId: string, playerName?: string, playerColor?: string, maxPlayers?: number): string {
+  private createRoom(socketId: string, playerName?: string, playerColor?: string, maxPlayers?: number, locale?: string): string {
     const roomId = `room-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     
     // Valida e limita maxPlayers
@@ -574,6 +589,7 @@ export class GameServer {
       createdAt: now,
       lastActivity: now,
       lastMasterHeartbeat: now,
+      locale: locale === 'en' ? 'en' : 'it',
     };
 
     // Il master NON viene aggiunto come giocatore
@@ -1492,6 +1508,7 @@ export class GameServer {
       isGameStarted: room.isGameStarted,
       maxPlayers: room.maxPlayers,
       masterSocketId: room.masterSocketId, // Invia il socket ID del master
+      locale: room.locale || 'it',
     });
   }
 

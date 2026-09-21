@@ -1,0 +1,226 @@
+[
+  {
+    "id": "d1",
+    "title": "AI Regulation for Donor Selection",
+    "description": "Parliament must decide how to regulate the use of AI in organ donor selection. Some propose efficiency criteria, others privilege equity. Which law do you approve?",
+    "options": [
+      {
+        "text": "Approve a law that privileges medical efficiency, maximising success rates",
+        "ethicsPoints": 5,
+        "techPoints": 10,
+        "neuralformingPoints": 8,
+        "consequence": "c1"
+      },
+      {
+        "text": "A law imposing a fair rotation system to guarantee social justice",
+        "ethicsPoints": 15,
+        "techPoints": 5,
+        "neuralformingPoints": 12,
+        "consequence": "c2"
+      },
+      {
+        "text": "Regulation requiring human oversight for every critical decision",
+        "ethicsPoints": 12,
+        "techPoints": 3,
+        "neuralformingPoints": 10,
+        "consequence": "c3"
+      }
+    ]
+  },
+  {
+    "id": "d2",
+    "title": "Anti-Discrimination Law in Selection AI",
+    "description": "You must decide how to regulate the use of AI in hiring. Historical data show disparities, but a complete ban could reduce efficiency. Which legislative proposal do you support?",
+    "options": [
+      {
+        "text": "Allow the use of historical data without restrictions to maximise efficiency",
+        "ethicsPoints": 3,
+        "techPoints": 12,
+        "neuralformingPoints": 6,
+        "consequence": "c4"
+      },
+      {
+        "text": "A law imposing algorithmic corrections to guarantee equal opportunity",
+        "ethicsPoints": 18,
+        "techPoints": 8,
+        "neuralformingPoints": 15,
+        "consequence": "c5"
+      },
+      {
+        "text": "An absolute ban on using demographic data in selection processes",
+        "ethicsPoints": 10,
+        "techPoints": 6,
+        "neuralformingPoints": 9,
+        "consequence": "c6"
+      }
+    ]
+  },
+  {
+    "id": "d3",
+    "title": "Law on Public Surveillance with AI",
+    "description": "The Ministry of the Interior proposes a law to use AI in public surveillance to prevent crime. Civil rights groups oppose it. How do you vote?",
+    "options": [
+      {
+        "text": "Approve the law for comprehensive surveillance, prioritising national security",
+        "ethicsPoints": 4,
+        "techPoints": 15,
+        "neuralformingPoints": 7,
+        "consequence": "c7"
+      },
+      {
+        "text": "Approve with amendments that guarantee rigorous checks and transparency",
+        "ethicsPoints": 14,
+        "techPoints": 10,
+        "neuralformingPoints": 13,
+        "consequence": "c8"
+      },
+      {
+        "text": "Reject the proposal to protect citizens' privacy rights",
+        "ethicsPoints": 16,
+        "techPoints": 2,
+        "neuralformingPoints": 11,
+        "consequence": "c9"
+      }
+    ]
+  },
+  {
+    "id": "d4",
+    "title": "Ethical Regulation of Autonomous Vehicles",
+    "description": "You must establish ethical standards for autonomous vehicles. The trolley dilemma divides public opinion. Which regulation do you approve?",
+    "options": [
+      {
+        "text": "A regulation that privileges passenger safety as the absolute priority",
+        "ethicsPoints": 6,
+        "techPoints": 12,
+        "neuralformingPoints": 8,
+        "consequence": "c10"
+      },
+      {
+        "text": "A standard imposing the minimisation of total harm in every scenario",
+        "ethicsPoints": 12,
+        "techPoints": 10,
+        "neuralformingPoints": 12,
+        "consequence": "c11"
+      },
+      {
+        "text": "A regulation requiring emergency systems to stop the vehicle whenever possible",
+        "ethicsPoints": 15,
+        "techPoints": 7,
+        "neuralformingPoints": 13,
+        "consequence": "c12"
+      }
+    ]
+  },
+  {
+    "id": "d5",
+    "title": "Data Privacy and Consent Law",
+    "description": "You must regulate the use of personal data by companies. The technology industry asks for flexibility; privacy groups demand rigorous protections. Which law do you approve?",
+    "options": [
+      {
+        "text": "A permissive law allowing the use of data to improve services",
+        "ethicsPoints": 2,
+        "techPoints": 14,
+        "neuralformingPoints": 5,
+        "consequence": "c13"
+      },
+      {
+        "text": "A rigorous law requiring explicit consent for every use of data",
+        "ethicsPoints": 17,
+        "techPoints": 6,
+        "neuralformingPoints": 14,
+        "consequence": "c14"
+      },
+      {
+        "text": "Balanced regulation with an opt-in system and granular controls",
+        "ethicsPoints": 13,
+        "techPoints": 9,
+        "neuralformingPoints": 12,
+        "consequence": "c15"
+      }
+    ]
+  },
+  {
+    "id": "d6",
+    "title": "National Plan for Automation and Work",
+    "description": "You must approve a plan regulating AI automation. Companies demand freedom; unions demand protections. Which policy do you approve?",
+    "options": [
+      {
+        "text": "A plan allowing complete automation without restrictions, for competitiveness",
+        "ethicsPoints": 3,
+        "techPoints": 16,
+        "neuralformingPoints": 7,
+        "consequence": "c16"
+      },
+      {
+        "text": "A plan with gradual automation and state retraining programmes",
+        "ethicsPoints": 16,
+        "techPoints": 11,
+        "neuralformingPoints": 15,
+        "consequence": "c17"
+      },
+      {
+        "text": "Regulation limiting automation to preserve jobs",
+        "ethicsPoints": 12,
+        "techPoints": 7,
+        "neuralformingPoints": 10,
+        "consequence": "c18"
+      }
+    ]
+  },
+  {
+    "id": "d7",
+    "title": "Anti-Disinformation and Deepfake Law",
+    "description": "You must regulate synthetic content generation technologies. The media demand protections; researchers demand freedom. Which law do you approve?",
+    "options": [
+      {
+        "text": "Allow unrestricted use to foster innovation",
+        "ethicsPoints": 1,
+        "techPoints": 18,
+        "neuralformingPoints": 4,
+        "consequence": "c19"
+      },
+      {
+        "text": "A law imposing mandatory watermarking and authentication systems",
+        "ethicsPoints": 14,
+        "techPoints": 12,
+        "neuralformingPoints": 14,
+        "consequence": "c20"
+      },
+      {
+        "text": "Restrictive regulation limiting access to authorised researchers",
+        "ethicsPoints": 11,
+        "techPoints": 8,
+        "neuralformingPoints": 10,
+        "consequence": "c21"
+      }
+    ]
+  },
+  {
+    "id": "d8",
+    "title": "Algorithmic Transparency Law",
+    "description": "You must decide whether to require companies to make AI algorithms public. Industry opposes it; transparency groups support it. How do you vote?",
+    "options": [
+      {
+        "text": "Reject the law to protect intellectual property and competitiveness",
+        "ethicsPoints": 4,
+        "techPoints": 13,
+        "neuralformingPoints": 6,
+        "consequence": "c22"
+      },
+      {
+        "text": "Approve a law imposing full publication for public transparency",
+        "ethicsPoints": 18,
+        "techPoints": 5,
+        "neuralformingPoints": 14,
+        "consequence": "c23"
+      },
+      {
+        "text": "Approve a compromise: simplified public versions and external audits",
+        "ethicsPoints": 13,
+        "techPoints": 9,
+        "neuralformingPoints": 12,
+        "consequence": "c24"
+      }
+    ]
+  }
+]

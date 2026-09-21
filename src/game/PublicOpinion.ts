@@ -4,6 +4,8 @@ import {
   OpinionModifier, 
   OpinionReactionResult 
 } from './singlePlayerTypes';
+import { gameT } from '../lib/i18n/game';
+import { getSessionLocale } from '../lib/i18n/session';
 
 /**
  * Sistema di Opinione Pubblica per il Single Player.
@@ -323,26 +325,27 @@ export class PublicOpinion {
     newValue: number,
     isRejected: boolean,
   ): string {
+    const t = gameT(getSessionLocale());
     if (isRejected) {
-      return `L'opinione pubblica è crollata! La proposta "${technology.name}" è stata respinta con indignazione. Il consenso è troppo basso per procedere.`;
+      return t.opinion.collapsed(technology.name);
     }
     
     if (change >= 5) {
-      return `La proposta "${technology.name}" ha ricevuto un'accoglienza entusiasta dal pubblico! L'opinione pubblica sale a ${newValue}.`;
+      return t.opinion.enthusiastic(technology.name, newValue);
     }
     
     if (change >= 2) {
-      return `"${technology.name}" è stata accolta positivamente. L'opinione pubblica migliora leggermente (${newValue}).`;
+      return t.opinion.positive(technology.name, newValue);
     }
     
     if (change >= 0) {
-      return `"${technology.name}" è stata approvata senza particolari reazioni. L'opinione pubblica resta stabile (${newValue}).`;
+      return t.opinion.stable(technology.name, newValue);
     }
     
     if (change >= -3) {
-      return `La proposta "${technology.name}" ha generato qualche perplessità nell'opinione pubblica (${newValue}).`;
+      return t.opinion.doubts(technology.name, newValue);
     }
     
-    return `"${technology.name}" ha suscitato forti critiche dall'opinione pubblica. Il consenso cala significativamente (${newValue}).`;
+    return t.opinion.criticism(technology.name, newValue);
   }
 }

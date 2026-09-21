@@ -1,25 +1,23 @@
 import { PlayerState, PlayerObjective } from './types';
 import { Scoring } from './Scoring';
-import objectivesData from '../data/objectives.json';
+import { loadGameContent } from '../lib/i18n/content';
 
 /**
  * Modulo centralizzato per la gestione degli obiettivi del giocatore
  */
 export class Objectives {
-  private static objectives: PlayerObjective[] = objectivesData as PlayerObjective[];
-
   /**
    * Ottiene tutti gli obiettivi disponibili
    */
   static getAllObjectives(): PlayerObjective[] {
-    return [...this.objectives];
+    return [...loadGameContent().objectives];
   }
 
   /**
    * Ottiene un obiettivo per ID
    */
   static getObjectiveById(id: string): PlayerObjective | undefined {
-    return this.objectives.find(obj => obj.id === id);
+    return this.getAllObjectives().find(obj => obj.id === id);
   }
 
   /**
@@ -28,7 +26,7 @@ export class Objectives {
    */
   static assignObjectives(players: PlayerState[]): Map<string, string> {
     const assignments = new Map<string, string>();
-    const availableObjectives = [...this.objectives];
+    const availableObjectives = this.getAllObjectives();
     const usedObjectives = new Set<string>();
 
     // Mescola i giocatori per assegnazione random

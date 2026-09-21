@@ -1,6 +1,7 @@
 import React from 'react';
 import Joyride, { CallBackProps, STATUS, Step } from 'react-joyride';
 import { GamePhase } from '../../game/types';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 
 interface GameTourProps {
   run: boolean;
@@ -14,6 +15,7 @@ export const GameTour: React.FC<GameTourProps> = ({
   onComplete,
   hasNews = false
 }) => {
+  const { t } = useGameCopy();
   const newsStep: Step = {
     target: '[data-tour="news"]',
     content: (
@@ -32,10 +34,9 @@ export const GameTour: React.FC<GameTourProps> = ({
       target: 'body',
       content: (
         <div>
-          <h3 className="text-lg font-bold text-gray-100 mb-2">Benvenuto in Neuralforming! 🎮</h3>
-          <p className="text-gray-300 text-sm">
-            Questo tour ti guiderà attraverso le funzionalità principali del gioco.
-            Prendi decisioni politiche per un'IA sostenibile e responsabile!
+            <h3 className="text-lg font-bold text-gray-100 mb-2">{t.tour.welcomeTitle}</h3>
+            <p className="text-gray-300 text-sm">
+              {t.tour.welcomeBody}
           </p>
         </div>
       ),
@@ -218,11 +219,11 @@ export const GameTour: React.FC<GameTourProps> = ({
         },
       }}
       locale={{
-        back: 'Indietro',
-        close: 'Chiudi',
-        last: 'Fine',
-        next: 'Avanti',
-        skip: 'Salta',
+        back: t.tour.back,
+        close: t.tour.close,
+        last: t.tour.last,
+        next: t.tour.next,
+        skip: t.tour.skip,
       }}
     />
   );

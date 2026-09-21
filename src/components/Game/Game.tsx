@@ -22,9 +22,9 @@ import { OpeningStoryModal } from './OpeningStoryModal';
 import { useGameSocketContext } from '../../contexts/GameSocketContext';
 import { Bot, Landmark, Users, CheckCircle2, XCircle, Clock, MessageCircle, Scale, Loader2, QrCode } from 'lucide-react';
 import { InviteQrModal } from './InviteQrModal';
-import technologiesData from '../../data/technologies.json';
-import dilemmasData from '../../data/dilemmas.json';
-import headerNewsData from '../../data/headerNews.json';
+import { loadGameContent } from '../../lib/i18n/content';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
+import { setSessionLocale } from '../../lib/i18n/session';
 
 // Componente per la fase di discussione e votazione (master view)
 const DiscussionAndVotingPanel: React.FC<{
@@ -45,6 +45,7 @@ const DiscussionAndVotingPanel: React.FC<{
   onVote: (vote: boolean) => void;
   onReadyToVote: (technologyId: string) => void;
 }> = ({ pendingVote, gameState, currentPlayer, isMaster, voteStatus, discussionPhase, onVote, onReadyToVote }) => {
+  const { t } = useGameCopy();
   const [secondsLeft, setSecondsLeft] = useState(0);
 
   useEffect(() => {
@@ -89,7 +90,7 @@ const DiscussionAndVotingPanel: React.FC<{
               <MessageCircle className="w-5 h-5 text-ethics-amber" />
             </div>
             <h2 className="text-xl font-heading font-bold text-gray-100">
-              Discussione in corso
+              {t.dilemma.discussion}
             </h2>
           </div>
           <p className="text-ethics-amber/80 text-center text-sm mb-3">
@@ -263,7 +264,7 @@ const DiscussionAndVotingPanel: React.FC<{
             >
               <div className="flex items-center justify-center gap-1">
                 <CheckCircle2 className="w-3 h-3" />
-                <span>{voteStatus?.hasVoted && voteStatus?.myVote === true ? 'Votato Sì' : 'Vota Sì'}</span>
+                <span>{voteStatus?.hasVoted && voteStatus?.myVote === true ? t.voting.votedYes : t.voting.yes}</span>
               </div>
             </button>
             <button
@@ -279,7 +280,7 @@ const DiscussionAndVotingPanel: React.FC<{
             >
               <div className="flex items-center justify-center gap-1">
                 <XCircle className="w-3 h-3" />
-                <span>{voteStatus?.hasVoted && voteStatus?.myVote === false ? 'Votato No' : 'Vota No'}</span>
+                <span>{voteStatus?.hasVoted && voteStatus?.myVote === false ? t.voting.votedNo : t.voting.no}</span>
               </div>
             </button>
           </div>
@@ -362,6 +363,8 @@ interface GameProps {
 }
 
 export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBackToSetup }) => {
+  const { locale, t } = useGameCopy();
+  const headerNews = loadGameContent(locale).headerNews;
   // Single player: stato locale
   // IMPORTANTE: In multiplayer, questo NON viene usato - viene sempre usato serverGameState
   const [localGameState, setLocalGameState] = useState<GameState>(() => 
@@ -401,8 +404,8 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
   const [showOpeningStory, setShowOpeningStory] = useState(false);
   const [hasShownOpeningStory, setHasShownOpeningStory] = useState(false);
   const [selectedOpeningStory, setSelectedOpeningStory] = useState<{ id: string; title: string; content: string; mood: string } | null>(null);
-  const [headerNewsIndex, setHeaderNewsIndex] = useState(() => 
-    Math.floor(Math.random() * headerNewsData.length)
+  const [headerNewsIndex, setHeaderNewsIndex] = useState(() =>
+    Math.floor(Math.random() * loadGameContent().headerNews.length)
   );
   const [showInviteQr, setShowInviteQr] = useState(false);
 
@@ -449,7 +452,11 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
     socket: null,
   };
 
-  // Determina se siamo il master
+  useEffect(() => {
+    if (roomInfo?.locale) {
+      setSessionLocale(roomInfo.locale);
+    }
+  }, [roomInfo?.locale]);
   useEffect(() => {
     if (mode === 'multiplayer' && roomInfo && socket) {
       // Il master è identificato confrontando il socket.id con masterSocketId
@@ -494,8 +501,9 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
           return shuffled;
         };
 
-        const technologyDeck = shuffleArray([...technologiesData] as Technology[]);
-        const dilemmaDeck = shuffleArray([...dilemmasData] as Dilemma[]);
+        const { technologies, dilemmas } = loadGameContent(roomInfo?.locale || locale);
+        const technologyDeck = shuffleArray([...technologies] as Technology[]);
+        const dilemmaDeck = shuffleArray([...dilemmas] as Dilemma[]);
 
         // Crea i giocatori reali dalla room (escludi eventuali master)
         let players: PlayerState[] = [];
@@ -720,7 +728,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
     if (isCurrentPlayerDisconnected && !isCurrentPlayerConnected) {
       // Il giocatore corrente è disconnesso - avvia timer per skip
       if (!disconnectSkipTimerRef.current) {
-        const playerName = gameState.players.find(p => p.id === currentPlayerId)?.name || 'Giocatore';
+        const playerName = gameState.players.find(p => p.id === currentPlayerId)?.name || t.common.player;
         console.log(`⏳ Player ${playerName} is disconnected during their turn. Auto-skip in ${DISCONNECT_SKIP_DELAY_MS / 1000}s...`);
         
         disconnectSkipTimerRef.current = setTimeout(() => {
@@ -1207,7 +1215,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
     const interval = setInterval(() => {
       setHeaderNewsIndex((prev) => {
         // Cambia alla news successiva, tornando all'inizio se necessario
-        return (prev + 1) % headerNewsData.length;
+        return (prev + 1) % headerNews.length;
       });
     }, 20000); // Cambia ogni 20 secondi
 
@@ -1218,7 +1226,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
   useEffect(() => {
     if (!gameState) return;
     // Cambia news random ad ogni turno
-    setHeaderNewsIndex(Math.floor(Math.random() * headerNewsData.length));
+    setHeaderNewsIndex(Math.floor(Math.random() * headerNews.length));
   }, [gameState?.turn]);
 
   // Rileva cambio turno per mostrare transizione
@@ -1275,7 +1283,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
         <div className="min-h-screen bg-cyber-950 flex items-center justify-center p-4">
           <div className="glass-card rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
             <div className="game-spinner"></div>
-            <h2 className="text-2xl font-bold text-gray-100 mb-2">Inizializzazione partita...</h2>
+            <h2 className="text-2xl font-bold text-gray-100 mb-2">{t.game.init}</h2>
             <p className="text-gray-300">Il gioco sta per iniziare...</p>
             {isMaster && (
               <p className="text-xs text-gray-400 mt-2">(Sei il master - inizializzazione in corso...)</p>
@@ -1313,7 +1321,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
           {isHumanWinner ? (
             <>
               <div className="text-6xl mb-4">🎉</div>
-              <h1 className="text-3xl font-bold text-gray-100 mb-4">Vittoria!</h1>
+              <h1 className="text-3xl font-bold text-gray-100 mb-4">{t.game.victory}</h1>
               {winnerObjective && (
                 <div className="bg-gray-800 border border-gray-600 rounded-lg p-4 mb-4">
                   <p className="text-xs text-gray-400 mb-1">Obiettivo Completato</p>
@@ -1332,10 +1340,10 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                     <strong className="text-gray-100">Punti Neuralforming:</strong> {humanPlayer.neuralformingPoints}
                   </p>
                   <p className="text-sm text-gray-200 mb-2">
-                    <strong className="text-gray-100">Punti Etica:</strong> {humanPlayer.ethicsPoints}
+                    <strong className="text-gray-100">{t.scores.ethicsPoints}:</strong> {humanPlayer.ethicsPoints}
                   </p>
                   <p className="text-sm text-gray-200">
-                    <strong className="text-gray-100">Punti Tecnologia:</strong> {humanPlayer.techPoints}
+                    <strong className="text-gray-100">{t.scores.techPoints}:</strong> {humanPlayer.techPoints}
                   </p>
                 </div>
               )}
@@ -1344,7 +1352,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
             <>
               <Bot className="w-16 h-16 mx-auto mb-4 text-gray-400" />
               <h1 className="text-3xl font-bold text-gray-100 mb-4">
-                {winner ? `${winner.name} ha vinto!` : 'Sconfitta'}
+                {winner ? t.game.won(winner.name) : t.game.defeat}
               </h1>
               {winner && winnerObjective && (
                 <div className="bg-gray-800 border border-gray-600 rounded-lg p-4 mb-4">
@@ -1366,10 +1374,10 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                     <strong className="text-gray-100">Punti Neuralforming:</strong> {winner.neuralformingPoints}
                   </p>
                   <p className="text-sm text-gray-200 mb-2">
-                    <strong className="text-gray-100">Punti Etica:</strong> {winner.ethicsPoints}
+                    <strong className="text-gray-100">{t.scores.ethicsPoints}:</strong> {winner.ethicsPoints}
                   </p>
                   <p className="text-sm text-gray-200">
-                    <strong className="text-gray-100">Punti Tecnologia:</strong> {winner.techPoints}
+                    <strong className="text-gray-100">{t.scores.techPoints}:</strong> {winner.techPoints}
                   </p>
                 </div>
               )}
@@ -1474,10 +1482,10 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
               <span className="text-tech-cyan">News</span>
             </div>
             <div className="flex items-center gap-4 flex-1 min-w-0 overflow-hidden">
-              {headerNewsData[headerNewsIndex] && (
+              {headerNews[headerNewsIndex] && (
                 <>
                   <div className="text-xs text-gray-500 whitespace-nowrap">
-                    {new Date(headerNewsData[headerNewsIndex].date).toLocaleDateString('it-IT', { 
+                    {new Date(headerNews[headerNewsIndex].date).toLocaleDateString(locale === 'en' ? 'en-GB' : 'it-IT', { 
                       day: '2-digit', 
                       month: 'short', 
                       year: 'numeric' 
@@ -1485,14 +1493,14 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                   </div>
                   <div className="flex items-center gap-3 flex-1 min-w-0">
                     <span className="text-sm text-gray-300 font-medium truncate">
-                      {headerNewsData[headerNewsIndex].title}
+                      {headerNews[headerNewsIndex].title}
                     </span>
                     <span className="text-xs text-gray-500 truncate hidden sm:inline">
-                      • {headerNewsData[headerNewsIndex].shortText}
+                      • {headerNews[headerNewsIndex].shortText}
                     </span>
                   </div>
                   <div className="text-xs text-gray-500 whitespace-nowrap hidden md:inline">
-                    {headerNewsData[headerNewsIndex].source}
+                    {headerNews[headerNewsIndex].source}
                   </div>
                 </>
               )}
@@ -1506,11 +1514,11 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyber-800 hover:bg-cyber-700 text-tech-cyan text-xs font-heading font-semibold border border-tech-cyan/30 transition-colors"
               >
                 <QrCode className="w-3.5 h-3.5" />
-                Invita
+                {t.invite.button}
               </button>
             )}
             <div className="text-sm text-gray-300">
-              Turno: <span className="font-heading font-bold text-gray-100 text-base">{gameState.turn}</span>
+              {t.dashboard.turn}: <span className="font-heading font-bold text-gray-100 text-base">{gameState.turn}</span>
             </div>
             {isProcessingAI && (
               <div className="bg-gray-800 border border-gray-600 rounded px-2 py-0.5 flex items-center gap-1.5">
@@ -1633,16 +1641,16 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
             {gameState.currentPhase === 'development' && isHumanTurn && currentPlayer && currentPlayer.hand.length === 0 && (
               <div className="bg-gray-800 rounded-lg shadow-md p-3 border border-blue-700/30">
                 <div className="flex items-center justify-between mb-2">
-                  <h2 className="text-sm font-bold text-gray-100">Sviluppo Politico</h2>
+                  <h2 className="text-sm font-bold text-gray-100">{t.phases.development}</h2>
                   <button
                     onClick={handleDrawTechnology}
                     className="bg-gradient-to-r from-neural-medium to-neural-dark hover:from-neural-light hover:to-neural-medium text-white font-heading font-semibold py-1 px-3 text-xs rounded-lg transition-all duration-200 shadow-sm"
                   >
-                    Nuova Proposta
+                    {t.game.newProposal}
                   </button>
                 </div>
                 <p className="text-xs text-gray-300">
-                  Non hai proposte disponibili. Clicca su "Nuova Proposta" per presentare una nuova iniziativa legislativa.
+                  {t.game.emptyHand}
                 </p>
               </div>
             )}
@@ -1669,8 +1677,8 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                       <Scale className="w-4 h-4 text-amber-400" />
                       <p className="text-xs font-bold text-gray-200">
                         {dilemmaDiscussionPhase
-                          ? 'I giocatori stanno discutendo il dilemma...'
-                          : 'Votazione sul dilemma in corso...'}
+                          ? t.dilemma.discussion
+                          : t.dilemma.votingInProgress}
                       </p>
                     </div>
                     {dilemmaVoteStatus && dilemmaVoteStatus.requiredVotes > 0 && !dilemmaDiscussionPhase && (
@@ -1767,10 +1775,10 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                             <Users className="w-5 h-5" style={{ color: activeColor }} />
                           </div>
                           <h2 className="text-sm font-bold text-gray-100 mb-1">
-                            Turno di {activePlayer?.name || 'Altro Giocatore'}
+                            {t.game.turnOf(activePlayer?.name || t.game.otherPlayer)}
                           </h2>
                           <p className="text-xs text-gray-400 mb-2">
-                            {isMaster ? 'Osservando il gioco...' : 'Aspetta il tuo turno...'}
+                            {isMaster ? t.game.observing : t.game.waitTurn}
                           </p>
                           <div className="flex items-center justify-center gap-1">
                             <Loader2 className="w-3 h-3 animate-spin text-tech-cyan" />

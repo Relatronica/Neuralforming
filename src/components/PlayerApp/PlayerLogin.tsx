@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { getQueryParam, extractRoomId } from '../../utils/deeplink';
 import { QRCodeScanner } from './QRCodeScanner';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 
 interface PlayerLoginProps {
   onLogin: (roomId: string, playerName: string, playerColor: string, playerIcon: string) => void;
@@ -43,6 +44,7 @@ const availableIcons = [
 ];
 
 export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
+  const { t } = useGameCopy();
   const [roomId, setRoomId] = useState('');
   const [playerName, setPlayerName] = useState('');
   const [selectedColor, setSelectedColor] = useState(availableColors[0].value);
@@ -101,7 +103,7 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
   // Ascolta eventi di errore per mostrare messaggio quando il nome è già usato
   useEffect(() => {
     const handlePlayerNameTaken = () => {
-      setNameError('Questo nome è già usato in questa partita. Scegli un altro nome.');
+      setNameError(t.login.nameTaken);
       setPlayerName(''); // Pulisci il campo nome
     };
 
@@ -142,7 +144,7 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
       console.error('❌ Could not extract roomId from QR code:', decodedText);
       setShowScanner(false);
       // Mostra un messaggio di errore
-      setNameError('QR code non valido. Assicurati di scansionare il QR code della partita.');
+      setNameError(t.login.invalidQr);
     }
   };
 
@@ -172,7 +174,7 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
         </div>
         
         <p className="text-gray-300 text-center mb-6">
-          Accedi alla partita con il tuo nome e l'ID della partita
+          {t.login.subtitle}
         </p>
 
         {/* Pulsante Scansiona QR Code */}
@@ -183,7 +185,7 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
             className="w-full bg-neural-medium hover:bg-neural-light text-white font-heading font-semibold py-3 px-6 rounded-xl transition-colors duration-200 shadow-md flex items-center justify-center gap-2"
           >
             <QrCode className="w-5 h-5" />
-            Scansiona QR Code
+            {t.login.scanQr}
           </button>
         </div>
 
@@ -192,14 +194,14 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
             <div className="w-full border-t border-gray-600"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-gray-900 text-gray-400">oppure</span>
+            <span className="px-2 bg-gray-900 text-gray-400">{t.login.or}</span>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
-              ID Partita
+              {t.login.roomId}
             </label>
             <input
               type="text"
@@ -208,7 +210,7 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
                 setRoomId(e.target.value);
                 setNameError(null); // Pulisci errori quando l'utente modifica
               }}
-              placeholder="Inserisci ID partita o incolla URL completo"
+              placeholder={t.login.roomIdPlaceholder}
               className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent font-mono text-sm text-gray-100 placeholder-gray-500"
               required
             />
@@ -216,7 +218,7 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
-              Nome del Partito
+              {t.login.partyName}
             </label>
             <input
               type="text"
@@ -225,7 +227,7 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
                 setPlayerName(e.target.value);
                 setNameError(null); // Pulisci l'errore quando l'utente inizia a digitare
               }}
-              placeholder="Il tuo nome partito"
+              placeholder={t.login.partyNamePlaceholder}
               className={`w-full px-4 py-3 bg-gray-800 border rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent text-gray-100 placeholder-gray-500 ${
                 nameError ? 'border-red-500 focus:ring-red-500' : 'border-gray-600'
               }`}
@@ -239,7 +241,7 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
-              Colore del Partito
+              {t.login.partyColor}
             </label>
             <div className="grid grid-cols-4 gap-2">
               {availableColors.map((color) => (
@@ -255,7 +257,7 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
                     }
                   `}
                   style={{ backgroundColor: color.value }}
-                  title={color.name}
+                  title={t.colors[color.value] || color.name}
                 >
                   {selectedColor === color.value && (
                     <div className="absolute inset-0 flex items-center justify-center">
@@ -269,7 +271,7 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-300 mb-2">
-              Icona del Partito
+              {t.login.partyIcon}
             </label>
             <div className="grid grid-cols-4 gap-2">
               {availableIcons.map((iconOption) => {
@@ -286,7 +288,7 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
                         : 'border-gray-600 bg-gray-800 hover:border-gray-500 hover:bg-gray-700 hover:scale-105'
                       }
                     `}
-                    title={iconOption.name}
+                    title={t.icons[iconOption.value] || iconOption.name}
                   >
                     <IconComponent className="w-6 h-6 text-gray-300" />
                   </button>
@@ -299,7 +301,7 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
             type="submit"
             className="w-full btn-game-primary"
           >
-            Accedi alla Partita
+            {t.login.submit}
           </button>
         </form>
 
@@ -310,10 +312,10 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
             onClick={handleNewGame}
             className="w-full bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 text-sm"
           >
-            🆕 Nuova Partita
+            {t.login.newGame}
           </button>
           <p className="text-xs text-gray-500 text-center mt-2">
-            Pulisce la sessione salvata per entrare in una nuova partita
+            {t.login.newGameHint}
           </p>
         </div>
 

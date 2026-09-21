@@ -1,5 +1,7 @@
 import { PlayerState, Technology, VoteResult } from './types';
 import { Scoring } from './Scoring';
+import { gameT } from '../lib/i18n/game';
+import { getSessionLocale } from '../lib/i18n/session';
 
 /**
  * Modulo centralizzato per il sistema di votazione parlamentare
@@ -173,6 +175,7 @@ export function calculateVotingEffects(
   isRejected: boolean; // Se true, la legge è stata bocciata
 } {
   const { approvalRate } = voteResult;
+  const t = gameT(getSessionLocale());
   
   // Soglia per bocciatura: < 50% di approvazione
   const REJECTION_THRESHOLD = 0.5;
@@ -187,9 +190,7 @@ export function calculateVotingEffects(
       techPoints: -Math.floor(basePoints.techPoints * penaltyMultiplier),
       ethicsPoints: -Math.floor(basePoints.ethicsPoints * penaltyMultiplier),
       neuralformingPoints: -Math.floor(basePoints.neuralformingPoints * penaltyMultiplier),
-      message: approvalRate < 0.3
-        ? `Bocciata! La proposta è stata respinta dal parlamento con grande maggioranza. Il fallimento ha danneggiato la tua reputazione politica (-50% penalità)`
-        : `Bocciata! La proposta è stata respinta dal parlamento. Il fallimento ha danneggiato la tua reputazione politica (-40% penalità)`,
+      message: approvalRate < 0.3 ? t.voting.rejectedLandslide : t.voting.rejected,
       isRejected: true,
     };
   }
@@ -200,7 +201,7 @@ export function calculateVotingEffects(
       techPoints: Math.floor(basePoints.techPoints * 1.3),
       ethicsPoints: Math.floor(basePoints.ethicsPoints * 1.3),
       neuralformingPoints: Math.floor(basePoints.neuralformingPoints * 1.2),
-      message: `Approvazione schiacciante! La proposta ha ricevuto ampio sostegno parlamentare (+30% bonus)`,
+      message: t.voting.approvedLandslide,
       isRejected: false,
     };
   }
@@ -210,7 +211,7 @@ export function calculateVotingEffects(
     techPoints: Math.floor(basePoints.techPoints * 1.1),
     ethicsPoints: Math.floor(basePoints.ethicsPoints * 1.1),
     neuralformingPoints: Math.floor(basePoints.neuralformingPoints * 1.1),
-    message: `Approvata! La proposta ha ottenuto il sostegno della maggioranza (+10% bonus)`,
+    message: t.voting.approved,
     isRejected: false,
   };
 }

@@ -5,6 +5,9 @@ import { Users, Play, Copy, Check } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { buildPlayerJoinUrl } from '../../utils/deeplink';
 import { NeuralformingMark } from '../Brand/NeuralformingMark';
+import { LangSwitch } from '../Brand/LangSwitch';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
+import type { Locale } from '../../lib/i18n/locale';
 
 interface RoomSetupProps {
   onGameStart: (roomId: string) => void;
@@ -22,6 +25,7 @@ const PARTY_COLORS = [
 ];
 
 export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
+  const { locale, setLocale, t } = useGameCopy();
   const [roomId, setRoomId] = useState<string | null>(null);
   const [roomIdInput, setRoomIdInput] = useState('');
   const [playerName, setPlayerName] = useState('');
@@ -37,6 +41,7 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
     isConnected,
     roomInfo,
     createRoom,
+    setRoomLocale,
     startGame,
     error,
     socket,
@@ -44,9 +49,23 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
     isConnected: false,
     roomInfo: null,
     createRoom: () => {},
+    setRoomLocale: () => {},
     startGame: () => {},
     error: null,
     socket: null,
+  };
+
+  useEffect(() => {
+    if (roomInfo?.locale && roomInfo.locale !== locale) {
+      setLocale(roomInfo.locale, false);
+    }
+  }, [roomInfo?.locale]);
+
+  const handleSetLocale = (next: Locale) => {
+    setLocale(next);
+    if (roomId && isMaster && !roomInfo?.isGameStarted) {
+      setRoomLocale?.(next);
+    }
   };
 
   // Ascolta la creazione della room
@@ -104,19 +123,19 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
     if (!isConnected) return;
     // Il master NON ha bisogno di nome e colore (non è un giocatore)
     if (socket) {
-      socket.emit('createRoom', {}); // Non inviare nome/colore
+      socket.emit('createRoom', { locale });
     } else {
-      createRoom();
+      createRoom(locale);
     }
   };
 
   const handleJoinRoom = () => {
     if (!roomIdInput.trim()) {
-      alert('Inserisci l\'ID della partita');
+      alert(t.setup.alertRoomId);
       return;
     }
     if (!playerName.trim()) {
-      alert('Inserisci il nome del partito');
+      alert(t.setup.alertPartyName);
       return;
     }
     setRoomId(roomIdInput.trim());
@@ -147,16 +166,16 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
     if (!isMaster) return;
     
     if (roomInfo && roomInfo.players.length < 2) {
-      alert('Devi avere almeno 2 giocatori per iniziare!');
+      alert(t.setup.alertMinPlayers);
       return;
     }
     if (!roomInfo || roomInfo.players.length === 0) {
-      alert('Nessun giocatore nella room!');
+      alert(t.setup.alertNoPlayers);
       return;
     }
     
     if (!roomId) {
-      alert('Errore: ID partita non disponibile');
+      alert(t.setup.alertNoRoom);
       return;
     }
     
@@ -200,25 +219,33 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
           </div>
         </div>
         <p className="text-gray-300 mb-4 text-center text-lg">
-          Governare l'Intelligenza Artificiale
+          {t.setup.tagline}
         </p>
-        <p className="text-gray-400 mb-6 text-center text-base">Setup Partita</p>
+        <p className="text-gray-400 mb-6 text-center text-base">{t.setup.title}</p>
+
+        {!roomInfo?.isGameStarted && (
+          <div className="mb-6">
+            <p className="text-sm font-medium text-gray-300 mb-2 text-center">{t.languageLabel}</p>
+            <LangSwitch locale={locale} setLocale={handleSetLocale} variant="setup" />
+            <p className="text-xs text-gray-500 mt-2 text-center">{t.languageHelp}</p>
+          </div>
+        )}
 
         {!isConnected && !error && (
           <div className="bg-gray-800 border border-gray-600 rounded-lg p-4 mb-6">
-            <p className="text-gray-300">Connessione al server in corso...</p>
+            <p className="text-gray-300">{t.setup.connecting}</p>
             <p className="text-xs text-gray-400 mt-2">
-              Assicurati che il server sia avviato su {import.meta.env.VITE_SERVER_URL || 'http://localhost:3001'}
+              {t.setup.connectingHint} {import.meta.env.VITE_SERVER_URL || 'http://localhost:3001'}
             </p>
           </div>
         )}
 
         {error && (
           <div className="bg-gray-800 border border-gray-600 rounded-lg p-4 mb-6">
-            <p className="text-gray-200 font-semibold">Errore di connessione</p>
+            <p className="text-gray-200 font-semibold">{t.setup.connectionError}</p>
             <p className="text-gray-300 text-sm mt-1">{error}</p>
             <p className="text-xs text-gray-400 mt-2">
-              Verifica che il server sia avviato: <code className="bg-gray-700 px-1 rounded text-gray-300">cd server && npm run dev</code>
+              {t.setup.connectionHint} <code className="bg-gray-700 px-1 rounded text-gray-300">cd server && npm run dev</code>
             </p>
           </div>
         )}
@@ -228,7 +255,7 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
             {/* Il master NON ha bisogno di nome e colore (non è un giocatore) */}
             <div className="bg-gray-800 border border-gray-600 rounded-lg p-4">
               <p className="text-sm text-gray-200">
-                <strong className="text-gray-100">Sei il Master della partita.</strong> Il master non è un giocatore, ma gestisce la partita e vede tutto lo stato del gioco.
+                <strong className="text-gray-100">{t.setup.masterBlurbLead}</strong> {t.setup.masterBlurb}
               </p>
             </div>
             
@@ -237,20 +264,20 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
                 <div className="w-full border-t border-gray-600"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-gray-900 text-gray-400">oppure</span>
+                <span className="px-2 bg-gray-900 text-gray-400">{t.setup.or}</span>
               </div>
             </div>
 
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  ID Partita (per unirsi)
+                  {t.setup.roomIdJoin}
                 </label>
                 <input
                   type="text"
                   value={roomIdInput}
                   onChange={(e) => setRoomIdInput(e.target.value)}
-                  placeholder="Incolla l'ID della partita"
+                  placeholder={t.setup.roomIdPlaceholder}
                   className="w-full px-4 py-2 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent font-mono text-sm text-gray-100 placeholder-gray-500"
                 />
               </div>
@@ -262,14 +289,14 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
                 disabled={!isConnected}
                 className="flex-1 btn-game-primary disabled:cursor-not-allowed"
               >
-                Crea Partita
+                {t.setup.create}
               </button>
               <button
                 onClick={handleJoinRoom}
                 disabled={!isConnected || !roomIdInput.trim() || !playerName.trim()}
                 className="flex-1 glass-panel hover:bg-cyber-800 text-gray-100 font-heading font-semibold py-3 px-6 rounded-xl border border-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Unisciti
+                {t.setup.join}
               </button>
             </div>
           </div>
@@ -278,7 +305,7 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
             {/* Room ID */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-2">
-                ID Partita (condividi con gli altri giocatori)
+                {t.setup.roomIdShare}
               </label>
               <div className="flex gap-2">
                 <input
@@ -295,7 +322,7 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
                 </button>
               </div>
               <p className="text-xs text-gray-400 mt-1">
-                Gli altri giocatori possono unirsi usando questo ID
+                {t.setup.roomIdShareHint}
               </p>
             </div>
 
@@ -305,7 +332,7 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
                 {/* Colonna sinistra: QR Code */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-3">
-                    Inquadra per entrare nella PWA giocatore
+                    {t.setup.qrLabel}
                   </label>
                   <div className="flex flex-col items-center gap-4">
                     <div className="bg-white border border-gray-700 rounded-lg p-4">
@@ -335,7 +362,7 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
                         </button>
                       </div>
                       <p className="text-xs text-gray-400 mt-1">
-                        Link diretto alla PWA giocatore con l'ID già compilato
+                        {t.setup.qrLinkHint}
                       </p>
                     </div>
                   </div>
@@ -347,7 +374,7 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
                     <div className="flex items-center gap-2 mb-4">
                       <Users className="w-5 h-5 text-gray-400" />
                       <h2 className="text-lg font-semibold text-gray-100">
-                        Giocatori ({roomInfo.players.length}/{roomInfo.maxPlayers})
+                        {t.setup.players} ({roomInfo.players.length}/{roomInfo.maxPlayers})
                       </h2>
                     </div>
                     <div className="space-y-2 max-h-[400px] overflow-y-auto">
@@ -363,7 +390,7 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
                           <span className="flex-1 font-medium text-gray-100">{player.name}</span>
                           {player.isMaster && (
                             <span className="text-xs bg-gray-700 text-gray-200 px-2 py-1 rounded">
-                              Master
+                              {t.setup.masterBadge}
                             </span>
                           )}
                         </div>
@@ -379,13 +406,13 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
               <div className="space-y-4 border-t border-gray-700 pt-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Nome del Partito
+                    {t.setup.partyName}
                   </label>
                   <input
                     type="text"
                     value={playerName}
                     onChange={(e) => setPlayerName(e.target.value)}
-                    placeholder="Es: Partito Democratico"
+                    placeholder={t.setup.partyNamePlaceholder}
                     className="w-full px-4 py-2 bg-gray-800 border border-gray-600 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent text-gray-100 placeholder-gray-500"
                     maxLength={30}
                     disabled={!!roomInfo?.players.some((p: RoomInfo['players'][0]) => p.name === playerName.trim())}
@@ -394,7 +421,7 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Colore del Partito
+                    {t.setup.partyColor}
                   </label>
                   <div className="grid grid-cols-4 gap-2">
                     {PARTY_COLORS.map((color) => (
@@ -407,7 +434,7 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
                             : 'border-gray-600 hover:border-gray-500'
                         }`}
                         style={{ backgroundColor: color.value }}
-                        title={color.name}
+                        title={t.colors[color.value] || color.name}
                         disabled={!!roomInfo?.players.some((p: RoomInfo['players'][0]) => p.name === playerName.trim())}
                       />
                     ))}
@@ -419,7 +446,7 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
                   disabled={!playerName.trim() || !!roomInfo?.players.some((p: RoomInfo['players'][0]) => p.name === playerName.trim())}
                   className="w-full btn-game-primary disabled:cursor-not-allowed"
                 >
-                  {roomInfo?.players.some((p: RoomInfo['players'][0]) => p.name === playerName.trim()) ? 'Già Unito' : 'Unisciti alla Partita'}
+                  {roomInfo?.players.some((p: RoomInfo['players'][0]) => p.name === playerName.trim()) ? t.setup.alreadyJoined : t.setup.joinGame}
                 </button>
               </div>
             )}
@@ -428,8 +455,8 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
             {!isMaster && roomInfo?.players.some((p: RoomInfo['players'][0]) => p.name === playerName.trim()) && (
               <div className="border-t border-gray-700 pt-4">
                 <div className="bg-gray-800 border border-gray-600 rounded-lg p-4">
-                  <p className="text-gray-200 font-semibold">✓ Ti sei unito alla partita!</p>
-                  <p className="text-sm text-gray-300 mt-1">Aspetta che il master avvii il gioco...</p>
+                  <p className="text-gray-200 font-semibold">{t.setup.joinedTitle}</p>
+                  <p className="text-sm text-gray-300 mt-1">{t.setup.joinedWait}</p>
                 </div>
               </div>
             )}
@@ -441,13 +468,13 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
                 className="w-full btn-game-primary"
               >
                 <Play className="w-5 h-5" />
-                Inizia Partita
+                {t.setup.start}
               </button>
             )}
 
             {isMaster && roomInfo && roomInfo.players.length < 2 && (
               <p className="text-sm text-gray-400 text-center">
-                Aspetta almeno 2 giocatori per iniziare
+                {t.setup.waitPlayers}
               </p>
             )}
           </div>

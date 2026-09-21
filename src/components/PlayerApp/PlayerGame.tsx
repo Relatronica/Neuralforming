@@ -12,6 +12,7 @@ import { GameTour } from './GameTour';
 import { Users, Loader2, LogOut, Menu, MessageCircle, Clock, CheckCircle2 } from 'lucide-react';
 import { TechnologyCard } from '../Cards/TechnologyCard';
 import { PlayerOpeningStory } from './PlayerOpeningStory';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 
 // Vista dedicata per il proponente durante la votazione
 const PlayerProposerView: React.FC<{
@@ -193,6 +194,7 @@ interface PlayerGameProps {
 }
 
 export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, playerColor = '#3B82F6', playerIcon = 'landmark', onLogout }) => {
+  const { setLocale, t } = useGameCopy();
   const socketContext = useGameSocketContext();
   
   const {
@@ -254,6 +256,12 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
   // Stato per riconnessione
   const [isReconnecting, setIsReconnecting] = useState(false);
   const wasConnectedRef = useRef(false);
+
+  useEffect(() => {
+    if (roomInfo?.locale) {
+      setLocale(roomInfo.locale, false);
+    }
+  }, [roomInfo?.locale, setLocale]);
 
   // Reset delle news chiuse quando arriva una nuova news (ID diverso)
   useEffect(() => {
@@ -432,7 +440,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
     return (
       <div className="min-h-screen bg-cyber-950 flex items-center justify-center p-4">
         <div className="bg-gray-900 rounded-xl shadow-2xl p-6 max-w-md w-full text-center border border-gray-700">
-          <h2 className="text-xl font-bold text-gray-200 mb-2">Errore</h2>
+          <h2 className="text-xl font-bold text-gray-200 mb-2">{t.common.error}</h2>
           <p className="text-gray-300 mb-4">{error}</p>
           {isNameTakenError && (
             <button
@@ -540,7 +548,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
     return (
       <div className="min-h-screen bg-cyber-950 flex items-center justify-center p-4">
         <div className="bg-gray-900 rounded-xl shadow-2xl p-6 max-w-md w-full text-center border border-gray-700">
-          <h2 className="text-xl font-bold text-gray-100 mb-2">Giocatore non trovato</h2>
+          <h2 className="text-xl font-bold text-gray-100 mb-2">{t.game.playerNotFound}</h2>
           <p className="text-gray-300">Controlla che il nome sia corretto</p>
         </div>
       </div>

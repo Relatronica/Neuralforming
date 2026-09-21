@@ -17,6 +17,8 @@ import { OpeningStoryModal } from '../Game/OpeningStoryModal';
 import { SinglePlayerDashboard } from './SinglePlayerDashboard';
 import { PublicOpinionMeter } from './PublicOpinionMeter';
 import { NeuralformingMark } from '../Brand/NeuralformingMark';
+import { LangSwitch } from '../Brand/LangSwitch';
+import { useGameCopy } from '../../lib/i18n/useGameCopy';
 import { 
   ArrowLeft, 
   Plus, 
@@ -36,6 +38,7 @@ interface SinglePlayerGameProps {
 }
 
 export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetup }) => {
+  const { locale, setLocale, t } = useGameCopy();
   // ============================================================
   // State
   // ============================================================
@@ -132,7 +135,24 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
   // ============================================================
 
   if (showOpeningStory) {
-    return <OpeningStoryModal onClose={() => setShowOpeningStory(false)} />;
+    return (
+      <>
+        <div className="fixed top-4 inset-x-0 z-[70] flex justify-center px-4 pointer-events-none">
+          <div className="w-full max-w-sm pointer-events-auto">
+            <p className="text-xs text-gray-400 mb-2 text-center">{t.languageLabel}</p>
+            <LangSwitch
+              locale={locale}
+              setLocale={(next) => {
+                setLocale(next);
+                setGameState(SinglePlayerEngine.initializeGame());
+              }}
+              variant="setup"
+            />
+          </div>
+        </div>
+        <OpeningStoryModal key={locale} onClose={() => setShowOpeningStory(false)} />
+      </>
+    );
   }
 
   // ============================================================
@@ -180,7 +200,7 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
             <h1 className={`text-3xl font-bold mb-2 ${
               gameState.gameWon ? 'text-emerald-400' : 'text-red-400'
             }`}>
-              {gameState.gameWon ? 'Vittoria!' : 'Sconfitta'}
+              {gameState.gameWon ? t.game.victory : t.game.defeat}
             </h1>
 
             {/* Reason */}
@@ -193,12 +213,12 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
               <div className="bg-gray-800/60 rounded-lg p-3">
                 <Microscope className="w-5 h-5 text-tech-cyan mx-auto mb-1" />
                 <p className="text-lg font-bold text-white">{player.techPoints}</p>
-                <p className="text-[10px] text-gray-500">Tecnologia</p>
+                <p className="text-[10px] text-gray-500">{t.scores.tech}</p>
               </div>
               <div className="bg-gray-800/60 rounded-lg p-3">
                 <Scale className="w-5 h-5 text-ethics-amber mx-auto mb-1" />
                 <p className="text-lg font-bold text-white">{player.ethicsPoints}</p>
-                <p className="text-[10px] text-gray-500">Etica</p>
+                <p className="text-[10px] text-gray-500">{t.scores.ethics}</p>
               </div>
               <div className="bg-gray-800/60 rounded-lg p-3">
                 <Brain className="w-5 h-5 text-neural-light mx-auto mb-1" />
@@ -234,7 +254,7 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
                 className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-medium hover:from-blue-500 hover:to-blue-600 transition-all flex items-center gap-2"
               >
                 <RotateCcw className="w-4 h-4" />
-                Nuova Partita
+                {t.sp.newGame}
               </button>
               {onBackToSetup && (
                 <button
@@ -273,7 +293,7 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
             <NeuralformingMark className="w-6 h-6" />
             <h1 className="text-sm font-heading font-bold text-gray-200">Neuralforming</h1>
             <span className="text-[9px] uppercase tracking-wider font-semibold px-1.5 py-0.5 bg-ethics-amber/10 text-ethics-amber rounded border border-ethics-amber/30">
-              Demo
+              {t.common.demo}
             </span>
             <span className="text-[10px] px-2 py-0.5 bg-tech-cyan/10 text-tech-cyan rounded-full border border-tech-cyan/20">
               Single Player
@@ -282,7 +302,7 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
         </div>
         
         <div className="flex items-center gap-4 text-xs text-gray-500">
-          <span>Turno {gameState.turn}/15</span>
+          <span>{t.game.turnN(gameState.turn)}/15</span>
           <span className={DifficultyManager.getDifficultyInfo(gameState.difficulty).color}>
             {DifficultyManager.getDifficultyInfo(gameState.difficulty).label}
           </span>
@@ -337,7 +357,7 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
         <div className="text-center mb-6">
           <div className="flex items-center justify-center gap-2 mb-2">
             <Sparkles className="w-5 h-5 text-cyan-400" />
-            <h2 className="text-xl font-bold text-gray-100">Fase di Sviluppo</h2>
+            <h2 className="text-xl font-bold text-gray-100">{t.sp.developmentPhase}</h2>
           </div>
           <p className="text-sm text-gray-400">
             Scegli una tecnologia dalla tua mano per proporla al parlamento.
@@ -486,7 +506,7 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
     return (
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-4">
-          <h2 className="text-xl font-bold text-gray-100 mb-1">Dilemma Etico</h2>
+          <h2 className="text-xl font-bold text-gray-100 mb-1">{t.dilemma.title}</h2>
           <p className="text-sm text-gray-400">
             Fai la tua scelta. Ogni opzione avra conseguenze diverse sull'opinione pubblica e sui tuoi punteggi.
           </p>

@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { GameState, PlayerState, Dilemma, DilemmaOption, DilemmaVoteResult } from '../game/types';
+import type { Locale } from '../lib/i18n/locale';
 
 export interface DisconnectedPlayerInfo {
   id: string;
@@ -23,6 +24,7 @@ export interface RoomInfo {
   isGameStarted: boolean;
   maxPlayers: number;
   masterSocketId?: string; // Socket ID del master (per identificare il master)
+  locale?: Locale;
 }
 
 // Costante per il heartbeat del master
@@ -161,7 +163,7 @@ export function useGameSocket(roomId: string | null) {
       console.error('Connection error:', err);
     });
 
-    newSocket.on('roomCreated', (data: { roomId: string }) => {
+    newSocket.on('roomCreated', (data: { roomId: string; locale?: Locale }) => {
       // Quando creiamo una room, siamo il master
       isMasterRef.current = true;
       setRoomInfo({
@@ -170,6 +172,7 @@ export function useGameSocket(roomId: string | null) {
         disconnectedPlayers: [],
         isGameStarted: false,
         maxPlayers: 5,
+        locale: data.locale,
       });
     });
 
@@ -551,10 +554,17 @@ export function useGameSocket(roomId: string | null) {
     };
   }, [socket, roomId, roomInfo?.masterSocketId]);
 
-  const createRoom = useCallback(() => {
+  const createRoom = useCallback((locale?: Locale) => {
     if (!socket) return;
-    socket.emit('createRoom');
+    socket.emit('createRoom', { locale });
   }, [socket]);
+
+  const setRoomLocale = useCallback((locale: Locale) => {
+    if (!socket) return;
+    const targetRoomId = roomId || roomInfo?.roomId;
+    if (!targetRoomId) return;
+    socket.emit('setRoomLocale', { roomId: targetRoomId, locale });
+  }, [socket, roomId, roomInfo]);
 
   const joinRoom = useCallback((playerName: string, playerColor: string, playerIcon?: string) => {
     if (!socket) return;
@@ -735,6 +745,7 @@ export function useGameSocket(roomId: string | null) {
     openingStoryStatus,
     error,
     createRoom,
+    setRoomLocale,
     joinRoom,
     startGame,
     sendAction,

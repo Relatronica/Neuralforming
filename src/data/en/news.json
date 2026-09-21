@@ -1,0 +1,132 @@
+[
+  {
+    "id": "scientific-breakthrough",
+    "title": "Revolutionary Scientific Discovery",
+    "description": "Researchers have made an exceptional discovery that accelerates AI development. Scientific enthusiasm is driving everyone towards innovation.",
+    "effect": {
+      "techPoints": 5
+    },
+    "targets": "all",
+    "category": "tech"
+  },
+  {
+    "id": "public-protest",
+    "title": "Public Protests over AI",
+    "description": "Large public demonstrations demand greater transparency and ethical control over AI development. Social pressure is strong.",
+    "effect": {
+      "ethicsPoints": -3,
+      "techPoints": -2
+    },
+    "targets": "all",
+    "category": "ethics"
+  },
+  {
+    "id": "ai-breakthrough",
+    "title": "Artificial Intelligence Breakthrough",
+    "description": "A major breakthrough in Neuralforming has generated widespread interest. All projects benefit.",
+    "effect": {
+      "neuralformingPoints": 8
+    },
+    "targets": "all",
+    "category": "breakthrough"
+  },
+  {
+    "id": "tech-scandal",
+    "title": "Technology Scandal",
+    "description": "A scandal involving the improper use of personal data has shaken the technology sector. Public trust has been compromised.",
+    "effect": {
+      "techPoints": -4,
+      "ethicsPoints": -5
+    },
+    "targets": "all",
+    "category": "crisis"
+  },
+  {
+    "id": "ethical-movement",
+    "title": "Global Ethics Movement",
+    "description": "A global movement calls for greater attention to ethics in AI. Society rewards those who demonstrate responsibility.",
+    "effect": {
+      "ethicsPoints": 6
+    },
+    "targets": "all",
+    "category": "ethics"
+  },
+  {
+    "id": "quantum-advance",
+    "title": "Progress in Quantum Computing",
+    "description": "New advances in quantum computing open unimaginable possibilities for AI. Everyone benefits.",
+    "effect": {
+      "techPoints": 7,
+      "neuralformingPoints": 5
+    },
+    "targets": "all",
+    "category": "tech"
+  },
+  {
+    "id": "privacy-concerns",
+    "title": "Privacy Concerns",
+    "description": "Concerns about citizens' privacy are growing. Projects that fail to take this into account are penalised.",
+    "effect": {
+      "ethicsPoints": -4,
+      "neuralformingPoints": -3
+    },
+    "targets": "all",
+    "category": "crisis"
+  },
+  {
+    "id": "ai-assistance",
+    "title": "AI Assistant in Medicine",
+    "description": "AI has demonstrated extraordinary capacity in assisting doctors, saving many lives. Public support is high.",
+    "effect": {
+      "ethicsPoints": 5,
+      "neuralformingPoints": 6
+    },
+    "targets": "all",
+    "category": "breakthrough"
+  },
+  {
+    "id": "automation-fear",
+    "title": "Fear of Automation",
+    "description": "Fear of job losses due to automation creates social tensions. Opposition to technology projects increases.",
+    "effect": {
+      "techPoints": -3,
+      "neuralformingPoints": -2
+    },
+    "targets": "all",
+    "category": "crisis"
+  },
+  {
+    "id": "sustainable-tech",
+    "title": "Movement for Sustainable Technologies",
+    "description": "A global movement promotes technologies that respect the environment and society. Balanced projects receive support.",
+    "effect": {
+      "techPoints": 4,
+      "ethicsPoints": 4,
+      "neuralformingPoints": 4
+    },
+    "targets": "all",
+    "category": "neutral"
+  },
+  {
+    "id": "ai-regulation",
+    "title": "New Regulations",
+    "description": "The government introduces new regulations that favour ethically responsible projects. Those who follow the guidelines are rewarded.",
+    "effect": {
+      "ethicsPoints": 7,
+      "techPoints": 2
+    },
+    "targets": "all",
+    "category": "ethics"
+  },
+  {
+    "id": "tech-investment",
+    "title": "Massive Investment in Technology",
+    "description": "Large investments in the technology sector accelerate all projects. The sector prospers.",
+    "effect": {
+      "techPoints": 6,
+      "neuralformingPoints": 4
+    },
+    "targets": "all",
+    "category": "tech"
+  }
+]

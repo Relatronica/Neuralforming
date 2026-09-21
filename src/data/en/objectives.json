@@ -1,0 +1,123 @@
+[
+  {
+    "id": "protect-humanity",
+    "title": "Guardian of Humanity",
+    "description": "Design a sentinel AI capable of intercepting existential threats before they emerge. Your task is to forge a system that combines innovative courage and ethical responsibility, protecting real lives without holding back progress.",
+    "requirements": {
+      "ethicsPoints": 55,
+      "neuralformingPoints": 70,
+      "balance": 0.6
+    },
+    "difficulty": "medium",
+    "category": "ethics"
+  },
+  {
+    "id": "tech-innovation",
+    "title": "Technological Pioneer",
+    "description": "Open the next frontier of AI. Lead a wave of discoveries that turn bold prototypes into revolutionary tools, where each technology unlocks new possibilities once thought impossible.",
+    "requirements": {
+      "techPoints": 60,
+      "neuralformingPoints": 65,
+      "technologiesCount": 6
+    },
+    "difficulty": "medium",
+    "category": "tech"
+  },
+  {
+    "id": "balanced-vision",
+    "title": "Farsighted Balance",
+    "description": "Master the tension between power and principle. Build an AI that unites ethical rigour and technological drive in a living equilibrium, able to bear complex decisions in the real world.",
+    "requirements": {
+      "techPoints": 50,
+      "ethicsPoints": 50,
+      "neuralformingPoints": 68,
+      "balance": 0.8
+    },
+    "difficulty": "hard",
+    "category": "balanced"
+  },
+  {
+    "id": "neural-breakthrough",
+    "title": "Neuralforming Breakthrough",
+    "description": "Open a breach in the possible. Bring Neuralforming to an unprecedented threshold of complexity, where AI does not merely learn: it evolves, abstracts and generates insight that redefines the entire field.",
+    "requirements": {
+      "neuralformingPoints": 80,
+      "technologiesCount": 5
+    },
+    "difficulty": "hard",
+    "category": "neural"
+  },
+  {
+    "id": "ethical-guardian",
+    "title": "Ethical Guardian",
+    "description": "Make ethics the engine, not the brake. Define clear, verifiable boundaries, ensuring that every AI choice is aligned with non-negotiable human values, even under pressure.",
+    "requirements": {
+      "ethicsPoints": 65,
+      "neuralformingPoints": 60,
+      "balance": 0.7
+    },
+    "difficulty": "medium",
+    "category": "ethics"
+  },
+  {
+    "id": "tech-dominance",
+    "title": "Technological Hegemon",
+    "description": "Push the technical arsenal to its limit. Assemble advanced stacks, optimise every cycle, surpass every benchmark: an AI honed like a razor, designed to prevail without compromise.",
+    "requirements": {
+      "techPoints": 70,
+      "neuralformingPoints": 62,
+      "technologiesCount": 7
+    },
+    "difficulty": "hard",
+    "category": "tech"
+  },
+  {
+    "id": "sustainable-innovation",
+    "title": "Sustainable Innovation",
+    "description": "Innovate without leaving ruins. Design technologies that create lasting value, reduce systemic risks and integrate ethical safeguards from the architecture itself.",
+    "requirements": {
+      "techPoints": 45,
+      "ethicsPoints": 50,
+      "neuralformingPoints": 65,
+      "technologiesCount": 6
+    },
+    "difficulty": "medium",
+    "category": "balanced"
+  },
+  {
+    "id": "neural-synergy",
+    "title": "Neural Synergy",
+    "description": "Orchestrate an ecosystem of models and modules that amplify one another. Power emerges from the whole: interoperability, composition and real-time feedback.",
+    "requirements": {
+      "neuralformingPoints": 75,
+      "technologiesCount": 6,
+      "balance": 0.5
+    },
+    "difficulty": "medium",
+    "category": "neural"
+  },
+  {
+    "id": "ethical-pioneer",
+    "title": "Ethical Pioneer",
+    "description": "Write the rules of the game. Define ethical standards that others will want to adopt and measure, turning prudence into competitive advantage.",
+    "requirements": {
+      "ethicsPoints": 70,
+      "techPoints": 40,
+      "neuralformingPoints": 63
+    },
+    "difficulty": "hard",
+    "category": "ethics"
+  },
+  {
+    "id": "rapid-advancement",
+    "title": "Unstoppable Acceleration",
+    "description": "Scale the innovation curve ahead of the others. Shorten the time from idea to adoption, multiply releases and convert speed into market leadership.",
+    "requirements": {
+      "technologiesCount": 8,
+      "neuralformingPoints": 60,
+      "techPoints": 50
+    },
+    "difficulty": "hard",
+    "category": "tech"
+  }
+]

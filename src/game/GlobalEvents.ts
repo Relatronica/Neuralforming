@@ -2,6 +2,8 @@ import { GameState } from './types';
 import { Scoring } from './Scoring';
 import { isPlayerProtectedFromEvent } from './Milestones';
 import { milestones } from './Milestones';
+import { GAME } from '../lib/i18n/game';
+import { getSessionLocale } from '../lib/i18n/session';
 
 /**
  * Modulo centralizzato per gli eventi globali
@@ -155,9 +157,14 @@ export function checkGlobalEvents(gameState: GameState): {
   // Scegli un evento casuale tra quelli disponibili
   const randomEvent = availableEvents[Math.floor(Math.random() * availableEvents.length)];
   
+  const copy = GAME[getSessionLocale()].events[randomEvent.id];
+  const localizedEvent = copy
+    ? { ...randomEvent, title: copy.title, description: copy.description }
+    : randomEvent;
+
   // Applica l'effetto
-  const newGameState = randomEvent.effect(gameState);
+  const newGameState = localizedEvent.effect(gameState);
   
-  return { triggeredEvent: randomEvent, newGameState };
+  return { triggeredEvent: localizedEvent, newGameState };
 }
 

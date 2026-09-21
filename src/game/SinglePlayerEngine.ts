@@ -2,7 +2,6 @@ import {
   Technology, 
   Dilemma, 
   DilemmaOption, 
-  Consequence, 
   PlayerState, 
   MilestoneUnlocked, 
   SocietyNews,
@@ -18,9 +17,9 @@ import { DifficultyManager } from './DifficultyManager';
 import { Objectives } from './Objectives';
 import { checkMilestones, calculateMilestonePointsBonus, milestones } from './Milestones';
 import { checkGlobalEvents } from './GlobalEvents';
-import technologiesData from '../data/technologies.json';
-import dilemmasData from '../data/dilemmas.json';
-import consequencesData from '../data/consequences.json';
+import { loadGameContent } from '../lib/i18n/content';
+import { gameT } from '../lib/i18n/game';
+import { getSessionLocale } from '../lib/i18n/session';
 
 /**
  * Engine dedicato al Single Player.
@@ -50,8 +49,10 @@ export class SinglePlayerEngine {
    * Un solo giocatore, 3 carte iniziali, opinione pubblica a 50.
    */
   static initializeGame(objectiveId?: string): SinglePlayerState {
-    const technologyDeck = this.shuffleArray([...technologiesData] as Technology[]);
-    const dilemmaDeck = this.shuffleArray([...dilemmasData] as Dilemma[]);
+    const { technologies, dilemmas } = loadGameContent();
+    const t = gameT(getSessionLocale());
+    const technologyDeck = this.shuffleArray([...technologies] as Technology[]);
+    const dilemmaDeck = this.shuffleArray([...dilemmas] as Dilemma[]);
 
     // Pesca 3 carte iniziali per il giocatore
     const initialHand = technologyDeck.splice(0, 3);
@@ -59,7 +60,7 @@ export class SinglePlayerEngine {
     // Crea il giocatore
     const player: PlayerState = {
       id: 'player-human',
-      name: 'Il Tuo Partito',
+      name: t.sp.yourParty,
       isAI: false,
       techPoints: 0,
       ethicsPoints: 0,
@@ -122,7 +123,7 @@ export class SinglePlayerEngine {
     for (let i = 0; i < count; i++) {
       if (technologyDeck.length === 0) {
         // Rimescola se il mazzo è vuoto
-        technologyDeck = this.shuffleArray([...technologiesData] as Technology[]);
+        technologyDeck = this.shuffleArray([...loadGameContent().technologies] as Technology[]);
       }
       newCards.push(technologyDeck[0]);
       technologyDeck = technologyDeck.slice(1);
@@ -299,7 +300,7 @@ export class SinglePlayerEngine {
     let { dilemmaDeck, difficulty } = state;
 
     if (dilemmaDeck.length === 0) {
-      dilemmaDeck = this.shuffleArray([...dilemmasData] as Dilemma[]);
+      dilemmaDeck = this.shuffleArray([...loadGameContent().dilemmas] as Dilemma[]);
     }
 
     // Filtra per difficoltà
@@ -387,7 +388,7 @@ export class SinglePlayerEngine {
     }
 
     // Trova la conseguenza collegata
-    const consequence = (consequencesData as Consequence[]).find(
+    const consequence = loadGameContent().consequences.find(
       c => c.id === option.consequence
     );
 
@@ -551,7 +552,7 @@ export class SinglePlayerEngine {
     
     if (hasExtraCard) {
       if (finalDeck.length === 0) {
-        finalDeck = this.shuffleArray([...technologiesData] as Technology[]);
+        finalDeck = this.shuffleArray([...loadGameContent().technologies] as Technology[]);
       }
       const bonusCard = finalDeck[0];
       finalDeck = finalDeck.slice(1);
@@ -629,7 +630,7 @@ export class SinglePlayerEngine {
       return {
         gameWon: true,
         gameLost: false,
-        reason: 'Hai raggiunto il tuo obiettivo mantenendo il consenso pubblico!',
+        reason: gameT(getSessionLocale()).sp.winReason,
       };
     }
 
@@ -644,7 +645,7 @@ export class SinglePlayerEngine {
       return {
         gameWon: false,
         gameLost: true,
-        reason: 'Il tuo approccio è troppo sbilanciato. L\'IA che hai sviluppato è eticamente inaccettabile.',
+        reason: gameT(getSessionLocale()).sp.loseEthics,
       };
     }
 
@@ -653,7 +654,7 @@ export class SinglePlayerEngine {
       return {
         gameWon: false,
         gameLost: true,
-        reason: 'L\'opinione pubblica è crollata! Il governo è caduto per mancanza di consenso.',
+        reason: gameT(getSessionLocale()).sp.loseOpinion,
       };
     }
 
@@ -662,7 +663,7 @@ export class SinglePlayerEngine {
       return {
         gameWon: false,
         gameLost: true,
-        reason: 'Troppo tempo è passato senza raggiungere l\'obiettivo. Il parlamento ha revocato il mandato.',
+        reason: gameT(getSessionLocale()).sp.loseTime,
       };
     }
 
