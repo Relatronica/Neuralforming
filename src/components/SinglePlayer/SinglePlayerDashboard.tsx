@@ -77,26 +77,26 @@ export const SinglePlayerDashboard: React.FC<SinglePlayerDashboardProps> = ({ st
         <div className="space-y-2">
           {/* Tech Points */}
           <StatBar 
-            icon={<Microscope className="w-3.5 h-3.5 text-cyan-400" />}
+            icon={<Microscope className="w-3.5 h-3.5 text-tech-cyan" />}
             label="Tecnologia"
             value={player.techPoints}
-            color="bg-cyan-500"
+            color="bg-tech-cyan"
           />
           
           {/* Ethics Points */}
           <StatBar 
-            icon={<Scale className="w-3.5 h-3.5 text-violet-400" />}
+            icon={<Scale className="w-3.5 h-3.5 text-ethics-amber" />}
             label="Etica"
             value={player.ethicsPoints}
-            color="bg-violet-500"
+            color="bg-ethics-amber"
           />
           
           {/* Neuralforming Points */}
           <StatBar 
-            icon={<Brain className="w-3.5 h-3.5 text-amber-400" />}
+            icon={<Brain className="w-3.5 h-3.5 text-neural-light" />}
             label="Neuralforming"
             value={player.neuralformingPoints}
-            color="bg-amber-500"
+            color="bg-neural-medium"
           />
           
           {/* Balance */}

@@ -74,7 +74,7 @@ export const DilemmaCard: React.FC<DilemmaCardProps> = ({
                     disabled={!isClickable}
                     className={`w-full border-2 rounded-lg p-3 sm:p-4 text-left transition-all duration-300 transform-gpu ${
                       isSelected
-                        ? 'bg-blue-700 border-blue-500 shadow-lg ring-2 ring-blue-400'
+                        ? 'bg-neural-dark/70 border-neural-light shadow-lg ring-2 ring-neural-light/60'
                         : isClickable
                         ? 'bg-gray-800 hover:bg-gray-700 active:bg-gray-600 border-gray-600 hover:border-gray-500 active:border-gray-400 hover:shadow-md active:shadow-lg cursor-pointer'
                         : 'bg-gray-900 border-gray-700 cursor-not-allowed opacity-60'
@@ -87,7 +87,7 @@ export const DilemmaCard: React.FC<DilemmaCardProps> = ({
                       isSelected ? 'text-white' : isClickable ? 'text-gray-100' : 'text-gray-500'
                     }`}>
                       {option.text}
-                      {isSelected && <span className="ml-2 text-blue-300">✓</span>}
+                      {isSelected && <span className="ml-2 text-neural-light">✓</span>}
                     </p>
                   </button>
                 );

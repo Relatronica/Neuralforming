@@ -39,9 +39,9 @@ export const GuidePage = () => {
   const nextChapter = activeIndex < guideChapters.length - 1 ? guideChapters[activeIndex + 1] : null;
 
   return (
-    <div className="min-h-screen bg-gray-950 text-gray-100">
+    <div className="min-h-screen bg-cyber-950 text-gray-100">
       {/* ── Header ── */}
-      <header className="sticky top-0 z-40 bg-gray-950/90 backdrop-blur-md border-b border-gray-800">
+      <header className="sticky top-0 z-40 bg-cyber-950/90 backdrop-blur-md border-b border-white/10">
         <div className="max-w-7xl mx-auto flex items-center justify-between px-4 sm:px-6 h-14">
           <Link
             to="/"
@@ -52,7 +52,7 @@ export const GuidePage = () => {
           </Link>
 
           <div className="flex items-center gap-2.5">
-            <BookOpen className="w-5 h-5 text-primary-400" />
+            <BookOpen className="w-5 h-5 text-tech-cyan" />
             <h1 className="font-bold text-lg">Guida al Gioco</h1>
           </div>
 
@@ -188,7 +188,7 @@ export const GuidePage = () => {
               ) : (
                 <Link
                   to="/"
-                  className="flex items-center gap-2 text-primary-400 hover:text-primary-300 transition-colors text-sm font-medium"
+                  className="flex items-center gap-2 text-tech-cyan hover:text-tech-blue transition-colors text-sm font-medium"
                 >
                   Torna alla Home
                   <ChevronRight className="w-4 h-4" />

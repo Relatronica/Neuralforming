@@ -58,7 +58,7 @@ const PlayerProposerView: React.FC<{
     : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 p-3 sm:p-4 pb-6 sm:pb-8">
+    <div className="min-h-screen bg-cyber-950 p-3 sm:p-4 pb-6 sm:pb-8">
       <div className="max-w-2xl mx-auto">
         <div className="bg-gray-900 rounded-xl shadow-2xl p-4 sm:p-6 border border-gray-700">
 
@@ -414,7 +414,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
   // Schermata di caricamento
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-cyber-950 flex items-center justify-center p-4">
         <div className="bg-gray-900 rounded-xl shadow-2xl p-8 max-w-md w-full text-center border border-gray-700">
           <Loader2 className="w-12 h-12 mx-auto mb-4 text-gray-400 animate-spin" />
           <h2 className="text-xl font-bold text-gray-100 mb-2">Connessione...</h2>
@@ -430,7 +430,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
     const isNameTakenError = error.includes('Player name already taken') || error.includes('name already taken');
     
     return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-cyber-950 flex items-center justify-center p-4">
         <div className="bg-gray-900 rounded-xl shadow-2xl p-6 max-w-md w-full text-center border border-gray-700">
           <h2 className="text-xl font-bold text-gray-200 mb-2">Errore</h2>
           <p className="text-gray-300 mb-4">{error}</p>
@@ -460,7 +460,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
   // 3. Non c'è un errore (gli errori vengono mostrati prima)
   if (roomInfo && !roomInfo.isGameStarted) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-cyber-950 flex items-center justify-center p-4">
         <div className="bg-gray-900 rounded-xl shadow-2xl p-6 max-w-md w-full text-center border border-gray-700">
           <Users className="w-12 h-12 mx-auto mb-4 text-gray-400" />
           <h2 className="text-xl font-bold text-gray-100 mb-2">In attesa...</h2>
@@ -475,7 +475,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
   // Questo può accadere subito dopo il login, prima che arrivi l'update della room
   if (!roomInfo && isConnected) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-cyber-950 flex items-center justify-center p-4">
         <div className="bg-gray-900 rounded-xl shadow-2xl p-6 max-w-md w-full text-center border border-gray-700">
           <Loader2 className="w-12 h-12 mx-auto mb-4 text-gray-400 animate-spin" />
           <h2 className="text-xl font-bold text-gray-100 mb-2">Connessione...</h2>
@@ -488,7 +488,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
   // Se il gioco è iniziato ma gameState non è ancora arrivato, mostra un messaggio di caricamento
   if (!gameState) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-cyber-950 flex items-center justify-center p-4">
         <div className="bg-gray-900 rounded-xl shadow-2xl p-6 max-w-md w-full text-center border border-gray-700">
           <Loader2 className="w-12 h-12 mx-auto mb-4 text-gray-400 animate-spin" />
           <h2 className="text-xl font-bold text-gray-100 mb-2">Caricamento partita...</h2>
@@ -538,7 +538,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
   // Il giocatore deve esistere
   if (!currentPlayer) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-cyber-950 flex items-center justify-center p-4">
         <div className="bg-gray-900 rounded-xl shadow-2xl p-6 max-w-md w-full text-center border border-gray-700">
           <h2 className="text-xl font-bold text-gray-100 mb-2">Giocatore non trovato</h2>
           <p className="text-gray-300">Controlla che il nome sia corretto</p>
@@ -681,7 +681,7 @@ export const PlayerGame: React.FC<PlayerGameProps> = ({ roomId, playerId, player
     
     // Per altre fasi, wrappiamo normalmente
     return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 p-3 sm:p-4">
+      <div className="min-h-screen bg-cyber-950 p-3 sm:p-4">
         <GameTour 
           run={showTour}
           onComplete={handleTourComplete}

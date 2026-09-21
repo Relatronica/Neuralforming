@@ -189,12 +189,12 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
   const canStart = isMaster && roomInfo && roomInfo.players.length >= 2 && !roomInfo.isGameStarted;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
-      <div className="bg-gray-900 rounded-xl shadow-2xl p-8 max-w-2xl w-full border border-gray-700">
+    <div className="min-h-screen bg-cyber-950 flex items-center justify-center p-4">
+      <div className="glass-card rounded-2xl p-8 max-w-2xl w-full">
         <div className="mb-6 flex justify-center">
           <div className="relative w-32 h-32 flex items-center justify-center">
-            <div className="absolute inset-0 rounded-full bg-primary-500/15 blur-xl" />
-            <div className="relative bg-gray-800/60 border border-tech-cyan/30 rounded-2xl p-3 backdrop-blur-sm">
+            <div className="absolute inset-0 rounded-full bg-tech-cyan/15 blur-xl" />
+            <div className="relative bg-cyber-800/60 border border-tech-cyan/30 rounded-2xl p-3 backdrop-blur-sm">
               <NeuralformingMark className="w-20 h-20" />
             </div>
           </div>
@@ -260,14 +260,14 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
               <button
                 onClick={handleCreateRoom}
                 disabled={!isConnected}
-                className="flex-1 bg-gray-600 hover:bg-gray-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+                className="flex-1 btn-game-primary disabled:cursor-not-allowed"
               >
                 Crea Partita
               </button>
               <button
                 onClick={handleJoinRoom}
                 disabled={!isConnected || !roomIdInput.trim() || !playerName.trim()}
-                className="flex-1 bg-gray-600 hover:bg-gray-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+                className="flex-1 glass-panel hover:bg-cyber-800 text-gray-100 font-heading font-semibold py-3 px-6 rounded-xl border border-white/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Unisciti
               </button>
@@ -417,7 +417,7 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
                 <button
                   onClick={handleJoinRoom}
                   disabled={!playerName.trim() || !!roomInfo?.players.some((p: RoomInfo['players'][0]) => p.name === playerName.trim())}
-                  className="w-full bg-gray-600 hover:bg-gray-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+                  className="w-full btn-game-primary disabled:cursor-not-allowed"
                 >
                   {roomInfo?.players.some((p: RoomInfo['players'][0]) => p.name === playerName.trim()) ? 'Già Unito' : 'Unisciti alla Partita'}
                 </button>
@@ -438,7 +438,7 @@ export const RoomSetup: React.FC<RoomSetupProps> = ({ onGameStart }) => {
             {isMaster && canStart && (
               <button
                 onClick={handleStartGame}
-                className="w-full bg-gray-600 hover:bg-gray-500 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+                className="w-full btn-game-primary"
               >
                 <Play className="w-5 h-5" />
                 Inizia Partita

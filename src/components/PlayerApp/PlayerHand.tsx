@@ -53,7 +53,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
   const canProposeTechnology = !hasProposedTechnology && gameState.currentPhase === 'development' && isMyTurn;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 p-3 sm:p-4 pb-6 sm:pb-8">
+    <div className="min-h-screen bg-cyber-950 p-3 sm:p-4 pb-6 sm:pb-8">
       <div className="max-w-2xl mx-auto">
         {/* Header con tabs */}
         <div className="bg-gray-900 rounded-xl shadow-2xl p-3 sm:p-4 mb-4 border border-gray-700">
@@ -190,7 +190,7 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
                     onAddTechnology(confirmingTech);
                     setConfirmingTech(null);
                   }}
-                  className="py-3 px-4 rounded-lg font-semibold text-sm bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white transition-all shadow-md hover:shadow-lg"
+                  className="py-3 px-4 rounded-xl font-heading font-semibold text-sm bg-gradient-to-r from-neural-medium to-neural-dark hover:from-neural-light hover:to-neural-medium text-white transition-all shadow-md hover:shadow-lg"
                 >
                   Proponi Legge
                 </button>
@@ -261,19 +261,19 @@ export const PlayerHand: React.FC<PlayerHandProps> = ({
                     <h3 className="text-sm font-bold text-gray-200">I tuoi punti</h3>
                   </div>
                   <div className="grid grid-cols-3 gap-2">
-                    <div className="bg-gray-800 rounded-lg p-2 text-center border border-blue-900/30">
-                      <Microscope className="w-4 h-4 text-blue-400 mx-auto mb-1" />
-                      <p className="text-lg font-bold text-blue-300">{player.techPoints}</p>
+                    <div className="bg-cyber-800 rounded-lg p-2 text-center border border-tech-cyan/20">
+                      <Microscope className="w-4 h-4 text-tech-cyan mx-auto mb-1" />
+                      <p className="text-lg font-bold text-tech-cyan">{player.techPoints}</p>
                       <p className="text-xs text-gray-500">Tech</p>
                     </div>
-                    <div className="bg-gray-800 rounded-lg p-2 text-center border border-emerald-900/30">
-                      <Scale className="w-4 h-4 text-emerald-400 mx-auto mb-1" />
-                      <p className="text-lg font-bold text-emerald-300">{player.ethicsPoints}</p>
+                    <div className="bg-cyber-800 rounded-lg p-2 text-center border border-ethics-amber/20">
+                      <Scale className="w-4 h-4 text-ethics-amber mx-auto mb-1" />
+                      <p className="text-lg font-bold text-ethics-amber">{player.ethicsPoints}</p>
                       <p className="text-xs text-gray-500">Etica</p>
                     </div>
-                    <div className="bg-gray-800 rounded-lg p-2 text-center border border-purple-900/30">
-                      <Brain className="w-4 h-4 text-purple-400 mx-auto mb-1" />
-                      <p className="text-lg font-bold text-purple-300">{player.neuralformingPoints}</p>
+                    <div className="bg-cyber-800 rounded-lg p-2 text-center border border-neural-medium/30">
+                      <Brain className="w-4 h-4 text-neural-light mx-auto mb-1" />
+                      <p className="text-lg font-bold text-neural-light">{player.neuralformingPoints}</p>
                       <p className="text-xs text-gray-500">Neural</p>
                     </div>
                   </div>

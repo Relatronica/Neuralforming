@@ -148,7 +148,7 @@ export const VoterPointsNotification: React.FC<VoterPointsNotificationProps> = (
                   <div className="text-center">
                     <p className="text-xs text-gray-400 mb-0.5">Tech</p>
                     <p className={`text-sm font-bold ${
-                      info.points.techPoints > 0 ? 'text-blue-400' : 'text-red-400'
+                      info.points.techPoints > 0 ? 'text-tech-cyan' : 'text-red-400'
                     }`}>
                       {info.points.techPoints > 0 ? '+' : ''}{info.points.techPoints}
                     </p>
@@ -158,7 +158,7 @@ export const VoterPointsNotification: React.FC<VoterPointsNotificationProps> = (
                   <div className="text-center">
                     <p className="text-xs text-gray-400 mb-0.5">Etica</p>
                     <p className={`text-sm font-bold ${
-                      info.points.ethicsPoints > 0 ? 'text-green-400' : 'text-red-400'
+                      info.points.ethicsPoints > 0 ? 'text-ethics-amber' : 'text-red-400'
                     }`}>
                       {info.points.ethicsPoints > 0 ? '+' : ''}{info.points.ethicsPoints}
                     </p>
@@ -168,7 +168,7 @@ export const VoterPointsNotification: React.FC<VoterPointsNotificationProps> = (
                   <div className="text-center">
                     <p className="text-xs text-gray-400 mb-0.5">Neural</p>
                     <p className={`text-sm font-bold ${
-                      info.points.neuralformingPoints > 0 ? 'text-purple-400' : 'text-red-400'
+                      info.points.neuralformingPoints > 0 ? 'text-neural-light' : 'text-red-400'
                     }`}>
                       {info.points.neuralformingPoints > 0 ? '+' : ''}{info.points.neuralformingPoints}
                     </p>

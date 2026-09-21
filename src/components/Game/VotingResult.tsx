@@ -23,13 +23,13 @@ export const VotingResult: React.FC<VotingResultProps> = ({
   const opponents = players.filter(p => voteResult.opponents.includes(p.id));
   
   return (
-    <div className="bg-gradient-to-br from-gray-800 via-gray-700 to-gray-800 rounded-2xl shadow-2xl p-6 sm:p-8 border-2 border-gray-600">
+    <div className="glass-card rounded-2xl shadow-2xl p-6 sm:p-8 border border-white/10">
       <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-4">
         <div className="flex items-center gap-3">
           <div className="bg-gray-600 rounded-full p-3 shadow-lg">
             <Users className="w-6 h-6 text-white" />
           </div>
-          <h3 className="text-2xl sm:text-3xl font-bold text-gray-100">
+          <h3 className="text-2xl sm:text-3xl font-heading font-bold text-gray-100">
             Risultato Votazione Parlamentare
           </h3>
         </div>

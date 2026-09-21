@@ -70,10 +70,10 @@ export const TechnologyCard: React.FC<TechnologyCardProps> = ({
       className={`
         rounded-xl shadow-xl p-3 sm:p-4 border-2 transition-all duration-300
         ${isJoker 
-          ? 'bg-gradient-to-br from-purple-900/40 via-purple-800/30 to-yellow-900/40 border-purple-600/60 shadow-[0_0_15px_rgba(168,85,247,0.3)]' 
-          : 'bg-gradient-to-br from-blue-900/30 via-gray-800 to-blue-900/20 border-blue-600/70'}
-        ${isSelectable ? (isJoker ? 'border-purple-500' : 'border-blue-500') + ' cursor-pointer hover:shadow-2xl active:shadow-lg hover:scale-105 active:scale-100 hover:-translate-y-1' : ''}
-        ${isInHand && !isJoker ? 'bg-gradient-to-br from-blue-900/40 via-gray-800 to-blue-900/30 border-blue-600/80' : ''}
+          ? 'bg-gradient-to-br from-neural-dark/40 via-cyber-800 to-ethics-amber/20 border-neural-medium/60 shadow-[0_0_15px_rgba(139,92,246,0.3)]' 
+          : 'bg-gradient-to-br from-tech-cyan/10 via-cyber-800 to-cyber-900 border-tech-cyan/40'}
+        ${isSelectable ? (isJoker ? 'border-neural-light' : 'border-tech-cyan') + ' cursor-pointer hover:shadow-2xl active:shadow-lg hover:scale-105 active:scale-100 hover:-translate-y-1' : ''}
+        ${isInHand && !isJoker ? 'bg-gradient-to-br from-tech-cyan/15 via-cyber-800 to-cyber-900 border-tech-cyan/50' : ''}
         transform-gpu flex flex-col
         ${isLargeFormat ? 'w-full' : ''}
       `}
@@ -95,7 +95,7 @@ export const TechnologyCard: React.FC<TechnologyCardProps> = ({
             </span>
           )}
           {!isJoker && (
-            <span className="inline-block mb-1 px-2 py-0.5 bg-blue-600/30 text-blue-200 text-[9px] sm:text-[10px] font-bold rounded border border-blue-500/50">
+            <span className="inline-block mb-1 px-2 py-0.5 bg-tech-cyan/20 text-tech-cyan text-[9px] sm:text-[10px] font-bold rounded border border-tech-cyan/40">
               LEGGE
             </span>
           )}
@@ -110,7 +110,7 @@ export const TechnologyCard: React.FC<TechnologyCardProps> = ({
         {isJoker ? (
           <Sparkles className={`text-purple-300 flex-shrink-0 ${isLargeFormat ? 'w-6 h-6 sm:w-7 sm:h-7' : 'w-5 h-5'}`} style={{ filter: 'drop-shadow(0 0 4px rgba(196, 181, 253, 0.6))' }} />
         ) : (
-          <Microscope className={`text-blue-300 flex-shrink-0 ${isLargeFormat ? 'w-6 h-6 sm:w-7 sm:h-7' : 'w-5 h-5'}`} style={{ filter: 'drop-shadow(0 0 3px rgba(96, 165, 250, 0.5))' }} />
+          <Microscope className={`text-tech-cyan flex-shrink-0 ${isLargeFormat ? 'w-6 h-6 sm:w-7 sm:h-7' : 'w-5 h-5'}`} style={{ filter: 'drop-shadow(0 0 3px rgba(0, 242, 254, 0.5))' }} />
         )}
       </div>
       
@@ -157,8 +157,8 @@ export const TechnologyCard: React.FC<TechnologyCardProps> = ({
             <Microscope 
               className={`${isLargeFormat ? 'w-5 h-5 sm:w-6 sm:h-6' : 'w-4 h-4'}`}
               style={{ 
-                color: technology.techPoints >= 8 ? '#9ca3af' : technology.techPoints >= 5 ? '#d1d5db' : '#e5e7eb',
-                filter: technology.techPoints >= 8 ? 'drop-shadow(0 0 4px rgba(156, 163, 175, 0.5))' : 'none'
+                color: '#00f2fe',
+                filter: 'drop-shadow(0 0 4px rgba(0, 242, 254, 0.4))'
               }}
             />
             <span className={`text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[10px]'}`}>
@@ -175,8 +175,8 @@ export const TechnologyCard: React.FC<TechnologyCardProps> = ({
               <Scale 
                 className={`${isLargeFormat ? 'w-5 h-5 sm:w-6 sm:h-6' : 'w-4 h-4'}`}
                 style={{ 
-                  color: technology.ethicsPoints >= 8 ? '#9ca3af' : technology.ethicsPoints >= 5 ? '#d1d5db' : '#e5e7eb',
-                  filter: technology.ethicsPoints >= 8 ? 'drop-shadow(0 0 4px rgba(156, 163, 175, 0.5))' : 'none'
+                  color: '#fbbf24',
+                  filter: 'drop-shadow(0 0 4px rgba(251, 191, 36, 0.4))'
                 }}
               />
               <span className={`text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[10px]'}`}>
@@ -193,8 +193,8 @@ export const TechnologyCard: React.FC<TechnologyCardProps> = ({
             <Brain 
               className={`${isLargeFormat ? 'w-5 h-5 sm:w-6 sm:h-6' : 'w-4 h-4'}`}
               style={{ 
-                color: technology.neuralformingPoints >= 8 ? '#9ca3af' : technology.neuralformingPoints >= 5 ? '#d1d5db' : '#e5e7eb',
-                filter: technology.neuralformingPoints >= 8 ? 'drop-shadow(0 0 4px rgba(156, 163, 175, 0.5))' : 'none'
+                color: '#a78bfa',
+                filter: 'drop-shadow(0 0 4px rgba(167, 139, 250, 0.4))'
               }}
             />
             <span className={`text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity ${isLargeFormat ? 'text-xs sm:text-sm' : 'text-[10px]'}`}>

@@ -39,7 +39,7 @@ export const Board: React.FC<BoardProps> = ({ players, currentPlayerId, voteResu
   return (
     <div className="space-y-1.5 h-full overflow-y-auto">
       {/* Logo o Immagine Home */}
-      <div className="bg-gray-800 rounded-lg p-1.5 shadow-sm border border-gray-700 relative">
+      <div className="bg-cyber-800 rounded-lg p-1.5 shadow-sm border border-white/10 relative">
         {showImage ? (
           <img 
             src="/images/home.jpg" 
@@ -67,10 +67,10 @@ export const Board: React.FC<BoardProps> = ({ players, currentPlayerId, voteResu
       </div>
 
       {/* Emiciclo Parlamentare - compatto */}
-      <div className="bg-gray-800 rounded-lg p-1.5 shadow-sm border border-gray-700">
+      <div className="bg-cyber-800 rounded-lg p-1.5 shadow-sm border border-white/10">
         <div className="flex items-center justify-center gap-2 mb-1.5">
-          <Landmark className="w-4 h-4 text-gray-300" />
-          <h3 className="text-sm font-bold text-gray-100">Parlamento</h3>
+          <Landmark className="w-4 h-4 text-tech-cyan" />
+          <h3 className="text-sm font-heading font-bold text-gray-100">Parlamento</h3>
         </div>
         <ParliamentHemicycle
           players={players}
@@ -101,7 +101,7 @@ export const Board: React.FC<BoardProps> = ({ players, currentPlayerId, voteResu
             {/* Titolo */}
             <div className="text-center mb-4">
               <div className="flex items-center justify-center gap-2 mb-1">
-                <QrCode className="w-5 h-5 text-blue-400" />
+                <QrCode className="w-5 h-5 text-tech-cyan" />
                 <h3 className="text-lg font-bold text-gray-100">Invita Giocatori</h3>
               </div>
               <p className="text-xs text-gray-400">

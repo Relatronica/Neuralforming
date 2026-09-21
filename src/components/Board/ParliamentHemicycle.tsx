@@ -263,7 +263,7 @@ export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
       {mode === 'composition' ? (
         <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
           <div className="flex items-center justify-between mb-2">
-            <h4 className="text-xs font-bold text-gray-100">Composizione Parlamentare</h4>
+            <h4 className="text-sm font-heading font-bold text-gray-100">Composizione Parlamentare</h4>
             <span className="text-[10px] text-gray-400">
               {occupiedSeats}/{totalParliamentSeats} seggi occupati
             </span>
@@ -305,8 +305,8 @@ export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
       ) : voteResult ? (
         <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
           <div className="flex items-center justify-between mb-2">
-            <h4 className="text-xs font-bold text-gray-100">Esito Votazione</h4>
-            <span className="text-[10px] text-gray-400">
+            <h4 className="text-sm font-heading font-bold text-gray-100">Esito Votazione</h4>
+            <span className="text-xs text-gray-400">
               {Math.round((voteResult.approvalRate || 0) * 100)}% favorevoli
             </span>
           </div>
@@ -372,7 +372,7 @@ export const ParliamentHemicycle: React.FC<ParliamentHemicycleProps> = ({
       ) : (
         <div className="bg-gray-800 rounded-lg p-3 border border-gray-700">
           <div className="flex items-center justify-between mb-2">
-            <h4 className="text-xs font-bold text-gray-100">Emiciclo Parlamentare</h4>
+            <h4 className="text-sm font-heading font-bold text-gray-100">Emiciclo Parlamentare</h4>
             <span className="text-[10px] text-gray-400">
               {totalParliamentSeats} seggi disponibili
             </span>

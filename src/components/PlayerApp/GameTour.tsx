@@ -183,7 +183,7 @@ export const GameTour: React.FC<GameTourProps> = ({
       disableScrollParentFix={false}
       styles={{
         options: {
-          primaryColor: '#3B82F6',
+          primaryColor: '#8b5cf6',
           zIndex: 10000,
         },
         tooltip: {
@@ -195,7 +195,7 @@ export const GameTour: React.FC<GameTourProps> = ({
           textAlign: 'left',
         },
         buttonNext: {
-          backgroundColor: '#3B82F6',
+          backgroundColor: '#8b5cf6',
           color: '#fff',
           borderRadius: '0.5rem',
           padding: '0.5rem 1rem',

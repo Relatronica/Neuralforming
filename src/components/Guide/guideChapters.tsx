@@ -396,11 +396,11 @@ export const guideChapters: GuideChapter[] = [
         </p>
 
         <div className="space-y-4">
-          <div className="bg-primary-600/5 rounded-xl p-6 border border-primary-500/20">
+          <div className="bg-neural-medium/10 rounded-xl p-6 border border-neural-medium/25">
             <div className="flex items-center gap-3 mb-3">
-              <Users className="w-6 h-6 text-primary-400" />
+              <Users className="w-6 h-6 text-neural-light" />
               <h3 className="text-lg font-bold text-gray-100">Multiplayer in Classe</h3>
-              <span className="text-xs font-semibold bg-primary-500/20 text-primary-300 px-2 py-0.5 rounded-full">Consigliato</span>
+              <span className="text-xs font-semibold bg-neural-medium/20 text-neural-light px-2 py-0.5 rounded-full">Consigliato</span>
             </div>
             <p className="text-gray-300 mb-3">
               Crea una stanza e invita 2-8 giocatori tramite QR code o link diretto.

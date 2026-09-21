@@ -50,7 +50,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentPlayer,
   return (
     <div
       className={`
-        rounded-lg shadow-sm p-2 transition-all duration-200 bg-gray-800 border-l-4 border border-gray-700
+        rounded-lg shadow-sm p-2 transition-all duration-200 bg-cyber-800 border-l-4 border border-white/10
         ${isCurrentPlayer ? 'ring-2 ring-offset-1 ring-offset-gray-900 shadow-lg' : ''}
         ${isWinner ? 'bg-gradient-to-br from-amber-900/20 to-gray-800' : ''}
         ${isDisconnected ? 'opacity-50' : ''}
@@ -108,38 +108,38 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentPlayer,
 
       {/* Barre di Progresso - con colori semantici e numeri sempre visibili */}
       <div className="space-y-1.5 mb-2">
-        {/* Tech - Blu */}
+        {/* Tech */}
         <div>
           <div className="flex items-center justify-between mb-0.5">
             <div className="flex items-center gap-1">
-              <Microscope className="w-3 h-3 text-blue-400" />
-              <span className="text-xs text-blue-300/80">Tech</span>
+              <Microscope className="w-3 h-3 text-tech-cyan" />
+              <span className="text-xs text-tech-cyan/80">Tech</span>
             </div>
-            <span className="text-xs font-bold text-blue-300">
+            <span className="text-xs font-bold text-tech-cyan">
               {player.techPoints}
             </span>
           </div>
-          <div className="w-full bg-gray-700 rounded-full h-1.5">
+          <div className="w-full bg-cyber-700 rounded-full h-1.5">
             <div
-              className="bg-gradient-to-r from-blue-600 to-blue-400 h-1.5 rounded-full transition-all duration-500"
+              className="bg-gradient-to-r from-tech-blue to-tech-cyan h-1.5 rounded-full transition-all duration-500"
               style={{ width: `${Math.min(100, (player.techPoints / 50) * 100)}%` }}
             />
           </div>
         </div>
-        {/* Etica - Verde */}
+        {/* Etica */}
         <div>
           <div className="flex items-center justify-between mb-0.5">
             <div className="flex items-center gap-1">
-              <Scale className="w-3 h-3 text-emerald-400" />
-              <span className="text-xs text-emerald-300/80">Etica</span>
+              <Scale className="w-3 h-3 text-ethics-amber" />
+              <span className="text-xs text-ethics-amber/80">Etica</span>
             </div>
-            <span className="text-xs font-bold text-emerald-300">
+            <span className="text-xs font-bold text-ethics-amber">
               {player.ethicsPoints}
             </span>
           </div>
-          <div className="w-full bg-gray-700 rounded-full h-1.5">
+          <div className="w-full bg-cyber-700 rounded-full h-1.5">
             <div
-              className="bg-gradient-to-r from-emerald-600 to-emerald-400 h-1.5 rounded-full transition-all duration-500"
+              className="bg-gradient-to-r from-ethics-gold to-ethics-amber h-1.5 rounded-full transition-all duration-500"
               style={{ width: `${Math.min(100, (player.ethicsPoints / 45) * 100)}%` }}
             />
           </div>
@@ -148,16 +148,16 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentPlayer,
         <div>
           <div className="flex items-center justify-between mb-0.5">
             <div className="flex items-center gap-1">
-              <Brain className="w-3 h-3 text-purple-400" />
-              <span className="text-xs text-purple-300/80">Neural</span>
+              <Brain className="w-3 h-3 text-neural-light" />
+              <span className="text-xs text-neural-light/80">Neural</span>
             </div>
-            <span className="text-xs font-bold text-purple-300">
+            <span className="text-xs font-bold text-neural-light">
               {player.neuralformingPoints}
             </span>
           </div>
-          <div className="w-full bg-gray-700 rounded-full h-1.5">
+          <div className="w-full bg-cyber-700 rounded-full h-1.5">
             <div
-              className="bg-gradient-to-r from-purple-600 to-purple-400 h-1.5 rounded-full transition-all duration-500"
+              className="bg-gradient-to-r from-neural-dark to-neural-light h-1.5 rounded-full transition-all duration-500"
               style={{ width: `${Math.min(100, (player.neuralformingPoints / 65) * 100)}%` }}
             />
           </div>
@@ -167,7 +167,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, isCurrentPlayer,
       {/* Info compatte: sempre visibili */}
       <div className="flex items-center justify-between text-xs text-gray-400">
         <div className="flex items-center gap-1" title={`Tecnologie: ${player.technologies.length}/5`}>
-          <Microscope className="w-3 h-3 text-blue-400/60" />
+          <Microscope className="w-3 h-3 text-tech-cyan/60" />
           <span className="text-gray-300">{player.technologies.length}/5</span>
         </div>
         {player.unlockedMilestones && player.unlockedMilestones.length > 0 && (

@@ -70,7 +70,7 @@ export const VoteLoadingScreen: React.FC<VoteLoadingScreenProps> = ({
         <div className="w-full max-w-md">
           <div className="bg-gray-700 rounded-full h-3 overflow-hidden shadow-inner">
             <div
-              className="bg-gradient-to-r from-blue-500 via-blue-400 to-blue-500 h-full rounded-full transition-all duration-300 ease-out relative overflow-hidden"
+              className="bg-gradient-to-r from-neural-medium via-tech-cyan to-neural-medium h-full rounded-full transition-all duration-300 ease-out relative overflow-hidden"
               style={{ width: `${progress}%` }}
             >
               {/* Effetto shimmer */}

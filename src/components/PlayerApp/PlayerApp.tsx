@@ -163,9 +163,9 @@ export const PlayerApp: React.FC = () => {
   // Mostra loading durante il caricamento della sessione
   if (isLoadingSession) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-cyber-950 flex items-center justify-center p-4">
         <div className="bg-gray-900 rounded-xl shadow-2xl p-8 max-w-md w-full text-center border border-gray-700">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
+          <div className="game-spinner"></div>
           <h2 className="text-xl font-bold text-gray-100 mb-2">Caricamento...</h2>
           <p className="text-gray-300">Ripristino sessione...</p>
         </div>

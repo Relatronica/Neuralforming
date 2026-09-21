@@ -13,7 +13,7 @@ export const PlayerConsequence: React.FC<PlayerConsequenceProps> = ({
   onContinue,
 }) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 p-3 sm:p-4 pb-6 sm:pb-8">
+    <div className="min-h-screen bg-cyber-950 p-3 sm:p-4 pb-6 sm:pb-8">
       <div className="max-w-2xl mx-auto">
         <div className="bg-gray-900 rounded-xl shadow-2xl p-4 sm:p-6 mb-4 border border-gray-700">
           <div className="flex items-center gap-2 mb-2">

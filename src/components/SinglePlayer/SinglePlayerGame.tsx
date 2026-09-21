@@ -16,6 +16,7 @@ import { DilemmaTransitionScreen } from '../Game/DilemmaTransitionScreen';
 import { OpeningStoryModal } from '../Game/OpeningStoryModal';
 import { SinglePlayerDashboard } from './SinglePlayerDashboard';
 import { PublicOpinionMeter } from './PublicOpinionMeter';
+import { NeuralformingMark } from '../Brand/NeuralformingMark';
 import { 
   ArrowLeft, 
   Plus, 
@@ -158,7 +159,7 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
 
   if (currentPhase === 'gameOver') {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-cyber-950 flex items-center justify-center p-4">
         <div className="max-w-lg w-full">
           <div className={`rounded-2xl p-8 border-2 text-center ${
             gameState.gameWon 
@@ -190,17 +191,17 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
             {/* Stats */}
             <div className="grid grid-cols-3 gap-3 mb-6">
               <div className="bg-gray-800/60 rounded-lg p-3">
-                <Microscope className="w-5 h-5 text-cyan-400 mx-auto mb-1" />
+                <Microscope className="w-5 h-5 text-tech-cyan mx-auto mb-1" />
                 <p className="text-lg font-bold text-white">{player.techPoints}</p>
                 <p className="text-[10px] text-gray-500">Tecnologia</p>
               </div>
               <div className="bg-gray-800/60 rounded-lg p-3">
-                <Scale className="w-5 h-5 text-violet-400 mx-auto mb-1" />
+                <Scale className="w-5 h-5 text-ethics-amber mx-auto mb-1" />
                 <p className="text-lg font-bold text-white">{player.ethicsPoints}</p>
                 <p className="text-[10px] text-gray-500">Etica</p>
               </div>
               <div className="bg-gray-800/60 rounded-lg p-3">
-                <Brain className="w-5 h-5 text-amber-400 mx-auto mb-1" />
+                <Brain className="w-5 h-5 text-neural-light mx-auto mb-1" />
                 <p className="text-lg font-bold text-white">{player.neuralformingPoints}</p>
                 <p className="text-[10px] text-gray-500">Neuralforming</p>
               </div>
@@ -256,9 +257,9 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
   // ============================================================
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800">
+    <div className="min-h-screen bg-cyber-950">
       {/* Header */}
-      <header className="bg-gray-900/80 backdrop-blur-sm border-b border-gray-800 px-4 py-2 flex items-center justify-between">
+      <header className="bg-cyber-950/90 backdrop-blur-md border-b border-white/10 px-4 py-2 flex items-center justify-between">
         <div className="flex items-center gap-3">
           {onBackToSetup && (
             <button
@@ -269,12 +270,12 @@ export const SinglePlayerGame: React.FC<SinglePlayerGameProps> = ({ onBackToSetu
             </button>
           )}
           <div className="flex items-center gap-2">
-            <Brain className="w-5 h-5 text-amber-400" />
-            <h1 className="text-sm font-bold text-gray-200">Neuralforming</h1>
-            <span className="text-[9px] uppercase tracking-wider font-semibold px-1.5 py-0.5 bg-amber-500/10 text-amber-400 rounded border border-amber-500/30">
+            <NeuralformingMark className="w-6 h-6" />
+            <h1 className="text-sm font-heading font-bold text-gray-200">Neuralforming</h1>
+            <span className="text-[9px] uppercase tracking-wider font-semibold px-1.5 py-0.5 bg-ethics-amber/10 text-ethics-amber rounded border border-ethics-amber/30">
               Demo
             </span>
-            <span className="text-[10px] px-2 py-0.5 bg-blue-900/40 text-blue-400 rounded-full">
+            <span className="text-[10px] px-2 py-0.5 bg-tech-cyan/10 text-tech-cyan rounded-full border border-tech-cyan/20">
               Single Player
             </span>
           </div>

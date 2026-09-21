@@ -20,7 +20,8 @@ import { TurnTransitionScreen } from './TurnTransitionScreen';
 import { MilestoneUnlockAnimation } from './MilestoneUnlockAnimation';
 import { OpeningStoryModal } from './OpeningStoryModal';
 import { useGameSocketContext } from '../../contexts/GameSocketContext';
-import { Bot, Landmark, Users, CheckCircle2, XCircle, Clock, MessageCircle, Scale, Loader2 } from 'lucide-react';
+import { Bot, Landmark, Users, CheckCircle2, XCircle, Clock, MessageCircle, Scale, Loader2, QrCode } from 'lucide-react';
+import { InviteQrModal } from './InviteQrModal';
 import technologiesData from '../../data/technologies.json';
 import dilemmasData from '../../data/dilemmas.json';
 import headerNewsData from '../../data/headerNews.json';
@@ -75,40 +76,39 @@ const DiscussionAndVotingPanel: React.FC<{
   const voteProgressColor = voteStatus 
     ? voteStatus.totalVotes >= voteStatus.requiredVotes 
       ? 'bg-gradient-to-r from-emerald-500 to-emerald-400' 
-      : 'bg-gradient-to-r from-amber-500 to-amber-400'
-    : 'bg-gray-500';
+      : 'bg-gradient-to-r from-ethics-amber to-ethics-gold'
+    : 'bg-cyber-700';
 
   return (
-    <div className="bg-gradient-to-br from-gray-800 via-gray-750 to-gray-800 rounded-lg shadow-lg p-3 border-2 border-gray-600">
+    <div className="glass-card rounded-2xl shadow-lg p-4 border border-white/10">
       {/* Header: Discussion or Voting */}
       {isInDiscussion ? (
         <>
           <div className="flex items-center justify-center gap-2 mb-1">
-            <div className="bg-amber-600/20 rounded-full p-1.5 shadow-md">
-              <MessageCircle className="w-4 h-4 text-amber-400" />
+            <div className="bg-ethics-amber/20 rounded-full p-2">
+              <MessageCircle className="w-5 h-5 text-ethics-amber" />
             </div>
-            <h2 className="text-base font-bold text-gray-100">
-              Discussione in Corso
+            <h2 className="text-xl font-heading font-bold text-gray-100">
+              Discussione in corso
             </h2>
           </div>
-          <p className="text-amber-300/80 text-center text-xs mb-2">
+          <p className="text-ethics-amber/80 text-center text-sm mb-3">
             I giocatori discutono la proposta prima di votare
           </p>
-          {/* Countdown - visibile a TUTTI (incluso proponente e master) */}
-          <div className="mb-2">
-            <div className="bg-gray-800 rounded-lg p-2 border border-gray-700">
-              <div className="flex items-center justify-center gap-1.5 mb-1">
-                <Clock className="w-3.5 h-3.5 text-amber-400" />
-                <span className={`text-xl font-mono font-bold ${
-                  secondsLeft <= 10 ? 'text-red-400 animate-pulse' : 'text-amber-300'
+          <div className="mb-3">
+            <div className="bg-cyber-800 rounded-xl p-3 border border-white/10">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Clock className="w-5 h-5 text-ethics-amber" />
+                <span className={`text-3xl font-mono font-bold ${
+                  secondsLeft <= 10 ? 'text-crisis-rose animate-pulse' : 'text-ethics-amber'
                 }`}>
                   {formatTime(secondsLeft)}
                 </span>
               </div>
-              <div className="w-full bg-gray-700 rounded-full h-1.5">
+              <div className="w-full bg-cyber-700 rounded-full h-2">
                 <div
-                  className={`h-1.5 rounded-full transition-all duration-1000 ${
-                    secondsLeft <= 10 ? 'bg-red-500' : 'bg-amber-500'
+                  className={`h-2 rounded-full transition-all duration-1000 ${
+                    secondsLeft <= 10 ? 'bg-crisis-rose' : 'bg-ethics-amber'
                   }`}
                   style={{ width: `${timerProgress}%` }}
                 />
@@ -117,19 +117,19 @@ const DiscussionAndVotingPanel: React.FC<{
           </div>
         </>
       ) : (
-        <div className="flex items-center justify-center gap-2 mb-2">
-          <div className="bg-blue-600/20 rounded-full p-1.5 shadow-md">
-            <Users className="w-4 h-4 text-blue-400" />
+        <div className="flex items-center justify-center gap-2 mb-3">
+          <div className="bg-tech-cyan/15 rounded-full p-2">
+            <Users className="w-5 h-5 text-tech-cyan" />
           </div>
-          <h2 className="text-base font-bold text-gray-100">
-            Proposta in Votazione
+          <h2 className="text-xl font-heading font-bold text-gray-100">
+            Proposta in votazione
           </h2>
         </div>
       )}
 
       {/* Technology Card */}
-      <div className="mb-2 flex justify-center">
-        <div className="bg-gray-800 rounded-lg shadow-md p-2 border border-gray-600 max-w-xs w-full">
+      <div className="mb-3 flex justify-center">
+        <div className="bg-cyber-800 rounded-xl shadow-md p-3 border border-white/10 max-w-lg w-full">
           <TechnologyCard
             technology={pendingVote.technology}
             isSelectable={false}
@@ -141,9 +141,9 @@ const DiscussionAndVotingPanel: React.FC<{
       </div>
 
       {/* Proposer name */}
-      <div className="bg-gray-800 rounded-lg p-2 mb-2 shadow-sm border border-gray-600">
-        <p className="text-gray-200 text-center text-xs">
-          <span className="font-bold text-gray-100">
+      <div className="bg-cyber-800 rounded-xl p-3 mb-3 border border-white/10">
+        <p className="text-gray-200 text-center text-base">
+          <span className="font-heading font-bold text-gray-100">
             {gameState.players.find(p => p.id === pendingVote.proposerId)?.name || 'Un giocatore'}
           </span>
           <span className="text-gray-400"> ha proposto questa tecnologia</span>
@@ -172,15 +172,15 @@ const DiscussionAndVotingPanel: React.FC<{
             </div>
           )}
           {discussionPhase && discussionPhase.requiredCount > 0 && (
-            <div className="bg-gray-800 rounded-lg p-1.5 border border-gray-700">
-              <p className="text-center text-xs text-gray-300">
-                Pronti: <span className="font-bold text-amber-300">{discussionPhase.readyCount}</span>
+            <div className="bg-cyber-800 rounded-xl p-2 border border-white/10">
+              <p className="text-center text-base text-gray-200">
+                Pronti: <span className="font-heading font-bold text-ethics-amber text-xl">{discussionPhase.readyCount}</span>
                 <span className="text-gray-500"> / </span>
-                <span className="font-bold text-gray-200">{discussionPhase.requiredCount}</span>
+                <span className="font-bold text-gray-100 text-xl">{discussionPhase.requiredCount}</span>
               </p>
-              <div className="mt-1 w-full bg-gray-700 rounded-full h-1">
+              <div className="mt-2 w-full bg-cyber-700 rounded-full h-2">
                 <div
-                  className="bg-amber-500 h-1 rounded-full transition-all duration-500"
+                  className="bg-ethics-amber h-2 rounded-full transition-all duration-500"
                   style={{ width: `${(discussionPhase.readyCount / discussionPhase.requiredCount) * 100}%` }}
                 />
               </div>
@@ -199,15 +199,15 @@ const DiscussionAndVotingPanel: React.FC<{
             </p>
           </div>
           {discussionPhase && discussionPhase.requiredCount > 0 && (
-            <div className="bg-gray-800/60 rounded p-1.5 border border-gray-700">
-              <p className="text-xs text-gray-300">
-                Pronti: <span className="font-bold text-amber-300">{discussionPhase.readyCount}</span>
+            <div className="bg-cyber-800/60 rounded-lg p-2 border border-white/10">
+              <p className="text-sm text-gray-200">
+                Pronti: <span className="font-heading font-bold text-ethics-amber text-lg">{discussionPhase.readyCount}</span>
                 <span className="text-gray-500"> / </span>
-                <span className="font-bold text-gray-200">{discussionPhase.requiredCount}</span>
+                <span className="font-bold text-gray-100 text-lg">{discussionPhase.requiredCount}</span>
               </p>
-              <div className="mt-1 w-full bg-gray-700 rounded-full h-1">
+              <div className="mt-1.5 w-full bg-cyber-700 rounded-full h-2">
                 <div
-                  className="bg-amber-500 h-1 rounded-full transition-all duration-500"
+                  className="bg-ethics-amber h-2 rounded-full transition-all duration-500"
                   style={{ width: `${(discussionPhase.readyCount / discussionPhase.requiredCount) * 100}%` }}
                 />
               </div>
@@ -226,15 +226,15 @@ const DiscussionAndVotingPanel: React.FC<{
             </p>
           </div>
           {discussionPhase && discussionPhase.requiredCount > 0 && (
-            <div className="bg-gray-800/60 rounded p-1.5 border border-gray-700">
-              <p className="text-xs text-gray-300">
-                Pronti: <span className="font-bold text-amber-300">{discussionPhase.readyCount}</span>
+            <div className="bg-cyber-800/60 rounded-lg p-2 border border-white/10">
+              <p className="text-sm text-gray-200">
+                Pronti: <span className="font-heading font-bold text-ethics-amber text-lg">{discussionPhase.readyCount}</span>
                 <span className="text-gray-500"> / </span>
-                <span className="font-bold text-gray-200">{discussionPhase.requiredCount}</span>
+                <span className="font-bold text-gray-100 text-lg">{discussionPhase.requiredCount}</span>
               </p>
-              <div className="mt-1 w-full bg-gray-700 rounded-full h-1">
+              <div className="mt-1.5 w-full bg-cyber-700 rounded-full h-2">
                 <div
-                  className="bg-amber-500 h-1 rounded-full transition-all duration-500"
+                  className="bg-ethics-amber h-2 rounded-full transition-all duration-500"
                   style={{ width: `${(discussionPhase.readyCount / discussionPhase.requiredCount) * 100}%` }}
                 />
               </div>
@@ -284,16 +284,16 @@ const DiscussionAndVotingPanel: React.FC<{
             </button>
           </div>
           {voteStatus && (
-            <div className="bg-gray-800 rounded-lg p-2 border border-gray-600">
-              <p className="text-center text-xs font-semibold text-gray-200">
-                <span className="text-gray-100">{voteStatus.totalVotes}</span>
+            <div className="bg-cyber-800 rounded-xl p-2 border border-white/10">
+              <p className="text-center font-heading font-bold text-gray-100 text-xl">
+                {voteStatus.totalVotes}
                 <span className="text-gray-500"> / </span>
-                <span className="text-gray-300">{voteStatus.requiredVotes}</span>
-                <span className="text-gray-500 text-xs ml-1">voti</span>
+                {voteStatus.requiredVotes}
+                <span className="text-gray-500 text-sm font-sans font-medium ml-1">voti</span>
               </p>
-              <div className="mt-1 w-full bg-gray-700 rounded-full h-1.5">
+              <div className="mt-2 w-full bg-cyber-700 rounded-full h-2">
                 <div
-                  className={`${voteProgressColor} h-1.5 rounded-full transition-all duration-500`}
+                  className={`${voteProgressColor} h-2 rounded-full transition-all duration-500`}
                   style={{ width: `${(voteStatus.totalVotes / voteStatus.requiredVotes) * 100}%` }}
                 />
               </div>
@@ -302,23 +302,23 @@ const DiscussionAndVotingPanel: React.FC<{
         </div>
       )}
 
-      {/* Voting phase: proposer view - con progress bar colorata */}
       {!isInDiscussion && currentPlayer && currentPlayer.id === pendingVote.proposerId && (
-        <div className="bg-gradient-to-r from-blue-900/20 to-gray-800 border border-blue-600/30 rounded-lg p-2 text-center">
-          <div className="flex items-center justify-center gap-1 mb-1">
-            <Clock className="w-3 h-3 text-blue-400 animate-pulse" />
-            <p className="text-blue-200 font-bold text-xs">
+        <div className="bg-tech-cyan/10 border border-tech-cyan/30 rounded-xl p-3 text-center">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <Clock className="w-4 h-4 text-tech-cyan animate-pulse" />
+            <p className="text-tech-cyan font-heading font-bold text-sm">
               Votazione sulla tua proposta...
             </p>
           </div>
           {voteStatus && (
-            <div className="bg-gray-800 rounded p-1.5 border border-gray-700">
-              <p className="text-gray-200 text-xs font-bold">
-                {voteStatus.totalVotes} / {voteStatus.requiredVotes} voti
+            <div className="bg-cyber-800 rounded-lg p-2 border border-white/10">
+              <p className="text-gray-100 font-heading font-bold text-2xl">
+                {voteStatus.totalVotes}<span className="text-gray-500 text-lg"> / {voteStatus.requiredVotes}</span>
+                <span className="text-gray-400 text-sm font-sans font-medium ml-2">voti</span>
               </p>
-              <div className="mt-1 w-full bg-gray-700 rounded-full h-1.5">
+              <div className="mt-2 w-full bg-cyber-700 rounded-full h-2">
                 <div
-                  className={`${voteProgressColor} h-1.5 rounded-full transition-all duration-500`}
+                  className={`${voteProgressColor} h-2 rounded-full transition-all duration-500`}
                   style={{ width: `${(voteStatus.totalVotes / voteStatus.requiredVotes) * 100}%` }}
                 />
               </div>
@@ -327,23 +327,23 @@ const DiscussionAndVotingPanel: React.FC<{
         </div>
       )}
 
-      {/* Voting phase: master (non-player) view */}
       {!isInDiscussion && isMaster && !currentPlayer && (
-        <div className="bg-gradient-to-r from-blue-900/20 to-gray-800 border border-blue-600/30 rounded-lg p-2 text-center">
-          <div className="flex items-center justify-center gap-1 mb-1">
-            <Users className="w-3 h-3 text-blue-400" />
-            <p className="text-blue-200 font-bold text-xs">
+        <div className="bg-tech-cyan/10 border border-tech-cyan/30 rounded-xl p-3 text-center">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            <Users className="w-4 h-4 text-tech-cyan" />
+            <p className="text-tech-cyan font-heading font-bold text-sm">
               Votazione in corso
             </p>
           </div>
           {voteStatus && (
-            <div className="bg-gray-800 rounded p-1.5 border border-gray-700">
-              <p className="text-gray-200 text-xs font-bold">
-                {voteStatus.totalVotes} / {voteStatus.requiredVotes} voti
+            <div className="bg-cyber-800 rounded-lg p-2 border border-white/10">
+              <p className="text-gray-100 font-heading font-bold text-3xl">
+                {voteStatus.totalVotes}<span className="text-gray-500 text-xl"> / {voteStatus.requiredVotes}</span>
+                <span className="text-gray-400 text-sm font-sans font-medium ml-2">voti</span>
               </p>
-              <div className="mt-1 w-full bg-gray-700 rounded-full h-1.5">
+              <div className="mt-2 w-full bg-cyber-700 rounded-full h-2.5">
                 <div
-                  className={`${voteProgressColor} h-1.5 rounded-full transition-all duration-500`}
+                  className={`${voteProgressColor} h-2.5 rounded-full transition-all duration-500`}
                   style={{ width: `${(voteStatus.totalVotes / voteStatus.requiredVotes) * 100}%` }}
                 />
               </div>
@@ -404,6 +404,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
   const [headerNewsIndex, setHeaderNewsIndex] = useState(() => 
     Math.floor(Math.random() * headerNewsData.length)
   );
+  const [showInviteQr, setShowInviteQr] = useState(false);
 
   // Multiplayer: stato dal server
   // Usa il context invece di creare una nuova istanza - questo condivide lo stato con RoomSetup
@@ -1271,9 +1272,9 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
   if (mode === 'multiplayer') {
     if (!gameState && roomInfo?.isGameStarted) {
       return (
-        <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
-          <div className="bg-gray-900 rounded-xl shadow-2xl p-8 max-w-md w-full text-center border border-gray-700">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
+        <div className="min-h-screen bg-cyber-950 flex items-center justify-center p-4">
+          <div className="glass-card rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
+            <div className="game-spinner"></div>
             <h2 className="text-2xl font-bold text-gray-100 mb-2">Inizializzazione partita...</h2>
             <p className="text-gray-300">Il gioco sta per iniziare...</p>
             {isMaster && (
@@ -1286,9 +1287,9 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
     // Se non abbiamo gameState e il gioco non è ancora iniziato, mostra attesa
     if (!gameState && !roomInfo?.isGameStarted) {
       return (
-        <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
-          <div className="bg-gray-900 rounded-xl shadow-2xl p-8 max-w-md w-full text-center border border-gray-700">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
+        <div className="min-h-screen bg-cyber-950 flex items-center justify-center p-4">
+          <div className="glass-card rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
+            <div className="game-spinner"></div>
             <h2 className="text-2xl font-bold text-gray-100 mb-2">Attesa...</h2>
             <p className="text-gray-300">Preparazione della partita...</p>
           </div>
@@ -1307,8 +1308,8 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
     const winnerObjective = winner?.objectiveId ? Objectives.getObjectiveById(winner.objectiveId) : null;
 
     return (
-      <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
-        <div className="bg-gray-900 rounded-xl shadow-2xl p-8 max-w-md w-full text-center border border-gray-700">
+      <div className="min-h-screen bg-cyber-950 flex items-center justify-center p-4">
+        <div className="glass-card rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
           {isHumanWinner ? (
             <>
               <div className="text-6xl mb-4">🎉</div>
@@ -1376,7 +1377,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
           )}
           <button
             onClick={handleNewGame}
-            className="w-full bg-gray-600 hover:bg-gray-500 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+            className="w-full btn-game-primary"
           >
             Nuova Partita
           </button>
@@ -1394,9 +1395,9 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
   if (shouldShowLoading) {
     if (mode === 'multiplayer') {
       return (
-        <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
-          <div className="bg-gray-900 rounded-xl shadow-2xl p-8 max-w-md w-full text-center border border-gray-700">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
+        <div className="min-h-screen bg-cyber-950 flex items-center justify-center p-4">
+          <div className="glass-card rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
+            <div className="game-spinner"></div>
             <h2 className="text-2xl font-bold text-gray-100 mb-2">Caricamento partita...</h2>
             <p className="text-gray-300">Attendere l'inizializzazione del gioco...</p>
             {isMaster && (
@@ -1413,6 +1414,10 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
   if (!gameState) {
     return null;
   }
+
+  const isVoteFocus =
+    mode === 'multiplayer' &&
+    (!!pendingVote || (!!gameState.lastVoteResult && !showVoteLoading));
 
   return (
     <>
@@ -1457,16 +1462,16 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
         />
       )}
 
-      <div className="h-screen flex flex-col overflow-hidden relative" style={{
-        background: 'linear-gradient(135deg, #000000 0%, #0a0a0a 15%, #1a1a1a 30%, #2a2a2a 45%, #3a3a3a 60%, #4a4a4a 75%, #5a5a5a 90%, #6a6a6a 100%)'
-      }}>
+      <div className="h-screen flex flex-col overflow-hidden relative bg-cyber-950">
+        {showInviteQr && roomId && (
+          <InviteQrModal roomId={roomId} onClose={() => setShowInviteQr(false)} />
+        )}
         {/* Header con news */}
-      <header className="flex-shrink-0 px-4 py-4 bg-gray-900/90 backdrop-blur-sm border-b border-gray-700/50 shadow-sm relative z-10">
+      <header className="flex-shrink-0 px-4 py-3 bg-cyber-950/90 backdrop-blur-md border-b border-white/10 relative z-10">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-4 flex-1 min-w-0">
-            <div className="flex items-center gap-2 text-xs text-gray-400 whitespace-nowrap">
-              <span className="text-gray-500">📰</span>
-              <span>NEWS</span>
+            <div className="flex items-center gap-2 text-xs text-gray-400 whitespace-nowrap font-mono uppercase tracking-wider">
+              <span className="text-tech-cyan">News</span>
             </div>
             <div className="flex items-center gap-4 flex-1 min-w-0 overflow-hidden">
               {headerNewsData[headerNewsIndex] && (
@@ -1493,9 +1498,19 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
               )}
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="text-xs text-gray-300">
-              Turno: <span className="font-bold text-gray-100">{gameState.turn}</span>
+          <div className="flex items-center gap-3 shrink-0">
+            {mode === 'multiplayer' && roomId && (
+              <button
+                type="button"
+                onClick={() => setShowInviteQr(true)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyber-800 hover:bg-cyber-700 text-tech-cyan text-xs font-heading font-semibold border border-tech-cyan/30 transition-colors"
+              >
+                <QrCode className="w-3.5 h-3.5" />
+                Invita
+              </button>
+            )}
+            <div className="text-sm text-gray-300">
+              Turno: <span className="font-heading font-bold text-gray-100 text-base">{gameState.turn}</span>
             </div>
             {isProcessingAI && (
               <div className="bg-gray-800 border border-gray-600 rounded px-2 py-0.5 flex items-center gap-1.5">
@@ -1512,7 +1527,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
       {/* Dashboard principale - layout a griglia senza scroll */}
       <div className="flex-1 grid grid-cols-12 gap-4 p-4 overflow-hidden">
         {/* Colonna 1 - Board compatto (3 colonne) */}
-        <div className="col-span-3 bg-gray-900/95 backdrop-blur-md border border-gray-700/50 rounded-xl p-2 overflow-hidden shadow-2xl relative z-20">
+        <div className={`${isVoteFocus ? 'col-span-2' : 'col-span-3'} bg-cyber-900/80 backdrop-blur-md border border-white/10 rounded-xl p-2 overflow-hidden shadow-2xl relative z-20 transition-all duration-300`}>
           <div className="h-full overflow-hidden">
             <Board 
               technologies={
@@ -1530,9 +1545,9 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
         </div>
 
         {/* Colonna 2 - Fase di gioco attiva (6 colonne) */}
-        <div className="col-span-6 flex flex-col gap-2 overflow-hidden relative z-10">
+        <div className={`${isVoteFocus ? 'col-span-8' : 'col-span-6'} flex flex-col gap-2 overflow-hidden relative z-10 transition-all duration-300`}>
           {/* Fase di gioco attiva - compatto */}
-          <div className="flex-1 bg-gray-900/90 backdrop-blur-sm rounded-xl p-2 overflow-hidden shadow-lg border border-gray-700/50">
+          <div className="flex-1 bg-cyber-900/80 backdrop-blur-sm rounded-xl p-3 overflow-hidden shadow-lg border border-white/10">
             <div className="h-full overflow-y-auto">
             
             {/* Mostra evento globale se presente */}
@@ -1621,7 +1636,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                   <h2 className="text-sm font-bold text-gray-100">Sviluppo Politico</h2>
                   <button
                     onClick={handleDrawTechnology}
-                    className="bg-gradient-to-r from-blue-700 to-blue-600 hover:from-blue-600 hover:to-blue-500 text-white font-semibold py-1 px-3 text-xs rounded transition-all duration-200 shadow-sm"
+                    className="bg-gradient-to-r from-neural-medium to-neural-dark hover:from-neural-light hover:to-neural-medium text-white font-heading font-semibold py-1 px-3 text-xs rounded-lg transition-all duration-200 shadow-sm"
                   >
                     Nuova Proposta
                   </button>
@@ -1758,7 +1773,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
                             {isMaster ? 'Osservando il gioco...' : 'Aspetta il tuo turno...'}
                           </p>
                           <div className="flex items-center justify-center gap-1">
-                            <Loader2 className="w-3 h-3 animate-spin text-blue-400" />
+                            <Loader2 className="w-3 h-3 animate-spin text-tech-cyan" />
                             <span className="text-xs text-gray-500">Turno {gameState.turn}</span>
                           </div>
                         </>
@@ -1782,21 +1797,21 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
           </div>
 
           {/* Carte in mano - Solo per giocatore umano - compatto */}
-          {isHumanTurn && currentPlayer && currentPlayer.hand.length > 0 && (
-            <div className="flex-shrink-0 bg-gray-900/90 backdrop-blur-sm rounded-xl p-2 border border-gray-700/50 shadow-lg">
+          {isHumanTurn && currentPlayer && currentPlayer.hand.length > 0 && !isVoteFocus && (
+            <div className="flex-shrink-0 bg-cyber-900/80 backdrop-blur-sm rounded-xl p-2 border border-white/10 shadow-lg">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-1.5">
-                  <Landmark className="w-3.5 h-3.5 text-blue-400" />
+                  <Landmark className="w-3.5 h-3.5 text-tech-cyan" />
                   <h3 className="text-xs font-bold text-gray-100">
                     Proposte di Legge
                   </h3>
-                  <span className="bg-blue-600/80 text-white font-bold px-1.5 py-0.5 rounded text-xs">
+                  <span className="bg-neural-medium/80 text-white font-bold px-1.5 py-0.5 rounded text-xs">
                     {currentPlayer.hand.length}
                   </span>
                 </div>
                 <button
                   onClick={handleDrawTechnology}
-                  className="bg-gradient-to-r from-blue-700 to-blue-600 hover:from-blue-600 hover:to-blue-500 text-white font-semibold py-1 px-2 text-xs rounded transition-all duration-200 shadow-sm"
+                  className="bg-gradient-to-r from-neural-medium to-neural-dark hover:from-neural-light hover:to-neural-medium text-white font-heading font-semibold py-1 px-2 text-xs rounded-lg transition-all duration-200 shadow-sm"
                 >
                   + Nuova
                 </button>
@@ -1818,7 +1833,7 @@ export const Game: React.FC<GameProps> = ({ mode = 'single', roomId = null, onBa
         </div>
 
         {/* Colonna 3 - Giocatori e info (3 colonne) */}
-        <div className="col-span-3 bg-gray-900/95 backdrop-blur-md border border-gray-700/50 rounded-xl p-2 flex flex-col overflow-hidden shadow-2xl relative z-20">
+        <div className={`${isVoteFocus ? 'col-span-2' : 'col-span-3'} bg-cyber-900/80 backdrop-blur-md border border-white/10 rounded-xl p-2 flex flex-col overflow-hidden shadow-2xl relative z-20 transition-all duration-300`}>
           <div className="flex-1 overflow-y-auto">
             <PlayersList
               players={gameState.players}

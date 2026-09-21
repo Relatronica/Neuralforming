@@ -159,7 +159,7 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-cyber-950 flex items-center justify-center p-4">
       <div className="bg-gray-900 rounded-xl shadow-2xl p-6 max-w-md w-full border border-gray-700">
         <div className="flex items-center justify-center gap-2.5 mb-6">
           <Landmark className="w-8 h-8 text-gray-100" />
@@ -180,7 +180,7 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
           <button
             type="button"
             onClick={() => setShowScanner(true)}
-            className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg flex items-center justify-center gap-2"
+            className="w-full bg-neural-medium hover:bg-neural-light text-white font-heading font-semibold py-3 px-6 rounded-xl transition-colors duration-200 shadow-md flex items-center justify-center gap-2"
           >
             <QrCode className="w-5 h-5" />
             Scansiona QR Code
@@ -297,7 +297,7 @@ export const PlayerLogin: React.FC<PlayerLoginProps> = ({ onLogin }) => {
 
           <button
             type="submit"
-            className="w-full bg-gray-600 hover:bg-gray-500 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+            className="w-full btn-game-primary"
           >
             Accedi alla Partita
           </button>

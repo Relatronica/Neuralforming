@@ -9,7 +9,7 @@ export const PlayerWaiting: React.FC<PlayerWaitingProps> = ({
   currentPlayerName,
 }) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-cyber-950 flex items-center justify-center p-4">
       <div className="bg-gray-900 rounded-xl shadow-2xl p-8 max-w-md w-full text-center border border-gray-700">
         <Users className="w-12 h-12 mx-auto mb-4 text-gray-400" />
         <h2 className="text-xl font-bold text-gray-100 mb-2">
