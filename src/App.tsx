@@ -8,6 +8,7 @@ import { PlayerApp } from './components/PlayerApp/PlayerApp';
 import { LandingPage } from './components/Landing/LandingPage';
 import { GuidePage } from './components/Guide/GuidePage';
 import { ContactPage } from './components/Contact/ContactPage';
+import { ContributorsPage } from './components/Contributors/ContributorsPage';
 
 type GameMode = 'setup' | 'single' | 'multiplayer';
 
@@ -69,6 +70,7 @@ function App() {
         <Route path="/player" element={<PlayerApp />} />
         <Route path="/guida" element={<GuidePage />} />
         <Route path="/contatti" element={<ContactPage />} />
+        <Route path="/contributori" element={<ContributorsPage />} />
         <Route path="*" element={<MainApp />} />
       </Routes>
     </BrowserRouter>

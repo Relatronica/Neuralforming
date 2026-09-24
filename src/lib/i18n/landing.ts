@@ -131,6 +131,7 @@ export type LandingCopy = {
   footer: {
     guide: string;
     contact: string;
+    contributors: string;
     donate: string;
     by: string;
   };
@@ -303,6 +304,7 @@ const it: LandingCopy = {
   footer: {
     guide: 'Guida',
     contact: 'Contatti',
+    contributors: 'Contributori',
     donate: 'Dona',
     by: 'Un progetto di',
   },
@@ -508,6 +510,7 @@ const en: LandingCopy = {
   footer: {
     guide: 'Guide',
     contact: 'Contact',
+    contributors: 'Contributors',
     donate: 'Donate',
     by: 'A project by',
   },

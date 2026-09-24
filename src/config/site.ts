@@ -19,7 +19,7 @@ export const SITE = {
     email: seo.organization.email,
     sameAs: [seo.github, seo.donate, seo.organization.url],
   },
-  indexablePaths: ['/', '/guida', '/contatti'] as const,
+  indexablePaths: ['/', '/guida', '/contatti', '/contributori'] as const,
 } as const;
 
 export function resolveSiteOrigin(fromEnv?: string | null): string {

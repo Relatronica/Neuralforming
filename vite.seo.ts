@@ -101,6 +101,7 @@ function sitemapXml(origin: string): string {
     ['/', '1.0'],
     ['/guida', '0.8'],
     ['/contatti', '0.8'],
+    ['/contributori', '0.6'],
   ] as const;
   const urls = paths.map(([path, priority]) =>
     [
@@ -134,6 +135,7 @@ Neuralforming is a free, AGPL-licensed educational multiplayer game by Relatroni
 - [Home](${abs(origin, '/')})
 - [Game guide (Italian)](${abs(origin, '/guida')})
 - [Contact](${abs(origin, '/contatti')})
+- [Contributors (Italian)](${abs(origin, '/contributori')})
 - [Source code](${seo.github})
 - [Licence](${seo.license})
 - [Relatronica](${seo.organization.url})

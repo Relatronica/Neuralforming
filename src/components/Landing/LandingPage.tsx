@@ -784,6 +784,9 @@ export const LandingPage = ({
               <Link to="/contatti" className="hover:text-gray-300 transition-colors">
                 {t.footer.contact}
               </Link>
+              <Link to="/contributori" className="hover:text-gray-300 transition-colors">
+                {t.footer.contributors}
+              </Link>
               <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer" className="hover:text-gray-300 transition-colors">
                 GitHub
               </a>
