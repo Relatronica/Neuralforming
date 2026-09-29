@@ -12,6 +12,7 @@ const PEOPLE = [
   'Capasso Teresa',
   'Marco Capasso',
   'Maddalena Vialli',
+  'Viviana Salvi',
 ] as const;
 
 const GROUPS = [
